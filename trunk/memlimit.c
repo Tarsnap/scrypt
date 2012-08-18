@@ -31,6 +31,9 @@
 #include <sys/types.h>
 #include <sys/resource.h>
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
 #ifdef HAVE_SYSCTL_HW_USERMEM
 #include <sys/sysctl.h>
 #endif
@@ -53,12 +56,15 @@
 static int
 memlimit_sysctl_hw_usermem(size_t * memlimit)
 {
+	int mib[2];
 	uint8_t usermembuf[8];
 	size_t usermemlen = 8;
 	uint64_t usermem;
 
 	/* Ask the kernel how much RAM we have. */
-	if (sysctlbyname("hw.usermem", usermembuf, &usermemlen, NULL, 0))
+	mib[0] = CTL_HW;
+	mib[1] = HW_USERMEM;
+	if (sysctl(mib, 2, usermembuf, &usermemlen, NULL, 0))
 		return (1);
 
 	/*
