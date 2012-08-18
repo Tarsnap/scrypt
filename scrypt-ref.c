@@ -223,8 +223,13 @@ scrypt(const uint8_t * passwd, size_t passwdlen,
 	uint32_t i;
 
 	/* Sanity-check parameters. */
-	if ((buflen > (((uint64_t)(1) << 32) - 1) * 32) ||
-	    ((uint64_t)(r) * (uint64_t)(p) >= (1 << 30))) {
+#if SIZE_MAX > UINT32_MAX
+	if (buflen > (((uint64_t)(1) << 32) - 1) * 32) {
+		errno = EFBIG;
+		goto err0;
+	}
+#endif
+	if ((uint64_t)(r) * (uint64_t)(p) >= (1 << 30)) {
 		errno = EFBIG;
 		goto err0;
 	}

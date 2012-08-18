@@ -23,7 +23,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include <err.h>
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -36,6 +35,7 @@
 #include "scrypt.h"
 #include "scryptenc.h"
 #include "sha256.h"
+#include "warn.h"
 
 #define dkLen 64
 #define MAXPASSLEN 2048
@@ -152,6 +152,10 @@ main(int argc, char *argv[])
 	char * passwd;
 	int rc;
 
+#ifdef NEED_WARN_PROGNAME
+	warn_progname = "scrypt";
+#endif
+
 	/* We should have "enc" or "dec" first. */
 	if (argc < 2)
 		usage();
@@ -190,13 +194,17 @@ main(int argc, char *argv[])
 		usage();
 
 	/* Open the input file. */
-	if ((infile = fopen(argv[0], "r")) == NULL)
-		err(1, "Cannot open input file: %s", argv[0]);
+	if ((infile = fopen(argv[0], "r")) == NULL) {
+		warn("Cannot open input file: %s", argv[0]);
+		exit(1);
+	}
 
 	/* If we have an output file, open it. */
 	if (argc > 1) {
-		if ((outfile = fopen(argv[1], "w")) == NULL)
-			err(1, "Cannot open output file: %s", argv[1]);
+		if ((outfile = fopen(argv[1], "w")) == NULL) {
+			warn("Cannot open output file: %s", argv[1]);
+			exit(1);
+		}
 	}
 
 	/* Prompt for a password. */
@@ -206,11 +214,11 @@ main(int argc, char *argv[])
 
 	/* Encrypt or decrypt. */
 	if (dec)
-		rc = scryptdec_file(infile, outfile, passwd, strlen(passwd),
-		    maxmem, maxmemfrac, maxtime);
+		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
+		    strlen(passwd), maxmem, maxmemfrac, maxtime);
 	else
-		rc = scryptenc_file(infile, outfile, passwd, strlen(passwd),
-		    maxmem, maxmemfrac, maxtime);
+		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
+		    strlen(passwd), maxmem, maxmemfrac, maxtime);
 
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {

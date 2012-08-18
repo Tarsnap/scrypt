@@ -30,6 +30,7 @@
 #define _SCRYPTENC_H_
 
 #include <stdint.h>
+#include <stdio.h>
 
 /**
  * The parameters maxmem, maxmemfrac, and maxtime used by all of these
