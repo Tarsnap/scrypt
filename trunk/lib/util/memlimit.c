@@ -193,7 +193,7 @@ memlimit_rlimit(size_t * memlimit)
 #define _SC_PAGE_SIZE _SC_PAGESIZE
 #endif
 
-int
+static int
 memlimit_sysconf(size_t * memlimit)
 {
 	long pagesize;

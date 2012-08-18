@@ -32,103 +32,12 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "scrypt.h"
+#include "readpass.h"
 #include "scryptenc.h"
 #include "sha256.h"
 #include "warn.h"
 
 #define dkLen 64
-#define MAXPASSLEN 2048
-
-static int
-readpass(char ** passwd, const char * prompt, const char * confirmprompt)
-{
-	FILE * readfrom;
-	char passbuf[MAXPASSLEN];
-	char confpassbuf[MAXPASSLEN];
-	struct termios term, term_old;
-	int usingtty;
-
-	/* Try to open /dev/tty.  If that doesn't work, use stdin. */
-	if ((readfrom = fopen("/dev/tty", "r")) == NULL)
-		readfrom = stdin;
-
-	/* If we're reading from a terminal, try to disable echo. */
-	if ((usingtty = isatty(fileno(readfrom))) != 0) {
-		if (tcgetattr(fileno(readfrom), &term_old)) {
-			warn("Cannot read terminal settings");
-			goto err1;
-		}
-		memcpy(&term, &term_old, sizeof(struct termios));
-		term.c_lflag = (term.c_lflag & ~ECHO) | ECHONL;
-		if (tcsetattr(fileno(readfrom), TCSANOW, &term)) {
-			warn("Cannot set terminal settings");
-			goto err1;
-		}
-	}
-
-retry:
-	/* If we have a terminal, prompt the user to enter the password. */
-	if (usingtty)
-		fprintf(stderr, "%s: ", prompt);
-
-	/* Read the password. */
-	if (fgets(passbuf, MAXPASSLEN, readfrom) == NULL) {
-		warn("Cannot read password");
-		goto err2;
-	}
-
-	/* Confirm the password if necessary. */
-	if (confirmprompt != NULL) {
-		if (usingtty)
-			fprintf(stderr, "%s: ", confirmprompt);
-		if (fgets(confpassbuf, MAXPASSLEN, readfrom) == NULL) {
-			warn("Cannot read password");
-			goto err2;
-		}
-		if (strcmp(passbuf, confpassbuf)) {
-			fprintf(stderr,
-			    "Passwords mismatch, please try again\n");
-			goto retry;
-		}
-	}
-
-	/* Terminate the string at the first "\r" or "\n" (if any). */
-	passbuf[strcspn(passbuf, "\r\n")] = '\0';
-
-	/* If we changed terminal settings, reset them. */
-	if (usingtty)
-		tcsetattr(fileno(readfrom), TCSANOW, &term_old);
-
-	/* Close /dev/tty if we opened it. */
-	if (readfrom != stdin)
-		fclose(readfrom);
-
-	/* Copy the password out. */
-	if ((*passwd = strdup(passbuf)) == NULL) {
-		warn("Cannot allocate memory");
-		goto err1;
-	}
-
-	/* Zero any stored passwords. */
-	memset(passbuf, 0, MAXPASSLEN);
-	memset(confpassbuf, 0, MAXPASSLEN);
-
-	/* Success! */
-	return (0);
-
-err2:
-	/* Reset terminal settings if necessary. */
-	if (usingtty)
-		tcsetattr(fileno(readfrom), TCSAFLUSH, &term_old);
-err1:
-	/* Close /dev/tty if we opened it. */
-	if (readfrom != stdin)
-		fclose(readfrom);
-
-	/* Failure! */
-	return (-1);
-}
 
 static void
 usage(void)
@@ -208,8 +117,8 @@ main(int argc, char *argv[])
 	}
 
 	/* Prompt for a password. */
-	if (readpass(&passwd, "Please enter passphrase",
-	    dec ? NULL : "Please confirm passphrase"))
+	if (tarsnap_readpass(&passwd, "Please enter passphrase",
+	    dec ? NULL : "Please confirm passphrase", 1))
 		exit(1);
 
 	/* Encrypt or decrypt. */

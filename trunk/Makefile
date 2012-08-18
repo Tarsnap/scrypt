@@ -1,15 +1,27 @@
 PROG=	scrypt
 VER?=	nosse
-SRCS=	main.c sha256.c scryptenc.c crypto_aesctr.c warn.c
-SRCS+=	memlimit.c scrypt_cpuperf.c scrypt-${VER}.c
+SRCS=	main.c
 LDADD+=	-lcrypto
 WARNS?=	6
 
 # We have a config file for FreeBSD
+CFLAGS	+=	-I .
 CFLAGS	+=	-DCONFIG_H_FILE=\"config_freebsd.h\"
 
 # Include all possible object files containing built scrypt code.
-CLEANFILES	+=	scrypt-ref.o scrypt-sse.o scrypt-nosse.o
+CLEANFILES	+=	crypto_scrypt-ref.o
+CLEANFILES	+=	crypto_scrypt-sse.o
+CLEANFILES	+=	crypto_scrypt-nosse.o
+
+.PATH.c	:	lib/util
+SRCS	+=	memlimit.c readpass.c warn.c
+CFLAGS	+=	-I lib/util
+.PATH.c	:	lib/crypto
+SRCS	+=	crypto_aesctr.c crypto_scrypt-${VER}.c sha256.c
+CFLAGS	+=	-I lib/crypto
+.PATH.c	:	lib/scryptenc
+SRCS	+=	scryptenc_cpuperf.c scryptenc.c
+CFLAGS	+=	-I lib/scryptenc
 
 #======== public code ends here
 SCRYPTVERSION!=basename `pwd` | cut -f 2 -d -
@@ -18,12 +30,8 @@ PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
 publish-at:
 	mkdir -p ${PKGNAME}
-	cp crypto_aesctr.[ch] memlimit.[ch] sha256.[ch]		\
-	    scryptenc.[ch] warn.[ch] scrypt_cpuperf.[ch]	\
-	    scrypt-*.c						\
-	    scrypt.h sysendian.h scrypt_platform.h main.c	\
-	    ${PKGNAME}
-	cp FORMAT scrypt.1 ${PKGNAME}
+	cp -R lib ${PKGNAME}
+	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
 	echo -n '${SCRYPTVERSION}' > scrypt-version
 	mkdir -p config.aux
 	aclocal-1.10 -I .

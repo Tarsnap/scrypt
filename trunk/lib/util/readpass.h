@@ -26,14 +26,20 @@
  * This file was originally written by Colin Percival as part of the Tarsnap
  * online backup system.
  */
-#ifndef _SCRYPTENC_CPUPERF_H_
-#define _SCRYPTENC_CPUPERF_H_
+#ifndef _READPASS_H_
+#define _READPASS_H_
 
 /**
- * scryptenc_cpuperf(opps):
- * Estimate the number of salsa20/8 cores which can be executed per second,
- * and return the value via opps.
+ * tarsnap_getpass(passwd, prompt, confirmprompt, devtty)
+ * If ${devtty} is non-zero, read a password from /dev/tty if possible; if
+ * not, read from stdin.  If reading from a tty (either /dev/tty or stdin),
+ * disable echo and prompt the user by printing ${prompt} to stderr.  If
+ * ${confirmprompt} is non-NULL, read a second password (prompting if a
+ * terminal is being used) and repeat until the user enters the same password
+ * twice.  Return the password as a malloced NUL-terminated string via
+ * ${passwd}.  The obscure name is to avoid namespace collisions due to the
+ * getpass / readpass / readpassphrase / etc. functions in various libraries.
  */
-int scryptenc_cpuperf(double *);
+int tarsnap_readpass(char **, const char *, const char *, int);
 
-#endif /* !_SCRYPTENC_CPUPERF_H_ */
+#endif /* !_READPASS_H_ */
