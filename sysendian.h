@@ -31,6 +31,11 @@
 
 #include "scrypt_platform.h"
 
+/* If we don't have be64enc, the <sys/endian.h> we have isn't usable. */
+#if !HAVE_DECL_BE64ENC
+#undef HAVE_SYS_ENDIAN_H
+#endif
+
 #ifdef HAVE_SYS_ENDIAN_H
 
 #include <sys/endian.h>

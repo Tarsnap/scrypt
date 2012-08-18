@@ -28,9 +28,12 @@
  */
 #include "scrypt_platform.h"
 
+#include <errno.h>
+#include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <openssl/aes.h>
 
@@ -156,18 +159,43 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 static int
 getsalt(uint8_t salt[32])
 {
-	FILE * f;
+	int fd;
+	ssize_t lenread;
+	uint8_t * buf = salt;
+	size_t buflen = 32;
 
-	/* Use /dev/urandom. */
-	if ((f = fopen("/dev/urandom", "r")) == NULL)
-		return (4);
-	if (fread(salt, 32, 1, f) != 1)
-		return (4);
-	if (fclose(f))
-		return (4);
+	/* Open /dev/urandom. */
+	if ((fd = open("/dev/urandom", O_RDONLY)) == -1)
+		goto err0;
+
+	/* Read bytes until we have filled the buffer. */
+	while (buflen > 0) {
+		if ((lenread = read(fd, buf, buflen)) == -1)
+			goto err1;
+
+		/* The random device should never EOF. */
+		if (lenread == 0)
+			goto err1;
+
+		/* We're partly done. */
+		buf += lenread;
+		buflen -= lenread;
+	}
+
+	/* Close the device. */
+	while (close(fd) == -1) {
+		if (errno != EINTR)
+			goto err0;
+	}
 
 	/* Success! */
 	return (0);
+
+err1:
+	close(fd);
+err0:
+	/* Failure! */
+	return (4);
 }
 
 static int
