@@ -28,170 +28,27 @@
  */
 #include "scrypt_platform.h"
 
-#include <sys/types.h>
-#include <sys/resource.h>
-#ifdef HAVE_SYSCTL_HW_USERMEM_ULONG
-#include <sys/sysctl.h>
-#endif
-#include <sys/time.h>
-
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
 #include <openssl/aes.h>
 
 #include "crypto_aesctr.h"
+#include "memlimit.h"
 #include "scrypt.h"
+#include "scrypt_cpuperf.h"
 #include "sha256.h"
 #include "sysendian.h"
 
 #include "scryptenc.h"
 
-#define ENCBLOCK 64
+#define ENCBLOCK 65536
 
-static int memtouse(size_t, double, size_t *);
-static int cpuperf(double *);
 static int pickparams(size_t, double, double,
     int *, uint32_t *, uint32_t *);
 static int checkparams(size_t, double, double, int, uint32_t, uint32_t);
 static int getsalt(uint8_t[32]);
-
-static int
-memtouse(size_t maxmem, double maxmemfrac, size_t * memlimit)
-{
-	struct rlimit rl;
-	size_t memavail;
-#ifdef HAVE_SYSCTL_HW_USERMEM_ULONG
-	unsigned long usermem;
-	size_t usermemlen;
-#endif
-
-	/* Find the least of RLIMIT_AS, RLIMIT_DATA, and RLIMIT_RSS. */
-	memavail = (size_t)(-1);
-	if (getrlimit(RLIMIT_AS, &rl))
-		return (1);
-	if ((rl.rlim_cur != RLIM_INFINITY) &&
-	    ((size_t)rl.rlim_cur < memavail))
-		memavail = rl.rlim_cur;
-	if (getrlimit(RLIMIT_DATA, &rl))
-		return (1);
-	if ((rl.rlim_cur != RLIM_INFINITY) &&
-	    ((size_t)rl.rlim_cur < memavail))
-		memavail = rl.rlim_cur;
-#ifdef RLIMIT_RSS
-	if (getrlimit(RLIMIT_RSS, &rl))
-		return (1);
-	if ((rl.rlim_cur != RLIM_INFINITY) &&
-	    ((size_t)rl.rlim_cur < memavail))
-		memavail = rl.rlim_cur;
-#endif
-#ifdef HAVE_SYSCTL_HW_USERMEM_ULONG
-	usermemlen = sizeof(unsigned long);
-	if (sysctlbyname("hw.usermem", &usermem, &usermemlen, NULL, 0))
-		return (1);
-	if (usermemlen != sizeof(unsigned long))
-		return (1);
-	if (usermem < memavail)
-		memavail = usermem;
-#endif
-
-#ifdef DEBUG
-	fprintf(stderr, "Lowest memory limit is %ju\n", memavail);
-#endif
-
-	/* Only use the specified fraction of the available memory. */
-	if ((maxmemfrac > 0.5) || (maxmemfrac == 0.0))
-		maxmemfrac = 0.5;
-	memavail = maxmemfrac * memavail;
-
-	/* Don't use more than the specified maximum. */
-	if ((maxmem > 0) && (memavail > maxmem))
-		memavail = maxmem;
-
-	/* But always allow at least 1 MiB. */
-	if (memavail < 1048576)
-		memavail = 1048576;
-
-#ifdef DEBUG
-	fprintf(stderr, "Allowing up to %ju memory to be used\n", memavail);
-#endif
-
-	/* Return limit via the provided pointer. */
-	*memlimit = memavail;
-	return (0);
-}
-
-static int
-cpuperf(double * opps)
-{
-	clockid_t clk;
-	struct timespec res;
-	struct timespec st;
-	struct timespec en;
-	double resd, timd;
-	uint64_t i = 0;
-
-	/* If we have a virtual clock use that; otherwise, use realtime. */
-	clk = CLOCK_REALTIME;
-#ifdef CLOCK_VIRTUAL
-	clk = CLOCK_VIRTUAL;
-#endif
-
-	/* Get the clock resolution. */
-	if (clock_getres(clk, &res))
-		return (2);
-	resd = res.tv_sec + res.tv_nsec * 0.000000001;
-
-#ifdef DEBUG
-	fprintf(stderr, "Clock resolution is %f\n", resd);
-#endif
-
-	/* Loop until the clock ticks. */
-	if (clock_gettime(clk, &st))
-		return (2);
-	do {
-		/* Do an scrypt. */
-		if (scrypt(NULL, 0, NULL, 0, 128, 1, 1, NULL, 0))
-			return (3);
-
-		/* Has the clock ticked? */
-		if (clock_gettime(clk, &en))
-			return (2);
-		if ((en.tv_sec != st.tv_sec) || (en.tv_nsec != st.tv_nsec))
-			break;
-	} while (1);
-
-	/* Could how many scryps we can do before the next tick. */
-	st.tv_sec = en.tv_sec;
-	st.tv_nsec = en.tv_nsec;
-	do {
-		/* Do an scrypt. */
-		if (scrypt(NULL, 0, NULL, 0, 128, 1, 1, NULL, 0))
-			return (3);
-
-		/* We invoked the salsa20/8 core 512 times. */
-		i += 512;
-
-		/* Check if we have looped for long enough. */
-		if (clock_gettime(clk, &en))
-			return (2);
-		timd = (en.tv_sec - st.tv_sec) +
-		    (en.tv_nsec - st.tv_nsec) * 0.000000001;
-		if (timd > resd)
-			break;
-	} while (1);
-
-#ifdef DEBUG
-	fprintf(stderr, "%ju salsa20/8 cores performed in %f seconds\n",
-	    (uintmax_t)i, timd);
-#endif
-
-	/* We can do approximately i salsa20/8 cores per (en - st) time. */
-	*opps = i / timd;
-	return (0);
-}
 
 static int
 pickparams(size_t maxmem, double maxmemfrac, double maxtime,
@@ -208,13 +65,9 @@ pickparams(size_t maxmem, double maxmemfrac, double maxtime,
 		return (1);
 
 	/* Figure out how fast the CPU is. */
-	if ((rc = cpuperf(&opps)) != 0)
+	if ((rc = scrypt_cpuperf(&opps)) != 0)
 		return (rc);
 	opslimit = opps * maxtime;
-
-#ifdef DEBUG
-	fprintf(stderr, "Allowing up to %f salsa20/8 cores\n", opslimit);
-#endif
 
 	/* Allow a minimum of 2^15 salsa20/8 cores. */
 	if (opslimit < 32768)
@@ -228,6 +81,10 @@ pickparams(size_t maxmem, double maxmemfrac, double maxtime,
 	 * limit requires that 4Nrp <= opslimit.  If opslimit < memlimit/32,
 	 * opslimit imposes the stronger limit on N.
 	 */
+#ifdef DEBUG
+	fprintf(stderr, "Requiring 128Nr <= %zu, 4Nrp <= %f\n",
+	    memlimit, opslimit);
+#endif
 	if (opslimit < memlimit/32) {
 		/* Set p = 1 and choose N based on the CPU limit. */
 		*p = 1;
@@ -275,7 +132,7 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 		return (1);
 
 	/* Figure out how fast the CPU is. */
-	if ((rc = cpuperf(&opps)) != 0)
+	if ((rc = scrypt_cpuperf(&opps)) != 0)
 		return (rc);
 	opslimit = opps * maxtime;
 

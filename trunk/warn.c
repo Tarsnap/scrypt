@@ -26,21 +26,50 @@
  * This file was originally written by Colin Percival as part of the Tarsnap
  * online backup system.
  */
-#ifndef _SCRYPT_H_
-#define _SCRYPT_H_
+#include "scrypt_platform.h"
 
-#include <stdint.h>
-
-/**
- * scrypt(passwd, passwdlen, salt, saltlen, N, r, p, buf, buflen):
- * Compute scrypt(passwd[0 .. passwdlen - 1], salt[0 .. saltlen - 1], N, r,
- * p, buflen) and write the result into buf.  The parameters r, p, and buflen
- * must satisfy r * p < 2^30 and buflen <= (2^32 - 1) * 32.  The parameter N
- * must be a power of 2 greater than 1.
- *
- * Return 0 on success; or -1 on error.
+#ifdef HAVE_ERR_H
+/*
+ * Everything is provided through err.h and the associated library, so we
+ * don't need to do anything here.
  */
-int scrypt(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
-    uint32_t, uint32_t, uint8_t *, size_t);
+#else
+#include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 
-#endif /* !_SCRYPT_H_ */
+#include "warn.h"
+
+const char * warn_progname = "(null)";
+
+void
+warn(const char * fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	fprintf(stderr, "%s", warn_progname);
+	if (fmt != NULL) {
+		fprintf(stderr, ": ");
+		vfprintf(stderr, fmt, ap);
+	}
+	fprintf(stderr, ": %s\n", strerror(errno));
+	va_end(ap);
+}
+
+void
+warnx(const char * fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	fprintf(stderr, "%s", warn_progname);
+	if (fmt != NULL) {
+		fprintf(stderr, ": ");
+		vfprintf(stderr, fmt, ap);
+	}
+	fprintf(stderr, "\n");
+	va_end(ap);
+}
+#endif

@@ -28,6 +28,8 @@
  */
 #include "scrypt_platform.h"
 
+#include <sys/mman.h>
+
 #include <emmintrin.h>
 #include <errno.h>
 #include <stdint.h>
@@ -267,8 +269,13 @@ scrypt(const uint8_t * passwd, size_t passwdlen,
 	uint32_t i;
 
 	/* Sanity-check parameters. */
-	if ((buflen > (((uint64_t)(1) << 32) - 1) * 32) ||
-	    ((uint64_t)(r) * (uint64_t)(p) >= (1 << 30))) {
+#if SIZE_MAX > UINT32_MAX
+	if (buflen > (((uint64_t)(1) << 32) - 1) * 32) {
+		errno = EFBIG;
+		goto err0;
+	}
+#endif
+	if ((uint64_t)(r) * (uint64_t)(p) >= (1 << 30)) {
 		errno = EFBIG;
 		goto err0;
 	}
@@ -289,23 +296,38 @@ scrypt(const uint8_t * passwd, size_t passwdlen,
 #ifdef HAVE_POSIX_MEMALIGN
 	if ((errno = posix_memalign(&B0, 64, 128 * r * p)) != 0)
 		goto err0;
+	B = (uint8_t *)(B0);
 	if ((errno = posix_memalign(&XY0, 64, 256 * r + 64)) != 0)
 		goto err1;
+	XY = (uint32_t *)(XY0);
+#ifndef MAP_ANON
 	if ((errno = posix_memalign(&V0, 64, 128 * r * N)) != 0)
 		goto err2;
-	B = (uint8_t *)(B0);
-	XY = (uint32_t *)(XY0);
 	V = (uint32_t *)(V0);
+#endif
 #else
 	if ((B0 = malloc(128 * r * p + 63)) == NULL)
 		goto err0;
+	B = (uint8_t *)(((uintptr_t)(B0) + 63) & ~ (uintptr_t)(63));
 	if ((XY0 = malloc(256 * r + 64 + 63)) == NULL)
 		goto err1;
+	XY = (uint32_t *)(((uintptr_t)(XY0) + 63) & ~ (uintptr_t)(63));
+#ifndef MAP_ANON
 	if ((V0 = malloc(128 * r * N + 63)) == NULL)
 		goto err2;
-	B = (uint8_t *)(((uintptr_t)(B0) + 63) & ~ (uintptr_t)(63));
-	XY = (uint32_t *)(((uintptr_t)(XY0) + 63) & ~ (uintptr_t)(63));
 	V = (uint32_t *)(((uintptr_t)(V0) + 63) & ~ (uintptr_t)(63));
+#endif
+#endif
+#ifdef MAP_ANON
+	if ((V0 = mmap(NULL, 128 * r * N, PROT_READ | PROT_WRITE,
+#ifdef MAP_NOCORE
+	    MAP_ANON | MAP_PRIVATE,
+#else
+	    MAP_ANON | MAP_PRIVATE | MAP_NOCORE,
+#endif
+	    -1, 0)) == MAP_FAILED)
+		goto err2;
+	V = (uint32_t *)(V0);
 #endif
 
 	/* 1: (B_0 ... B_{p-1}) <-- PBKDF2(P, S, 1, p * MFLen) */

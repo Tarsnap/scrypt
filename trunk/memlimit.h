@@ -26,21 +26,17 @@
  * This file was originally written by Colin Percival as part of the Tarsnap
  * online backup system.
  */
-#ifndef _SCRYPT_H_
-#define _SCRYPT_H_
+#ifndef _MEMLIMIT_H_
+#define _MEMLIMIT_H_
 
-#include <stdint.h>
+#include <stddef.h>
 
 /**
- * scrypt(passwd, passwdlen, salt, saltlen, N, r, p, buf, buflen):
- * Compute scrypt(passwd[0 .. passwdlen - 1], salt[0 .. saltlen - 1], N, r,
- * p, buflen) and write the result into buf.  The parameters r, p, and buflen
- * must satisfy r * p < 2^30 and buflen <= (2^32 - 1) * 32.  The parameter N
- * must be a power of 2 greater than 1.
- *
- * Return 0 on success; or -1 on error.
+ * memtouse(maxmem, maxmemfrac, memlimit):
+ * Examine the system and return via memlimit the amount of RAM which should
+ * be used -- the specified fraction of the available RAM, but no more than
+ * maxmem, and no less than 1MiB.
  */
-int scrypt(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
-    uint32_t, uint32_t, uint8_t *, size_t);
+int memtouse(size_t, double, size_t *);
 
-#endif /* !_SCRYPT_H_ */
+#endif /* !_MEMLIMIT_H_ */
