@@ -30,14 +30,14 @@ PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
 publish-at:
 	mkdir -p ${PKGNAME}
-	cp -R lib ${PKGNAME}
+	cp -R lib autocrap ${PKGNAME}
 	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
 	echo -n '${SCRYPTVERSION}' > scrypt-version
 	mkdir -p config.aux
-	aclocal-1.10 -I .
-	autoheader-2.62
-	automake-1.10 -a -c
-	autoconf-2.62
+	aclocal -I .
+	autoheader
+	automake -a -c
+	autoconf
 	mv Makefile.in config.h.in configure ${PKGNAME}/
 	rm aclocal.m4
 	mv config.aux ${PKGNAME}/

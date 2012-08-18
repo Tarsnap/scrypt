@@ -48,8 +48,8 @@ usage(void)
 int
 main(int argc, char *argv[])
 {
-	FILE * infile = NULL;
-	FILE * outfile = stdout;
+	FILE * infile;
+	FILE * outfile;
 	int dec = 0;
 	size_t maxmem = 0;
 	double maxmemfrac = 0.5;
@@ -99,10 +99,14 @@ main(int argc, char *argv[])
 	if ((argc < 1) || (argc > 2))
 		usage();
 
-	/* Open the input file. */
-	if ((infile = fopen(argv[0], "r")) == NULL) {
-		warn("Cannot open input file: %s", argv[0]);
-		exit(1);
+	/* If the input isn't stdin, open the file. */
+	if (strcmp(argv[0], "-")) {
+		if ((infile = fopen(argv[0], "r")) == NULL) {
+			warn("Cannot open input file: %s", argv[0]);
+			exit(1);
+		}
+	} else {
+		infile = stdin;
 	}
 
 	/* If we have an output file, open it. */
@@ -111,6 +115,8 @@ main(int argc, char *argv[])
 			warn("Cannot open output file: %s", argv[1]);
 			exit(1);
 		}
+	} else {
+		outfile = stdout;
 	}
 
 	/* Prompt for a password. */

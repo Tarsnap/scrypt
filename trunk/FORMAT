@@ -11,7 +11,7 @@ offset	length
 48	16	first 16 bytes of SHA256(bytes 0 .. 47)
 64	32	HMAC-SHA256(bytes 0 .. 63)
 96	X	data xor AES256-CTR key stream generated with nonce == 0
-96+X	32	HMAC-SHA256(bytes 96 .. 96 + (X - 1))
+96+X	32	HMAC-SHA256(bytes 0 .. 96 + (X - 1))
 
 AES256-CTR is computed with a 256-bit AES key key_enc, and HMAC-SHA256 is
 computed with a 256-bit key key_hmac, where
