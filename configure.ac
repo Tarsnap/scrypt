@@ -45,6 +45,8 @@ AC_ARG_ENABLE([sse2],
 AS_IF([test "x$enable_sse2" != xno], [SCRYPTVER=sse], [SCRYPTVER=nosse])
 AC_SUBST([SCRYPTVER])
 
+AC_SYS_LARGEFILE
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
