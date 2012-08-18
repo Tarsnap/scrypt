@@ -38,9 +38,9 @@
 #include <openssl/aes.h>
 
 #include "crypto_aesctr.h"
+#include "crypto_scrypt.h"
 #include "memlimit.h"
-#include "scrypt.h"
-#include "scrypt_cpuperf.h"
+#include "scryptenc_cpuperf.h"
 #include "sha256.h"
 #include "sysendian.h"
 
@@ -68,7 +68,7 @@ pickparams(size_t maxmem, double maxmemfrac, double maxtime,
 		return (1);
 
 	/* Figure out how fast the CPU is. */
-	if ((rc = scrypt_cpuperf(&opps)) != 0)
+	if ((rc = scryptenc_cpuperf(&opps)) != 0)
 		return (rc);
 	opslimit = opps * maxtime;
 
@@ -135,7 +135,7 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 		return (1);
 
 	/* Figure out how fast the CPU is. */
-	if ((rc = scrypt_cpuperf(&opps)) != 0)
+	if ((rc = scryptenc_cpuperf(&opps)) != 0)
 		return (rc);
 	opslimit = opps * maxtime;
 
@@ -225,7 +225,7 @@ scryptenc_setup(uint8_t header[96], uint8_t dk[64],
 		return (rc);
 
 	/* Generate the derived keys. */
-	if (scrypt(passwd, passwdlen, salt, 32, N, r, p, dk, 64))
+	if (crypto_scrypt(passwd, passwdlen, salt, 32, N, r, p, dk, 64))
 		return (3);
 
 	/* Construct the file header. */
@@ -291,7 +291,7 @@ scryptdec_setup(const uint8_t header[96], uint8_t dk[64],
 
 	/* Compute the derived keys. */
 	N = (uint64_t)(1) << logN;
-	if (scrypt(passwd, passwdlen, salt, 32, N, r, p, dk, 64))
+	if (crypto_scrypt(passwd, passwdlen, salt, 32, N, r, p, dk, 64))
 		return (3);
 
 	/* Check header signature (i.e., verify password). */
