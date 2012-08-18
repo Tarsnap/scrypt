@@ -29,6 +29,10 @@ AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit],
 # Check if we have a hw.usermem sysctl.
 CHECK_SYSCTL_HW_USERMEM
 
+# Check if we have <sys/param.h>, since some systems require it for sysctl
+# to work.
+AC_CHECK_HEADERS([sys/param.h])
+
 # Check for posix_memalign
 AC_CHECK_FUNCS([posix_memalign])
 

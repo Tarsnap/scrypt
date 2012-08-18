@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS=	foreign
 
 bin_PROGRAMS=	scrypt
+dist_man_MANS=$(scrypt_man_MANS)
 
 scrypt_SOURCES=		main.c				\
 			scryptenc.c			\
@@ -11,3 +12,4 @@ scrypt_SOURCES=		main.c				\
 			scrypt_cpuperf.c		\
 			scrypt-@SCRYPTVER@.c
 scrypt_LDADD=		-lcrypto
+scrypt_man_MANS=	scrypt.1
