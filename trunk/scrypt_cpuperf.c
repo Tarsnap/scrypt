@@ -40,22 +40,35 @@
 
 #ifdef HAVE_CLOCK_GETTIME
 
-/* Figure out which clock to use. */
-#if defined(CLOCK_VIRTUAL)
-#define CLOCKTOUSE CLOCK_VIRTUAL
-#elif defined(CLOCK_MONOTONIC)
-#define CLOCKTOUSE CLOCK_MONOTONIC
-#else
-#define CLOCKTOUSE CLOCK_REALTIME
-#endif
+static clock_t clocktouse;
 
 static int
 getclockres(double * resd)
 {
 	struct timespec res;
 
-	if (clock_getres(CLOCKTOUSE, &res))
+	/*
+	 * Try clocks in order of preference until we find one which works.
+	 * (We assume that if clock_getres works, clock_gettime will, too.)
+	 * The use of if/else/if/else/if/else rather than if/elif/elif/else
+	 * is ugly but legal, and allows us to #ifdef things appropriately.
+	 */
+#ifdef CLOCK_VIRTUAL
+	if (clock_getres(CLOCK_VIRTUAL, &res) == 0)
+		clocktouse = CLOCK_VIRTUAL;
+	else
+#endif
+#ifdef CLOCK_MONOTONIC
+	if (clock_getres(CLOCK_MONOTONIC, &res) == 0)
+		clocktouse = CLOCK_MONOTONIC;
+	else
+#endif
+	if (clock_getres(CLOCK_REALTIME, &res) == 0)
+		clocktouse = CLOCK_REALTIME;
+	else
 		return (-1);
+
+	/* Convert clock resolution to a double. */
 	*resd = res.tv_sec + res.tv_nsec * 0.000000001;
 
 	return (0);
@@ -65,7 +78,7 @@ static int
 getclocktime(struct timespec * ts)
 {
 
-	if (clock_gettime(CLOCKTOUSE, ts))
+	if (clock_gettime(clocktouse, ts))
 		return (-1);
 
 	return (0);
@@ -119,7 +132,6 @@ scrypt_cpuperf(double * opps)
 	struct timespec st;
 	double resd, diffd;
 	uint64_t i = 0;
-
 
 	/* Get the clock resolution. */
 	if (getclockres(&resd))

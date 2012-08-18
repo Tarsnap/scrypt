@@ -15,8 +15,9 @@ CLEANFILES	+=	scrypt-ref.o scrypt-sse.o scrypt-nosse.o
 #======== public code ends here
 SCRYPTVERSION!=basename `pwd` | cut -f 2 -d -
 PKGNAME=scrypt-${SCRYPTVERSION}
+PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
-publish:
+publish-at:
 	mkdir -p ${PKGNAME}
 	cp crypto_aesctr.[ch] memlimit.[ch] sha256.[ch]		\
 	    scryptenc.[ch] warn.[ch] scrypt_cpuperf.[ch]	\
@@ -36,5 +37,10 @@ publish:
 	rm scrypt-version
 	tar -czf ${PKGNAME}.tgz ${PKGNAME}
 	rm -rf ${PKGNAME}
+
+publish: publish-at
+	sha256 ${PKGNAME}.tgz |			\
+	    gpg --secret-keyring ../EC2/md/gpg.key --clearsign -u 3DD61E72 \
+	    > ${PKGSIGS}.asc
 
 .include <bsd.prog.mk>

@@ -38,8 +38,10 @@
 #include <sys/sysinfo.h>
 #endif
 
+#include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -93,6 +95,11 @@ memlimit_sysctl_hw_usermem(size_t * memlimit)
 #undef HAVE_SYSINFO
 #endif
 
+/* If we don't HAVE_STRUCT_SYSINFO_TOTALRAM, we can't use sysinfo. */
+#ifndef HAVE_STRUCT_SYSINFO_TOTALRAM
+#undef HAVE_SYSINFO
+#endif
+
 #ifdef HAVE_SYSINFO
 static int
 memlimit_sysinfo(size_t * memlimit)
@@ -135,11 +142,13 @@ memlimit_rlimit(size_t * memlimit)
 	memrlimit = (uint64_t)(-1);
 
 	/* ... RLIMIT_AS... */
+#ifdef RLIMIT_AS
 	if (getrlimit(RLIMIT_AS, &rl))
 		return (1);
 	if ((rl.rlim_cur != RLIM_INFINITY) &&
 	    ((uint64_t)rl.rlim_cur < memrlimit))
 		memrlimit = rl.rlim_cur;
+#endif
 
 	/* ... RLIMIT_DATA... */
 	if (getrlimit(RLIMIT_DATA, &rl))
@@ -171,10 +180,57 @@ memlimit_rlimit(size_t * memlimit)
 	return (0);
 }
 
+#ifdef _SC_PHYS_PAGES
+
+/* Some systems define _SC_PAGESIZE instead of _SC_PAGE_SIZE. */
+#ifndef _SC_PAGE_SIZE
+#define _SC_PAGE_SIZE _SC_PAGESIZE
+#endif
+
+int
+memlimit_sysconf(size_t * memlimit)
+{
+	long pagesize;
+	long physpages;
+	uint64_t totalmem;
+
+	/* Set errno to 0 in order to distinguish "no limit" from "error". */
+	errno = 0;
+
+	/* Read the two limits. */
+	if (((pagesize = sysconf(_SC_PAGE_SIZE)) == -1) ||
+	    ((physpages = sysconf(_SC_PHYS_PAGES)) == -1)) {
+		/* Did an error occur? */
+		if (errno != 0)
+			return (1);
+
+		/* If not, there is no limit. */
+		totalmem = (uint64_t)(-1);
+	} else {
+		/* Compute the limit. */
+		totalmem = (uint64_t)(pagesize) * (uint64_t)(physpages);
+	}
+
+	/* Return the value, but clamp to SIZE_MAX if necessary. */
+#if UINT64_MAX > SIZE_MAX
+	if (totalmem > SIZE_MAX)
+		*memlimit = SIZE_MAX;
+	else
+		*memlimit = totalmem;
+#else
+	*memlimit = totalmem;
+#endif
+
+	/* Success! */
+	return (0);
+}
+#endif
+
 int
 memtouse(size_t maxmem, double maxmemfrac, size_t * memlimit)
 {
 	size_t sysctl_memlimit, sysinfo_memlimit, rlimit_memlimit;
+	size_t sysconf_memlimit;
 	size_t memlimit_min;
 	size_t memavail;
 
@@ -193,10 +249,17 @@ memtouse(size_t maxmem, double maxmemfrac, size_t * memlimit)
 #endif
 	if (memlimit_rlimit(&rlimit_memlimit))
 		return (1);
+#ifdef _SC_PHYS_PAGES
+	if (memlimit_sysconf(&sysconf_memlimit))
+		return (1);
+#else
+	sysconf_memlimit = (size_t)(-1);
+#endif
 
 #ifdef DEBUG
-	fprintf(stderr, "Memory limits are %zu %zu %zu\n",
-	    sysctl_memlimit, sysinfo_memlimit, rlimit_memlimit);
+	fprintf(stderr, "Memory limits are %zu %zu %zu %zu\n",
+	    sysctl_memlimit, sysinfo_memlimit, rlimit_memlimit,
+	    sysconf_memlimit);
 #endif
 
 	/* Find the smallest of them. */
@@ -207,6 +270,8 @@ memtouse(size_t maxmem, double maxmemfrac, size_t * memlimit)
 		memlimit_min = sysinfo_memlimit;
 	if (memlimit_min > rlimit_memlimit)
 		memlimit_min = rlimit_memlimit;
+	if (memlimit_min > sysconf_memlimit)
+		memlimit_min = sysconf_memlimit;
 
 	/* Only use the specified fraction of the available memory. */
 	if ((maxmemfrac > 0.5) || (maxmemfrac == 0.0))
