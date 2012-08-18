@@ -12,6 +12,6 @@ scrypt_SOURCES=		main.c				\
 			lib/crypto/crypto_aesctr.c	\
 			lib/crypto/sha256.c		\
 			lib/crypto/crypto_scrypt-@SCRYPTVER@.c
-scrypt_CFLAGS=		-I $(srcdir)/lib/util -I $(srcdir)/lib/scryptenc -I $(srcdir)/lib/crypto
+scrypt_CFLAGS=		-I . -I lib/util -I lib/scryptenc -I lib/crypto
 scrypt_LDADD=		-lcrypto
 scrypt_man_MANS=	scrypt.1

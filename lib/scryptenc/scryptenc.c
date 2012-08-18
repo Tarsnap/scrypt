@@ -515,7 +515,7 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	int rc;
 
 	/*
-	 * Read the first 7 bytes of the file; all future version of scrypt
+	 * Read the first 7 bytes of the file; all future versions of scrypt
 	 * are guaranteed to have at least 7 bytes of header.
 	 */
 	if (fread(header, 7, 1, infile) < 1) {
