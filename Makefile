@@ -47,7 +47,7 @@ publish-at:
 
 publish: publish-at
 	sha256 ${PKGNAME}.tgz |			\
-	    gpg --secret-keyring ../EC2/md/gpg.key --clearsign -u 3DD61E72 \
+	    gpg --secret-keyring $GPGKEYFILE --clearsign -u $GPGKEYID \
 	    > ${PKGSIGS}.asc
 
 .include <bsd.prog.mk>
