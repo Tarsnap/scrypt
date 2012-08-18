@@ -126,6 +126,10 @@ main(int argc, char *argv[])
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime);
 
+	/* Zero and free the password. */
+	memset(passwd, 0, strlen(passwd));
+	free(passwd);
+
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {
 		switch (rc) {
@@ -172,10 +176,6 @@ main(int argc, char *argv[])
 		}
 		exit(1);
 	}
-
-	/* Zero and free the password. */
-	memset(passwd, 0, strlen(passwd));
-	free(passwd);
 
 	return (0);
 }
