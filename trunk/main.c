@@ -23,21 +23,18 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#include "scrypt_platform.h"
+
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <termios.h>
-#include <time.h>
 #include <unistd.h>
 
 #include "readpass.h"
 #include "scryptenc.h"
-#include "sha256.h"
 #include "warn.h"
-
-#define dkLen 64
 
 static void
 usage(void)
