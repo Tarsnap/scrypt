@@ -214,12 +214,13 @@ smix(uint8_t * B, size_t r, uint64_t N, uint8_t * V, uint8_t * XY)
  */
 int
 crypto_scrypt(const uint8_t * passwd, size_t passwdlen,
-    const uint8_t * salt, size_t saltlen, uint64_t N, uint32_t r, uint32_t p,
+    const uint8_t * salt, size_t saltlen, uint64_t N, uint32_t _r, uint32_t _p,
     uint8_t * buf, size_t buflen)
 {
 	uint8_t * B;
 	uint8_t * V;
 	uint8_t * XY;
+	size_t r = _r, p = _p;
 	uint32_t i;
 
 	/* Sanity-check parameters. */
