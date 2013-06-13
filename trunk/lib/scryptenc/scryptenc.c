@@ -532,7 +532,7 @@ scryptdec_file(FILE * infile, FILE * outfile,
 		return (8);
 
 	/*
-	 * Read another 89 bytes of the file; version 0 of the srypt file
+	 * Read another 89 bytes of the file; version 0 of the scrypt file
 	 * format has a 96-byte header.
 	 */
 	if (fread(&header[7], 89, 1, infile) < 1) {
