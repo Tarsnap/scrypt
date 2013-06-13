@@ -359,7 +359,7 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 /**
  * scryptdec_buf(inbuf, inbuflen, outbuf, outlen, passwd, passwdlen,
  *     maxmem, maxmemfrac, maxtime):
- * Decrypt inbuflen bytes fro inbuf, writing the result into outbuf and the
+ * Decrypt inbuflen bytes from inbuf, writing the result into outbuf and the
  * decrypted data length to outlen.  The allocated length of outbuf must
  * be at least inbuflen.
  */
