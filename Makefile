@@ -14,11 +14,14 @@ CLEANFILES	+=	crypto_scrypt-sse.o
 CLEANFILES	+=	crypto_scrypt-nosse.o
 
 .PATH.c	:	lib/util
+.PATH.c	:	libcperciva/util
 SRCS	+=	memlimit.c readpass.c warn.c
-CFLAGS	+=	-I lib/util
+CFLAGS	+=	-I lib/util -I libcperciva/util
 .PATH.c	:	lib/crypto
+.PATH.c	:	libcperciva/alg
+.PATH.c	:	libcperciva/crypto
 SRCS	+=	crypto_aesctr.c crypto_scrypt-${VER}.c sha256.c
-CFLAGS	+=	-I lib/crypto
+CFLAGS	+=	-I lib/crypto -I libcperciva/alg -I libcperciva/crypto
 .PATH.c	:	lib/scryptenc
 SRCS	+=	scryptenc_cpuperf.c scryptenc.c
 CFLAGS	+=	-I lib/scryptenc
@@ -30,7 +33,7 @@ PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
 publish-at:
 	mkdir -p ${PKGNAME}
-	cp -R lib autocrap ${PKGNAME}
+	cp -R lib libcperciva autocrap ${PKGNAME}
 	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
 	echo -n '${SCRYPTVERSION}' > scrypt-version
 	mkdir -p config.aux
