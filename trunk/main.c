@@ -120,7 +120,7 @@ main(int argc, char *argv[])
 	}
 
 	/* Prompt for a password. */
-	if (tarsnap_readpass(&passwd, "Please enter passphrase",
+	if (readpass(&passwd, "Please enter passphrase",
 	    dec ? NULL : "Please confirm passphrase", 1))
 		exit(1);
 
