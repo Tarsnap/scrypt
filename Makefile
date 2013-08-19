@@ -15,7 +15,7 @@ CLEANFILES	+=	crypto_scrypt-nosse.o
 
 .PATH.c	:	lib/util
 .PATH.c	:	libcperciva/util
-SRCS	+=	memlimit.c readpass.c warn.c
+SRCS	+=	memlimit.c readpass.c warnp.c
 CFLAGS	+=	-I lib/util -I libcperciva/util
 .PATH.c	:	lib/crypto
 .PATH.c	:	libcperciva/alg

@@ -34,7 +34,7 @@
 
 #include "readpass.h"
 #include "scryptenc.h"
-#include "warn.h"
+#include "warnp.h"
 
 static void
 usage(void)
@@ -58,9 +58,7 @@ main(int argc, char *argv[])
 	char * passwd;
 	int rc;
 
-#ifdef NEED_WARN_PROGNAME
-	warn_progname = "scrypt";
-#endif
+	WARNP_INIT;
 
 	/* We should have "enc" or "dec" first. */
 	if (argc < 2)
@@ -102,7 +100,7 @@ main(int argc, char *argv[])
 	/* If the input isn't stdin, open the file. */
 	if (strcmp(argv[0], "-")) {
 		if ((infile = fopen(argv[0], "r")) == NULL) {
-			warn("Cannot open input file: %s", argv[0]);
+			warnp("Cannot open input file: %s", argv[0]);
 			exit(1);
 		}
 	} else {
@@ -112,7 +110,7 @@ main(int argc, char *argv[])
 	/* If we have an output file, open it. */
 	if (argc > 1) {
 		if ((outfile = fopen(argv[1], "w")) == NULL) {
-			warn("Cannot open output file: %s", argv[1]);
+			warnp("Cannot open output file: %s", argv[1]);
 			exit(1);
 		}
 	} else {
@@ -140,44 +138,44 @@ main(int argc, char *argv[])
 	if (rc != 0) {
 		switch (rc) {
 		case 1:
-			warn("Error determining amount of available memory");
+			warnp("Error determining amount of available memory");
 			break;
 		case 2:
-			warn("Error reading clocks");
+			warnp("Error reading clocks");
 			break;
 		case 3:
-			warn("Error computing derived key");
+			warnp("Error computing derived key");
 			break;
 		case 4:
-			warn("Error reading salt");
+			warnp("Error reading salt");
 			break;
 		case 5:
-			warn("OpenSSL error");
+			warnp("OpenSSL error");
 			break;
 		case 6:
-			warn("Error allocating memory");
+			warnp("Error allocating memory");
 			break;
 		case 7:
-			warnx("Input is not valid scrypt-encrypted block");
+			warn0("Input is not valid scrypt-encrypted block");
 			break;
 		case 8:
-			warnx("Unrecognized scrypt format version");
+			warn0("Unrecognized scrypt format version");
 			break;
 		case 9:
-			warnx("Decrypting file would require too much memory");
+			warn0("Decrypting file would require too much memory");
 			break;
 		case 10:
-			warnx("Decrypting file would take too much CPU time");
+			warn0("Decrypting file would take too much CPU time");
 			break;
 		case 11:
-			warnx("Passphrase is incorrect");
+			warn0("Passphrase is incorrect");
 			break;
 		case 12:
-			warn("Error writing file: %s",
+			warnp("Error writing file: %s",
 			    (argc > 1) ? argv[1] : "standard output");
 			break;
 		case 13:
-			warn("Error reading file: %s", argv[0]);
+			warnp("Error reading file: %s", argv[0]);
 			break;
 		}
 		exit(1);

@@ -6,7 +6,7 @@ dist_man_MANS=$(scrypt_man_MANS)
 scrypt_SOURCES=		main.c				\
 			lib/util/memlimit.c		\
 			libcperciva/util/readpass.c		\
-			lib/util/warn.c			\
+			libcperciva/util/warnp.c		\
 			lib/scryptenc/scryptenc.c	\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			libcperciva/crypto/crypto_aesctr.c	\
