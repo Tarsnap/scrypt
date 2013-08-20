@@ -5,14 +5,6 @@ AM_INIT_AUTOMAKE()
 AM_MAINTAINER_MODE
 AC_PROG_CC
 
-# Look for sys/endian.h and be64enc.  Old versions of NetBSD have
-# sys/endian.h but don't have the (le|be)(32|64)(enc|dec) functions in it.
-AC_CHECK_HEADERS([sys/endian.h])
-AC_CHECK_DECLS([be64enc], [], [], [[#include <sys/endian.h>]])
-
-# Check for err.h; if not present, we need to provide warn() and warnx().
-AC_CHECK_HEADERS([err.h])
-
 # Check for clock_gettime.  On some systems, this is provided via librt.
 AC_CHECK_LIB(rt, clock_gettime)
 AC_CHECK_FUNCS([clock_gettime])
