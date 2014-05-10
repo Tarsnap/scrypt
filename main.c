@@ -54,7 +54,7 @@ main(int argc, char *argv[])
 	size_t maxmem = 0;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
-	char ch;
+	int ch;
 	char * passwd;
 	int rc;
 
