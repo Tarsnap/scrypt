@@ -12,7 +12,7 @@
 #define MAXPASSLEN 2048
 
 /* Signals we need to block. */
-int badsigs[] = {
+static const int badsigs[] = {
 	SIGALRM, SIGHUP, SIGINT,
 	SIGPIPE, SIGQUIT, SIGTERM,
 	SIGTSTP, SIGTTIN, SIGTTOU
