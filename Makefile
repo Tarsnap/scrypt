@@ -19,12 +19,21 @@ SRCS	+=	memlimit.c readpass.c warnp.c
 CFLAGS	+=	-I lib/util -I libcperciva/util
 .PATH.c	:	lib/crypto
 .PATH.c	:	libcperciva/alg
+.PATH.c	:	libcperciva/cpusupport
+SRCS	+=	cpusupport_x86_aesni.c
 .PATH.c	:	libcperciva/crypto
 SRCS	+=	crypto_aesctr.c crypto_scrypt-${VER}.c sha256.c
 CFLAGS	+=	-I lib/crypto -I libcperciva/alg -I libcperciva/crypto
 .PATH.c	:	lib/scryptenc
 SRCS	+=	scryptenc_cpuperf.c scryptenc.c
 CFLAGS	+=	-I lib/scryptenc
+
+# CPU features compiler support detection
+SRCS	+=	cpusupport-config.h
+cpusupport-config.h:
+	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; cd libcperciva/cpusupport/Build && command -p sh cpusupport.sh ) > cpusupport-config.h
+CLEANFILES+=	cpusupport-config.h
+CFLAGS	+=	-I . -D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
 
 #======== public code ends here
 SCRYPTVERSION!=basename `pwd` | cut -f 2 -d -
