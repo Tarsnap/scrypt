@@ -35,8 +35,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <openssl/aes.h>
-
+#include "crypto_aes.h"
 #include "crypto_aesctr.h"
 #include "crypto_scrypt.h"
 #include "memlimit.h"
@@ -323,7 +322,7 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 	uint8_t * key_hmac = &dk[32];
 	int rc;
 	HMAC_SHA256_CTX hctx;
-	AES_KEY key_enc_exp;
+	struct crypto_aes_key * key_enc_exp;
 	struct crypto_aesctr * AES;
 
 	/* Generate the header and derived key. */
@@ -335,12 +334,13 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 	memcpy(outbuf, header, 96);
 
 	/* Encrypt data. */
-	if (AES_set_encrypt_key(key_enc, 256, &key_enc_exp))
+	if ((key_enc_exp = crypto_aes_key_expand(key_enc, 32)) == NULL)
 		return (5);
-	if ((AES = crypto_aesctr_init(&key_enc_exp, 0)) == NULL)
+	if ((AES = crypto_aesctr_init(key_enc_exp, 0)) == NULL)
 		return (6);
 	crypto_aesctr_stream(AES, inbuf, &outbuf[96], inbuflen);
 	crypto_aesctr_free(AES);
+	crypto_aes_key_free(key_enc_exp);
 
 	/* Add signature. */
 	HMAC_SHA256_Init(&hctx, key_hmac, 32);
@@ -350,7 +350,6 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 
 	/* Zero sensitive data. */
 	memset(dk, 0, 64);
-	memset(&key_enc_exp, 0, sizeof(AES_KEY));
 
 	/* Success! */
 	return (0);
@@ -374,7 +373,7 @@ scryptdec_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 	uint8_t * key_hmac = &dk[32];
 	int rc;
 	HMAC_SHA256_CTX hctx;
-	AES_KEY key_enc_exp;
+	struct crypto_aes_key * key_enc_exp;
 	struct crypto_aesctr * AES;
 
 	/*
@@ -398,12 +397,13 @@ scryptdec_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 		return (rc);
 
 	/* Decrypt data. */
-	if (AES_set_encrypt_key(key_enc, 256, &key_enc_exp))
+	if ((key_enc_exp = crypto_aes_key_expand(key_enc, 32)) == NULL)
 		return (5);
-	if ((AES = crypto_aesctr_init(&key_enc_exp, 0)) == NULL)
+	if ((AES = crypto_aesctr_init(key_enc_exp, 0)) == NULL)
 		return (6);
 	crypto_aesctr_stream(AES, &inbuf[96], outbuf, inbuflen - 128);
 	crypto_aesctr_free(AES);
+	crypto_aes_key_free(key_enc_exp);
 	*outlen = inbuflen - 128;
 
 	/* Verify signature. */
@@ -415,7 +415,6 @@ scryptdec_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 
 	/* Zero sensitive data. */
 	memset(dk, 0, 64);
-	memset(&key_enc_exp, 0, sizeof(AES_KEY));
 
 	/* Success! */
 	return (0);
@@ -440,7 +439,7 @@ scryptenc_file(FILE * infile, FILE * outfile,
 	uint8_t * key_hmac = &dk[32];
 	size_t readlen;
 	HMAC_SHA256_CTX hctx;
-	AES_KEY key_enc_exp;
+	struct crypto_aes_key * key_enc_exp;
 	struct crypto_aesctr * AES;
 	int rc;
 
@@ -459,9 +458,9 @@ scryptenc_file(FILE * infile, FILE * outfile,
 	 * Read blocks of data, encrypt them, and write them out; hash the
 	 * data as it is produced.
 	 */
-	if (AES_set_encrypt_key(key_enc, 256, &key_enc_exp))
+	if ((key_enc_exp = crypto_aes_key_expand(key_enc, 32)) == NULL)
 		return (5);
-	if ((AES = crypto_aesctr_init(&key_enc_exp, 0)) == NULL)
+	if ((AES = crypto_aesctr_init(key_enc_exp, 0)) == NULL)
 		return (6);
 	do {
 		if ((readlen = fread(buf, 1, ENCBLOCK, infile)) == 0)
@@ -472,6 +471,7 @@ scryptenc_file(FILE * infile, FILE * outfile,
 			return (12);
 	} while (1);
 	crypto_aesctr_free(AES);
+	crypto_aes_key_free(key_enc_exp);
 
 	/* Did we exit the loop due to a read error? */
 	if (ferror(infile))
@@ -484,7 +484,6 @@ scryptenc_file(FILE * infile, FILE * outfile,
 
 	/* Zero sensitive data. */
 	memset(dk, 0, 64);
-	memset(&key_enc_exp, 0, sizeof(AES_KEY));
 
 	/* Success! */
 	return (0);
@@ -510,7 +509,7 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	size_t buflen = 0;
 	size_t readlen;
 	HMAC_SHA256_CTX hctx;
-	AES_KEY key_enc_exp;
+	struct crypto_aes_key * key_enc_exp;
 	struct crypto_aesctr * AES;
 	int rc;
 
@@ -557,9 +556,9 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	 * data and decrypt all of it except the final 32 bytes, then check
 	 * if that final 32 bytes is the correct signature.
 	 */
-	if (AES_set_encrypt_key(key_enc, 256, &key_enc_exp))
+	if ((key_enc_exp = crypto_aes_key_expand(key_enc, 32)) == NULL)
 		return (5);
-	if ((AES = crypto_aesctr_init(&key_enc_exp, 0)) == NULL)
+	if ((AES = crypto_aesctr_init(key_enc_exp, 0)) == NULL)
 		return (6);
 	do {
 		/* Read data until we have more than 32 bytes of it. */
@@ -584,6 +583,7 @@ scryptdec_file(FILE * infile, FILE * outfile,
 		buflen = 32;
 	} while (1);
 	crypto_aesctr_free(AES);
+	crypto_aes_key_free(key_enc_exp);
 
 	/* Did we exit the loop due to a read error? */
 	if (ferror(infile))
@@ -600,7 +600,6 @@ scryptdec_file(FILE * infile, FILE * outfile,
 
 	/* Zero sensitive data. */
 	memset(dk, 0, 64);
-	memset(&key_enc_exp, 0, sizeof(AES_KEY));
 
 	return (0);
 }
