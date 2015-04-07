@@ -21,7 +21,9 @@ CFLAGS	+=	-I lib/util -I libcperciva/util
 .PATH.c	:	libcperciva/alg
 .PATH.c	:	libcperciva/cpusupport
 SRCS	+=	cpusupport_x86_aesni.c
+CFLAGS	+=	-I libcperciva/cpusupport
 .PATH.c	:	libcperciva/crypto
+SRCS	+=	crypto_aes.c crypto_aes_aesni.c
 SRCS	+=	crypto_aesctr.c crypto_scrypt-${VER}.c sha256.c
 CFLAGS	+=	-I lib/crypto -I libcperciva/alg -I libcperciva/crypto
 .PATH.c	:	lib/scryptenc
@@ -34,6 +36,10 @@ cpusupport-config.h:
 	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; cd libcperciva/cpusupport/Build && command -p sh cpusupport.sh ) > cpusupport-config.h
 CLEANFILES+=	cpusupport-config.h
 CFLAGS	+=	-I . -D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
+
+# Building crypto_aes_aesni.o needs CFLAGS_X86_AESNI
+crypto_aes_aesni.o: crypto_aes_aesni.c cpusupport-config.h
+	. ./cpusupport-config.h; ${CC} ${CFLAGS} $${CFLAGS_X86_AESNI} -c $< -o $@
 
 #======== public code ends here
 SCRYPTVERSION!=basename `pwd` | cut -f 2 -d -
