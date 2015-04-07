@@ -38,6 +38,7 @@
 #include "crypto_aes.h"
 #include "crypto_aesctr.h"
 #include "crypto_scrypt.h"
+#include "insecure_memzero.h"
 #include "memlimit.h"
 #include "scryptenc_cpuperf.h"
 #include "sha256.h"
@@ -349,7 +350,7 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 	memcpy(&outbuf[96 + inbuflen], hbuf, 32);
 
 	/* Zero sensitive data. */
-	memset(dk, 0, 64);
+	insecure_memzero(dk, 64);
 
 	/* Success! */
 	return (0);
@@ -414,7 +415,7 @@ scryptdec_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 		return (7);
 
 	/* Zero sensitive data. */
-	memset(dk, 0, 64);
+	insecure_memzero(dk, 64);
 
 	/* Success! */
 	return (0);
@@ -483,7 +484,7 @@ scryptenc_file(FILE * infile, FILE * outfile,
 		return (12);
 
 	/* Zero sensitive data. */
-	memset(dk, 0, 64);
+	insecure_memzero(dk, 64);
 
 	/* Success! */
 	return (0);
@@ -599,7 +600,7 @@ scryptdec_file(FILE * infile, FILE * outfile,
 		return (7);
 
 	/* Zero sensitive data. */
-	memset(dk, 0, 64);
+	insecure_memzero(dk, 64);
 
 	return (0);
 }
