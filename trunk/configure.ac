@@ -4,6 +4,7 @@ AC_CONFIG_AUX_DIR([config.aux])
 AM_INIT_AUTOMAKE()
 AM_MAINTAINER_MODE
 AC_PROG_CC
+AC_PROG_RANLIB
 
 # Check for clock_gettime.  On some systems, this is provided via librt.
 AC_CHECK_LIB(rt, clock_gettime)
