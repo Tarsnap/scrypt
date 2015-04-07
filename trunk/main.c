@@ -32,6 +32,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "insecure_memzero.h"
 #include "readpass.h"
 #include "scryptenc.h"
 #include "warnp.h"
@@ -131,7 +132,7 @@ main(int argc, char *argv[])
 		    strlen(passwd), maxmem, maxmemfrac, maxtime);
 
 	/* Zero and free the password. */
-	memset(passwd, 0, strlen(passwd));
+	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 
 	/* If we failed, print the right error message and exit. */
