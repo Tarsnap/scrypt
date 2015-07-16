@@ -2,9 +2,9 @@ m4_define([SCRYPT_VERS],m4_include([scrypt-version]))
 AC_INIT([scrypt],SCRYPT_VERS())
 AC_CONFIG_AUX_DIR([config.aux])
 AM_INIT_AUTOMAKE()
-AM_MAINTAINER_MODE
 AC_PROG_CC
 AC_PROG_RANLIB
+AM_MAINTAINER_MODE
 
 # Check for clock_gettime.  On some systems, this is provided via librt.
 AC_CHECK_LIB(rt, clock_gettime)
@@ -16,8 +16,8 @@ AC_CHECK_FUNCS([clock_gettime])
 AC_CHECK_HEADERS([sys/sysinfo.h])
 AC_CHECK_FUNCS([sysinfo])
 AC_CHECK_TYPES([struct sysinfo], [], [], [[#include <sys/sysinfo.h>]])
-AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit],
-    [], [], [[#include <sys/sysinfo.h>]])
+AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit], [], [],
+    [[#include <sys/sysinfo.h>]])
 
 # Check if we have a hw.usermem sysctl.
 CHECK_SYSCTL_HW_USERMEM
