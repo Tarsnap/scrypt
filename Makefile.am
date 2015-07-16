@@ -5,6 +5,7 @@ dist_man_MANS=$(scrypt_man_MANS)
 
 scrypt_SOURCES=		main.c				\
 			lib/util/memlimit.c		\
+			libcperciva/util/entropy.c		\
 			libcperciva/util/insecure_memzero.c		\
 			libcperciva/util/readpass.c		\
 			libcperciva/util/warnp.c		\
@@ -12,6 +13,7 @@ scrypt_SOURCES=		main.c				\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aesctr.c	\
+			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/alg/sha256.c		\
 			lib/crypto/crypto_scrypt-@SCRYPTVER@.c	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \

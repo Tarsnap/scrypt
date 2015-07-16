@@ -15,7 +15,7 @@ CLEANFILES	+=	crypto_scrypt-nosse.o
 
 .PATH.c	:	lib/util
 .PATH.c	:	libcperciva/util
-SRCS	+=	insecure_memzero.c memlimit.c readpass.c warnp.c
+SRCS	+=	entropy.c insecure_memzero.c memlimit.c readpass.c warnp.c
 CFLAGS	+=	-I lib/util -I libcperciva/util
 .PATH.c	:	libcperciva/alg
 SRCS	+=	sha256.c
@@ -26,7 +26,7 @@ CFLAGS	+=	-I libcperciva/cpusupport
 .PATH.c	:	lib/crypto
 .PATH.c	:	libcperciva/crypto
 SRCS	+=	crypto_aes.c crypto_aes_aesni.c
-SRCS	+=	crypto_aesctr.c crypto_scrypt-${VER}.c
+SRCS	+=	crypto_aesctr.c crypto_entropy.c crypto_scrypt-${VER}.c
 CFLAGS	+=	-I lib/crypto -I libcperciva/crypto
 .PATH.c	:	lib/scryptenc
 SRCS	+=	scryptenc_cpuperf.c scryptenc.c
