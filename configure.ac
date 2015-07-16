@@ -29,6 +29,9 @@ AC_CHECK_HEADERS([sys/param.h])
 # Check for posix_memalign
 AC_CHECK_FUNCS([posix_memalign])
 
+# Check for mmap so we can work around its absence on Minix
+AC_CHECK_FUNCS([mmap])
+
 # Figure out whether we want to use the SSE version of the scrypt code or not.
 AC_ARG_ENABLE([sse2],
     [AS_HELP_STRING([--enable-sse2],
