@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS=	foreign
+AUTOMAKE_OPTIONS=	foreign subdir-objects
 
 bin_PROGRAMS=	scrypt
 dist_man_MANS=$(scrypt_man_MANS)
