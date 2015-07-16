@@ -22,6 +22,7 @@ SRCS	+=	sha256.c
 CFLAGS	+=	-I libcperciva/alg
 .PATH.c	:	libcperciva/cpusupport
 SRCS	+=	cpusupport_x86_aesni.c
+SRCS	+=	cpusupport_x86_sse2.c
 CFLAGS	+=	-I libcperciva/cpusupport
 .PATH.c	:	lib/crypto
 .PATH.c	:	libcperciva/crypto
