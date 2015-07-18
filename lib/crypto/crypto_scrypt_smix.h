@@ -1,5 +1,5 @@
-#ifndef _CRYPTO_SCRYPT_INTERNAL_H_
-#define _CRYPTO_SCRYPT_INTERNAL_H_
+#ifndef _CRYPTO_SCRYPT_SMIX_H_
+#define _CRYPTO_SCRYPT_SMIX_H_
 
 /**
  * crypto_scrypt_smix(B, r, N, V, XY):
@@ -11,4 +11,4 @@
  */
 void crypto_scrypt_smix(uint8_t *, size_t, uint64_t, void *, void *);
 
-#endif /* !_CRYPTO_SCRYPT_INTERNAL_H_ */
+#endif /* !_CRYPTO_SCRYPT_SMIX_H_ */

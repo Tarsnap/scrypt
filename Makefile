@@ -8,11 +8,6 @@ WARNS?=	6
 CFLAGS	+=	-I .
 CFLAGS	+=	-DCONFIG_H_FILE=\"config_freebsd.h\"
 
-# Include all possible object files containing built scrypt code.
-CLEANFILES	+=	crypto_scrypt-ref.o
-CLEANFILES	+=	crypto_scrypt-sse.o
-CLEANFILES	+=	crypto_scrypt-nosse.o
-
 .PATH.c	:	lib/util
 .PATH.c	:	libcperciva/util
 SRCS	+=	entropy.c insecure_memzero.c memlimit.c readpass.c warnp.c
@@ -28,7 +23,7 @@ CFLAGS	+=	-I libcperciva/cpusupport
 .PATH.c	:	libcperciva/crypto
 SRCS	+=	crypto_aes.c crypto_aes_aesni.c
 SRCS	+=	crypto_aesctr.c crypto_entropy.c
-SRCS	+=	crypto_scrypt.c crypto_scrypt-${VER}.c
+SRCS	+=	crypto_scrypt.c crypto_scrypt_smix.c crypto_scrypt_smix_sse2.c
 CFLAGS	+=	-I lib/crypto -I libcperciva/crypto
 .PATH.c	:	lib/scryptenc
 SRCS	+=	scryptenc_cpuperf.c scryptenc.c
@@ -44,6 +39,10 @@ CFLAGS	+=	-I . -D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
 # Building crypto_aes_aesni.o needs CFLAGS_X86_AESNI
 crypto_aes_aesni.o: crypto_aes_aesni.c cpusupport-config.h
 	. ./cpusupport-config.h; ${CC} ${CFLAGS} $${CFLAGS_X86_AESNI} -c $< -o $@
+
+# Building crypto_scrypt_smix_sse2.o needs CFLAGS_X86_SSE2
+crypto_scrypt_smix_sse2.o: crypto_scrypt_smix_sse2.c cpusupport-config.h
+	. ./cpusupport-config.h; ${CC} ${CFLAGS} $${CFLAGS_X86_SSE2} -c $< -o $@
 
 #======== public code ends here
 SCRYPTVERSION!=basename `pwd` | cut -f 2 -d -

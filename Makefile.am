@@ -15,7 +15,7 @@ scrypt_SOURCES=		main.c				\
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/alg/sha256.c		\
-			lib/crypto/crypto_scrypt-@SCRYPTVER@.c	\
+			lib/crypto/crypto_scrypt_smix.c	\
 			lib/crypto/crypto_scrypt.c	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			cpusupport-config.h
@@ -24,7 +24,7 @@ scrypt_CFLAGS=		-I $(srcdir)/lib/util -I $(srcdir)/lib/scryptenc \
 			-I $(srcdir)/libcperciva/crypto	-I $(srcdir)/libcperciva/util \
 			-I $(srcdir)/libcperciva/cpusupport \
 			-I . -D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
-scrypt_LDADD=		-lcrypto libcperciva_aesni.a
+scrypt_LDADD=		-lcrypto libcperciva_aesni.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
@@ -35,3 +35,8 @@ noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
 libcperciva_aesni_a_CFLAGS=	$(scrypt_CFLAGS)	\
 			`. cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
+
+noinst_LIBRARIES+=	libscrypt_sse2.a
+libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
+libscrypt_sse2_a_CFLAGS=	$(scrypt_CFLAGS)	\
+			`. cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`

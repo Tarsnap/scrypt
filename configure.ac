@@ -32,15 +32,6 @@ AC_CHECK_FUNCS([posix_memalign])
 # Check for mmap so we can work around its absence on Minix
 AC_CHECK_FUNCS([mmap])
 
-# Figure out whether we want to use the SSE version of the scrypt code or not.
-AC_ARG_ENABLE([sse2],
-    [AS_HELP_STRING([--enable-sse2],
-	[use optimized SSE2 code])],
-    [],
-    [enable_sse2=no])
-AS_IF([test "x$enable_sse2" != xno], [SCRYPTVER=sse], [SCRYPTVER=nosse])
-AC_SUBST([SCRYPTVER])
-
 AC_SYS_LARGEFILE
 
 AC_CONFIG_HEADERS([config.h])
