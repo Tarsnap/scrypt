@@ -1,5 +1,4 @@
 PROG=	scrypt
-VER?=	nosse
 SRCS=	main.c
 LDADD+=	-lcrypto
 WARNS?=	6
