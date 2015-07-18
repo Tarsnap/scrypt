@@ -16,6 +16,7 @@ scrypt_SOURCES=		main.c				\
 			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/alg/sha256.c		\
 			lib/crypto/crypto_scrypt-@SCRYPTVER@.c	\
+			lib/crypto/crypto_scrypt.c	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			cpusupport-config.h
 scrypt_CFLAGS=		-I $(srcdir)/lib/util -I $(srcdir)/lib/scryptenc \

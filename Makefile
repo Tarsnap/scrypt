@@ -27,7 +27,8 @@ CFLAGS	+=	-I libcperciva/cpusupport
 .PATH.c	:	lib/crypto
 .PATH.c	:	libcperciva/crypto
 SRCS	+=	crypto_aes.c crypto_aes_aesni.c
-SRCS	+=	crypto_aesctr.c crypto_entropy.c crypto_scrypt-${VER}.c
+SRCS	+=	crypto_aesctr.c crypto_entropy.c
+SRCS	+=	crypto_scrypt.c crypto_scrypt-${VER}.c
 CFLAGS	+=	-I lib/crypto -I libcperciva/crypto
 .PATH.c	:	lib/scryptenc
 SRCS	+=	scryptenc_cpuperf.c scryptenc.c
