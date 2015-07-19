@@ -55,20 +55,20 @@ crypto_scrypt_smix_sse2.o: crypto_scrypt_smix_sse2.c cpusupport-config.h
 	. ./cpusupport-config.h; ${CC} ${CFLAGS} $${CFLAGS_X86_SSE2} -c $< -o $@
 
 #======== public code ends here
-SCRYPTVERSION!=basename `pwd` | cut -f 2 -d -
 PKGNAME=scrypt-${SCRYPTVERSION}
 PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
 publish-at:
-	mkdir -p ${PKGNAME}
-	cp -R lib libcperciva autocrap ${PKGNAME}
+	@if [ -z "${SCRYPTVERSION}" ]; then		\
+		echo "SCRYPTVERSION must be set for a release";		\
+		false;					\
+	fi
+	mkdir -p ${PKGNAME} ${PKGNAME}/autocrap
+	cp -R lib libcperciva ${PKGNAME}
 	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
+	cp Makefile.am configure.ac acscrypt.m4 ${PKGNAME}/autocrap
 	echo -n '${SCRYPTVERSION}' > scrypt-version
-	mkdir -p config.aux
-	aclocal
-	autoheader
-	automake -a -c
-	autoconf
+	autoreconf -i
 	mv Makefile.in config.h.in configure ${PKGNAME}/
 	rm aclocal.m4
 	mv config.aux ${PKGNAME}/
