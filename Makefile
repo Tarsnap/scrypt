@@ -66,7 +66,7 @@ publish-at:
 	mkdir -p ${PKGNAME} ${PKGNAME}/autocrap
 	cp -R lib libcperciva ${PKGNAME}
 	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
-	cp Makefile.am configure.ac acscrypt.m4 ${PKGNAME}/autocrap
+	cp Makefile.am configure.ac ${PKGNAME}/autocrap
 	echo -n '${SCRYPTVERSION}' > scrypt-version
 	autoreconf -i
 	mv Makefile.in config.h.in configure ${PKGNAME}/
