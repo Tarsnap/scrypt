@@ -3,21 +3,21 @@ AUTOMAKE_OPTIONS=	foreign subdir-objects
 bin_PROGRAMS=	scrypt
 dist_man_MANS=$(scrypt_man_MANS)
 
-scrypt_SOURCES=		main.c				\
-			lib/util/memlimit.c		\
-			libcperciva/util/entropy.c		\
-			libcperciva/util/insecure_memzero.c		\
-			libcperciva/util/readpass.c		\
-			libcperciva/util/warnp.c		\
-			lib/scryptenc/scryptenc.c	\
-			lib/scryptenc/scryptenc_cpuperf.c	\
+scrypt_SOURCES=		main.c					\
+			libcperciva/cpusupport/cpusupport_x86_aesni.c \
+			libcperciva/alg/sha256.c		\
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_entropy.c	\
-			libcperciva/alg/sha256.c		\
-			lib/crypto/crypto_scrypt_smix.c	\
-			lib/crypto/crypto_scrypt.c	\
-			libcperciva/cpusupport/cpusupport_x86_aesni.c \
+			libcperciva/util/entropy.c		\
+			libcperciva/util/insecure_memzero.c	\
+			libcperciva/util/readpass.c		\
+			libcperciva/util/warnp.c		\
+			lib/crypto/crypto_scrypt_smix.c		\
+			lib/crypto/crypto_scrypt.c		\
+			lib/scryptenc/scryptenc.c		\
+			lib/scryptenc/scryptenc_cpuperf.c	\
+			lib/util/memlimit.c			\
 			cpusupport-config.h
 scrypt_CFLAGS=		-I $(srcdir)/lib/util -I $(srcdir)/lib/scryptenc \
 			-I $(srcdir)/lib/crypto -I $(srcdir)/libcperciva/alg \
