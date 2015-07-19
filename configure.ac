@@ -4,7 +4,12 @@ AC_CONFIG_AUX_DIR([config.aux])
 AM_INIT_AUTOMAKE()
 AC_PROG_CC
 AC_PROG_RANLIB
+
+# Don't rebuild the configure script.  I'm distributing a perfectly good one.
 AM_MAINTAINER_MODE
+
+# We have some of our own configure functions
+m4_include([acscrypt.m4])
 
 # Check for clock_gettime.  On some systems, this is provided via librt.
 AC_CHECK_LIB(rt, clock_gettime)

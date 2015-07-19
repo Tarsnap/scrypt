@@ -65,7 +65,7 @@ publish-at:
 	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
 	echo -n '${SCRYPTVERSION}' > scrypt-version
 	mkdir -p config.aux
-	aclocal -I .
+	aclocal
 	autoheader
 	automake -a -c
 	autoconf
