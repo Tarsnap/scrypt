@@ -1,4 +1,4 @@
-PROG=	test
+PROG=	test_scrypt
 SRCS=	main.c
 LDADD+=	-lcrypto
 WARNS?=	6
@@ -31,5 +31,9 @@ CFLAGS	+=	-I . -D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
 # Building crypto_scrypt_smix_sse2.o needs CFLAGS_X86_SSE2
 crypto_scrypt_smix_sse2.o: crypto_scrypt_smix_sse2.c cpusupport-config.h
 	. ./cpusupport-config.h; ${CC} ${CFLAGS} $${CFLAGS_X86_SSE2} -c $< -o $@
+
+test: all
+	@./test_scrypt.sh
+CLEANFILES+=	test_scrypt.log
 
 .include <bsd.prog.mk>
