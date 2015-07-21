@@ -38,9 +38,9 @@ BUILT_SOURCES=	cpusupport-config.h
 noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
 libcperciva_aesni_a_CFLAGS=	$(scrypt_CFLAGS)	\
-			`. cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
+			`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
 
 noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
 libscrypt_sse2_a_CFLAGS=	$(scrypt_CFLAGS)	\
-			`. cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
+			`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
