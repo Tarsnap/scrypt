@@ -42,7 +42,7 @@ CFLAGS	+=	-I lib/util
 # CPU features compiler support detection
 SRCS	+=	cpusupport-config.h
 cpusupport-config.h:
-	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; cd libcperciva/cpusupport/Build && command -p sh cpusupport.sh ) > cpusupport-config.h
+	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; command -p sh libcperciva/cpusupport/Build/cpusupport.sh libcperciva/cpusupport/Build ) > cpusupport-config.h
 CLEANFILES+=	cpusupport-config.h
 CFLAGS	+=	-I . -D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
 
