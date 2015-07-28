@@ -32,9 +32,9 @@ scrypt_LDADD=		-lcrypto libcperciva_aesni.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
-	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; command -p sh $(srcdir)/libcperciva/cpusupport/Build/cpusupport.sh ) > cpusupport-config.h
+	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; command -p sh $(srcdir)/libcperciva/cpusupport/Build/cpusupport.sh ) > cpusupport-config.h.tmp && command -p mv cpusupport-config.h.tmp cpusupport-config.h
 BUILT_SOURCES=	cpusupport-config.h
-CLEANFILES=	cpusupport-config.h
+CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 
 noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
