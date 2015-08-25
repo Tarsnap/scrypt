@@ -64,12 +64,12 @@ The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
 (Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd. To
 build scrypt, extract the tarball and run `./configure` && `make`.
 
-* [scrypt version 1.1.6 source
-  tarball](http://www.tarsnap.com/scrypt/scrypt-1.1.6.tgz)
+* [scrypt version 1.2.0 source
+  tarball](https://www.tarsnap.com/scrypt/scrypt-1.2.0.tgz)
 * [GPG-signed SHA256 for scrypt version
-  1.1.6](http://www.tarsnap.com/scrypt/scrypt-sigs-1.1.6.asc) (signature
-  generated using Tarsnap [2009 code signing
-  key](http://www.tarsnap.com/tarsnap-signing-key-2009.asc))
+  1.2.0](https://www.tarsnap.com/scrypt/scrypt-sigs-1.2.0.asc) (signature
+  generated using Tarsnap [code signing
+  key](https://www.tarsnap.com/tarsnap-signing-key.asc))
 
 In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
 in NetBSD pkgsrc as `security/scrypt`.
