@@ -18,7 +18,7 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/util/memlimit.c			\
 			cpusupport-config.h
-scrypt_CFLAGS=		-I $(srcdir)/libcperciva/alg		\
+AM_CPPFLAGS=		-I $(srcdir)/libcperciva/alg		\
 			-I $(srcdir)/libcperciva/cpusupport	\
 			-I $(srcdir)/libcperciva/crypto		\
 			-I $(srcdir)/libcperciva/util		\
@@ -36,10 +36,8 @@ CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 
 noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
-libcperciva_aesni_a_CFLAGS=	$(scrypt_CFLAGS)	\
-			`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
+libcperciva_aesni_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
 
 noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
-libscrypt_sse2_a_CFLAGS=	$(scrypt_CFLAGS)	\
-			`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
+libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
