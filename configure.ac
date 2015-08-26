@@ -1,13 +1,20 @@
+AC_PREREQ([2.69])
 m4_define([SCRYPT_VERS],m4_include([scrypt-version]))
-AC_INIT([scrypt],SCRYPT_VERS())
+AC_INIT([scrypt],[SCRYPT_VERS()],[https://github.com/Tarsnap/scrypt],[scrypt],[http://www.tarsnap.com/scrypt/])
+AC_CONFIG_SRCDIR([lib/scryptenc/scryptenc.c])
 AC_CONFIG_AUX_DIR([config.aux])
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
+
+# Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
 AM_PROG_AR
 
 # Don't rebuild the configure script.  I'm distributing a perfectly good one.
 AM_MAINTAINER_MODE
+
+# Checks for libraries.
 
 # Check for clock_gettime.  On some systems, this is provided via librt.
 AC_SEARCH_LIBS([clock_gettime], [rt])
