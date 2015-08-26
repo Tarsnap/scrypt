@@ -41,3 +41,38 @@ libcperciva_aesni_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
 noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
 libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
+
+EXTRA_DIST = \
+	FORMAT							\
+	lib/README						\
+	libcperciva/COPYRIGHT					\
+	BSDmakefile						\
+	README.md						\
+	config_freebsd.h					\
+	lib/crypto/crypto_scrypt-ref.c				\
+	lib/crypto/crypto_scrypt.h				\
+	lib/crypto/crypto_scrypt_smix.h				\
+	lib/crypto/crypto_scrypt_smix_sse2.h			\
+	lib/scryptenc/scryptenc.h				\
+	lib/scryptenc/scryptenc_cpuperf.h			\
+	lib/util/memlimit.h					\
+	libcperciva/alg/sha256.h				\
+	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
+	libcperciva/cpusupport/Build/cpusupport.sh		\
+	libcperciva/cpusupport/cpusupport.h			\
+	libcperciva/crypto/crypto_aes.h				\
+	libcperciva/crypto/crypto_aes_aesni.h			\
+	libcperciva/crypto/crypto_aesctr.h			\
+	libcperciva/crypto/crypto_entropy.h			\
+	libcperciva/util/entropy.h				\
+	libcperciva/util/insecure_memzero.h			\
+	libcperciva/util/readpass.h				\
+	libcperciva/util/sysendian.h				\
+	libcperciva/util/warnp.h				\
+	scrypt_platform.h					\
+	test/Makefile						\
+	test/main.c						\
+	test/test_scrypt.good					\
+	test/test_scrypt.sh
