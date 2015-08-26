@@ -1,7 +1,7 @@
 m4_define([SCRYPT_VERS],m4_include([scrypt-version]))
 AC_INIT([scrypt],SCRYPT_VERS())
 AC_CONFIG_AUX_DIR([config.aux])
-AM_INIT_AUTOMAKE()
+AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 AC_PROG_CC
 AC_PROG_RANLIB
 
