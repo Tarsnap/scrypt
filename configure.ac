@@ -13,6 +13,9 @@ AM_MAINTAINER_MODE
 AC_SEARCH_LIBS([clock_gettime], [rt])
 AC_CHECK_FUNCS([clock_gettime])
 
+AC_SEARCH_LIBS([AES_encrypt], [crypto],,
+    AC_MSG_ERROR([function AES_ENCRYPT not found]))
+
 # Check for a linuxy sysinfo syscall; and while we're doing that, check if
 # struct sysinfo is the old version (total RAM == totalmem) or the new
 # version (total RAM == totalmem * mem_unit).
