@@ -59,22 +59,7 @@ PKGNAME=scrypt-${SCRYPTVERSION}
 PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
 publish-at:
-	@if [ -z "${SCRYPTVERSION}" ]; then		\
-		echo "SCRYPTVERSION must be set for a release";		\
-		false;					\
-	fi
-	mkdir -p ${PKGNAME} ${PKGNAME}/autocrap
-	cp -R lib libcperciva ${PKGNAME}
-	cp scrypt_platform.h main.c FORMAT scrypt.1 ${PKGNAME}
-	cp Makefile.am configure.ac ${PKGNAME}/autocrap
-	echo -n '${SCRYPTVERSION}' > scrypt-version
-	autoreconf -i
-	mv Makefile.in config.h.in configure ${PKGNAME}/
-	rm aclocal.m4
-	mv config.aux ${PKGNAME}/
-	rm scrypt-version
-	tar -czf ${PKGNAME}.tgz ${PKGNAME}
-	rm -rf ${PKGNAME}
+	sh release-tools/mktarball.sh ${SCRYPTVERSION}
 
 publish: publish-at
 	sha256 ${PKGNAME}.tgz |			\
