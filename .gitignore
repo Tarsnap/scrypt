@@ -1,0 +1,17 @@
+*.a
+*.o
+.deps/
+.deps/
+.dirstamp
+/aclocal.m4
+/config.aux/
+/config.h
+/config.h.in
+/config.log
+/config.status
+/configure
+/cpusupport-config.h
+/scrypt
+/stamp-h1
+Makefile
+Makefile.in
