@@ -135,6 +135,12 @@ main(int argc, char *argv[])
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 
+	/* Close any files we opened. */
+	if (infile != stdin)
+		fclose(infile);
+	if (outfile != stdout)
+		fclose(outfile);
+
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {
 		switch (rc) {
