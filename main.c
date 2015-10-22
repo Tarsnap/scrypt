@@ -43,7 +43,7 @@ usage(void)
 
 	fprintf(stderr,
 	    "usage: scrypt {enc | dec} [-M maxmem] [-m maxmemfrac]"
-	    " [-t maxtime] infile\n"
+	    " [-t maxtime] [-v] infile\n"
 	    "              [outfile]\n");
 	exit(1);
 }
@@ -60,6 +60,7 @@ main(int argc, char *argv[])
 	int ch;
 	char * passwd;
 	int rc;
+	int verbose = 0;
 
 	WARNP_INIT;
 
@@ -78,7 +79,7 @@ main(int argc, char *argv[])
 	argv++;
 
 	/* Parse arguments. */
-	while ((ch = getopt(argc, argv, "hm:M:t:")) != -1) {
+	while ((ch = getopt(argc, argv, "hm:M:t:v")) != -1) {
 		switch (ch) {
 		case 'M':
 			maxmem = strtoumax(optarg, NULL, 0);
@@ -88,6 +89,9 @@ main(int argc, char *argv[])
 			break;
 		case 't':
 			maxtime = strtod(optarg, NULL);
+			break;
+		case 'v':
+			verbose = 1;
 			break;
 		default:
 			usage();
@@ -128,10 +132,10 @@ main(int argc, char *argv[])
 	/* Encrypt or decrypt. */
 	if (dec)
 		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime);
+		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime);
+		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 
 	/* Zero and free the password. */
 	insecure_memzero(passwd, strlen(passwd));
