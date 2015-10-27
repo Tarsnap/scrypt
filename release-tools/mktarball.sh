@@ -6,13 +6,16 @@ if [ -z $VERSION ]; then
 	exit 1
 fi
 DESTDIR=scrypt-${VERSION}
+RELEASEDATE=`date "+%B %d, %Y"`
 
 # Copy bits in
 mkdir ${DESTDIR} ${DESTDIR}/autocrap
-cp scrypt_platform.h main.c FORMAT scrypt.1 ${DESTDIR}
+cp scrypt_platform.h main.c FORMAT ${DESTDIR}
 cp Makefile.am configure.ac .autom4te.cfg ${DESTDIR}
 cp Makefile.am configure.ac ${DESTDIR}/autocrap
 cp -R lib libcperciva ${DESTDIR}
+# Copy with substitution
+sed -e "s/@DATE@/$RELEASEDATE/" < scrypt.1 > ${DESTDIR}/scrypt.1
 
 # Generate autotools files
 ( cd ${DESTDIR}
