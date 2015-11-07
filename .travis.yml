@@ -10,4 +10,5 @@ env:
     - COVERITY_SCAN_BUILD_COMMAND="make all clean"
 before_install:
   - autoreconf -i
+  - ./configure
   - curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true
