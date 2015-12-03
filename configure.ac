@@ -39,8 +39,7 @@ AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit], [], [],
 # to work.
 AC_CHECK_HEADERS([sys/param.h])
 
-# Check if we have <openssl/aes.h>, since some systems require it for sysctl
-# to work.
+# Check if we have <openssl/aes.h>, to fix the make failing when configure passes.
 AC_CHECK_HEADERS([openssl/aes.h],
   [scrypt_found_aes_headers=yes; break;])
 
