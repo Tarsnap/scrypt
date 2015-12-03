@@ -3,6 +3,7 @@
 .deps/
 .deps/
 .dirstamp
+/m4
 /aclocal.m4
 /config.aux/
 /config.h

@@ -1,7 +1,7 @@
 bin_PROGRAMS=	scrypt
 dist_man_MANS=$(scrypt_man_MANS)
 
-scrypt_SOURCES=		main.c					\
+scrypt_SOURCES= main.c \
 			libcperciva/alg/sha256.c		\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			libcperciva/cpusupport/cpusupport_x86_sse2.c \
@@ -72,7 +72,9 @@ EXTRA_DIST = \
 	libcperciva/util/sysendian.h				\
 	libcperciva/util/warnp.h				\
 	scrypt_platform.h					\
-	test/Makefile						\
-	test/main.c						\
+	test/test_scrypt.c                \
 	test/test_scrypt.good					\
 	test/test_scrypt.sh
+
+# udpated make for test_scrypt
+SUBDIRS=	. test
