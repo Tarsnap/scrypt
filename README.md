@@ -104,3 +104,30 @@ Mailing list
 The scrypt key derivation function and the scrypt encryption utility are
 discussed on the <scrypt@tarsnap.com> mailing list.
 
+Update 12-2-2015
+----------------
+This command (tested on newer linux / OSX) should configure the repository for you to build:
+  * autoreconf -i
+  * ./configure
+  * make
+
+If that doesn't work, try the following steps (tested on linux / osx) individually to 
+troubleshoot the build.
+  * (g)libtoolize --force
+  * aclocal
+  * autoheader
+  * automake --force-missing --add-missing
+  * autoconf
+  * ./configure
+
+Test build is fixed, after you make the setup, you can run test vectors via
+```
+cd test
+./test_scrypt.sh
+```
+Or view the tests:
+```
+cd test
+./test_scrypt
+```
+Added configure.ac check for openssl/aes.h header file

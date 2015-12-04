@@ -1,7 +1,8 @@
-bin_PROGRAMS=	scrypt
+bin_PROGRAMS=	scrypt test/test_scrypt
 dist_man_MANS=$(scrypt_man_MANS)
 
-scrypt_SOURCES=		main.c					\
+
+scrypt_SOURCES= main.c \
 			libcperciva/alg/sha256.c		\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			libcperciva/cpusupport/cpusupport_x86_sse2.c \
@@ -72,7 +73,25 @@ EXTRA_DIST = \
 	libcperciva/util/sysendian.h				\
 	libcperciva/util/warnp.h				\
 	scrypt_platform.h					\
-	test/Makefile						\
-	test/main.c						\
+	test/test_scrypt.c                \
 	test/test_scrypt.good					\
 	test/test_scrypt.sh
+
+test_test_scrypt_SOURCES =  test/test_scrypt.c  \
+		%reldir%/libcperciva/alg/sha256.c        \
+		%reldir%/libcperciva/cpusupport/cpusupport_x86_aesni.c \
+		%reldir%/libcperciva/cpusupport/cpusupport_x86_sse2.c \
+		%reldir%/libcperciva/crypto/crypto_aes.c     \
+		%reldir%/libcperciva/crypto/crypto_aesctr.c  \
+		%reldir%/libcperciva/crypto/crypto_entropy.c \
+		%reldir%/libcperciva/util/entropy.c      \
+		%reldir%/libcperciva/util/insecure_memzero.c \
+		%reldir%/libcperciva/util/readpass.c     \
+		%reldir%/libcperciva/util/warnp.c        \
+		%reldir%/lib/crypto/crypto_scrypt.c      \
+		%reldir%/lib/crypto/crypto_scrypt_smix.c     \
+		%reldir%/lib/scryptenc/scryptenc.c       \
+		%reldir%/lib/scryptenc/scryptenc_cpuperf.c   \
+		%reldir%/lib/util/memlimit.c         \
+		%reldir%/cpusupport-config.h 
+test_test_scrypt_LDADD=       %reldir%/libcperciva_aesni.a %reldir%/libscrypt_sse2.a

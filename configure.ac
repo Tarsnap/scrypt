@@ -6,6 +6,9 @@ AC_CONFIG_AUX_DIR([config.aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 
+# add test_scrypt
+AM_EXTRA_RECURSIVE_TARGETS([test])
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_RANLIB
@@ -36,6 +39,13 @@ AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit], [], [],
 # to work.
 AC_CHECK_HEADERS([sys/param.h])
 
+# Check if we have <openssl/aes.h>, to fix the make failing when configure passes.
+AC_CHECK_HEADERS([openssl/aes.h],
+  [scrypt_found_aes_headers=yes; break;])
+
+AS_IF([test "x$scrypt_found_aes_headers" != "xyes"],
+  [AC_MSG_ERROR([Unable to find the openssl/aes.h headers])])
+
 # Check for <sys/sysctl.h>.  If it exists and it defines HW_USERMEM
 # and/or HW_MEMSIZE, we'll try using those as memory limits.
 AC_CHECK_HEADERS([sys/sysctl.h])
@@ -48,8 +58,9 @@ AC_CHECK_FUNCS([mmap])
 
 AC_SYS_LARGEFILE
 
-AX_CFLAGS_WARN_ALL
+# AX_CFLAGS_WARN_ALL
 
 AC_CONFIG_HEADERS([config.h])
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
