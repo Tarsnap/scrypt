@@ -58,10 +58,9 @@ AC_CHECK_FUNCS([mmap])
 
 AC_SYS_LARGEFILE
 
-AX_CFLAGS_WARN_ALL
+# AX_CFLAGS_WARN_ALL
 
 AC_CONFIG_HEADERS([config.h])
 
-# added file for test_scrypt
-AC_CONFIG_FILES([Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

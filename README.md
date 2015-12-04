@@ -106,9 +106,13 @@ discussed on the <scrypt@tarsnap.com> mailing list.
 
 Update 12-2-2015
 ----------------
+This command (tested on newer linux / OSX) should configure the repository for you to build:
+  * autoreconf -i
+  * ./configure
+  * make
 
-You may need to use the following steps (tested on linux / osx) to build
-the scrypt repository.
+If that doesn't work, try the following steps (tested on linux / osx) individually to 
+troubleshoot the build.
   * (g)libtoolize --force
   * aclocal
   * autoheader
