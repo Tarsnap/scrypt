@@ -1,7 +1,7 @@
 #ifndef _GETOPT_H_
 #define _GETOPT_H_
 
-#include <stdint.h>
+#include <stddef.h>
 #include <setjmp.h>
 
 /**
