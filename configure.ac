@@ -36,6 +36,11 @@ AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit], [], [],
 # to work.
 AC_CHECK_HEADERS([sys/param.h])
 
+# Check if we have <openssl/aes.h>, to fix the make failing when configure 
+# passes.
+AC_CHECK_HEADERS([openssl/aes.h],,
+  [AC_MSG_ERROR([Unable to find the openssl/aes.h header])])
+
 # Check for <sys/sysctl.h>.  If it exists and it defines HW_USERMEM
 # and/or HW_MEMSIZE, we'll try using those as memory limits.
 AC_CHECK_HEADERS([sys/sysctl.h])
