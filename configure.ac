@@ -57,7 +57,7 @@ AC_SYS_LARGEFILE
 AC_MSG_CHECKING([compiler_warnings])
 AC_ARG_ENABLE(compiler_warnings,
    AS_HELP_STRING([--disable-compiler-warnings],
-       [Do not request compiler warnings. @<:@kefault=enabled@:>@]),
+       [Do not request compiler warnings. @<:@default=enabled@:>@]),
    [ac_compiler_warnings=$enableval],
    [ac_compiler_warnings=yes])
 AC_MSG_RESULT([${ac_compiler_warnings}])
