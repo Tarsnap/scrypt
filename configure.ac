@@ -48,7 +48,16 @@ AC_CHECK_FUNCS([mmap])
 
 AC_SYS_LARGEFILE
 
-AX_CFLAGS_WARN_ALL
+# Check whether the user has requested to disable compiler warnings
+AC_MSG_CHECKING([compiler_warnings])
+AC_ARG_ENABLE(compiler_warnings,
+   AS_HELP_STRING([--disable-compiler-warnings],
+       [Do not request compiler warnings. @<:@kefault=enabled@:>@]),
+   [ac_compiler_warnings=$enableval],
+   [ac_compiler_warnings=yes])
+AC_MSG_RESULT([${ac_compiler_warnings}])
+AS_IF([test x${ac_compiler_warnings} = xyes],
+   [AX_CFLAGS_WARN_ALL])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
