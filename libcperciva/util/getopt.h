@@ -54,9 +54,9 @@ extern int optind, opterr, optreset;
 	volatile size_t getopt_ln_min = __LINE__;			\
 	volatile size_t getopt_ln = getopt_ln_min - 1;		\
 	volatile int getopt_default_missing = 0;			\
-	jmp_buf getopt_initloop;					\
+	sigjmp_buf getopt_initloop;					\
 	if (!getopt_initialized)					\
-		setjmp(getopt_initloop);				\
+		sigsetjmp(getopt_initloop, 0);				\
 	switch (getopt_initialized ? getopt_lookup(ch) + getopt_ln_min : getopt_ln++)
 
 /**
@@ -73,7 +73,7 @@ extern int optind, opterr, optreset;
 		if (getopt_initialized)					\
 			goto getopt_skip_ ## ln;			\
 		getopt_register_opt(os, ln - getopt_ln_min, 0);		\
-		longjmp(getopt_initloop, 1);				\
+		siglongjmp(getopt_initloop, 1);				\
 	getopt_skip_ ## ln
 
 /**
@@ -92,7 +92,7 @@ extern int optind, opterr, optreset;
 		if (getopt_initialized)					\
 			goto getopt_skip_ ## ln;			\
 		getopt_register_opt(os, ln - getopt_ln_min, 1);		\
-		longjmp(getopt_initloop, 1);				\
+		siglongjmp(getopt_initloop, 1);				\
 	getopt_skip_ ## ln
 
 /**
@@ -111,7 +111,7 @@ extern int optind, opterr, optreset;
 		if (getopt_initialized)					\
 			goto getopt_skip_ ## ln;			\
 		getopt_register_missing(ln - getopt_ln_min);		\
-		longjmp(getopt_initloop, 1);				\
+		siglongjmp(getopt_initloop, 1);				\
 	getopt_skip_ ## ln
 
 /**
@@ -139,7 +139,7 @@ extern int optind, opterr, optreset;
 			getopt_setrange(ln - getopt_ln_min);		\
 			getopt_default_missing = 1;			\
 		}							\
-		longjmp(getopt_initloop, 1);				\
+		siglongjmp(getopt_initloop, 1);				\
 	getopt_skip_ ## ln
 
 /*
