@@ -76,21 +76,12 @@ EXTRA_DIST = \
 	test/test_scrypt.good					\
 	test/test_scrypt.sh
 
-test_test_scrypt_SOURCES =  test/test_scrypt.c			\
-		libcperciva/alg/sha256.c			\
-		libcperciva/cpusupport/cpusupport_x86_aesni.c	\
-		libcperciva/cpusupport/cpusupport_x86_sse2.c	\
-		libcperciva/crypto/crypto_aes.c			\
-		libcperciva/crypto/crypto_aesctr.c		\
-		libcperciva/crypto/crypto_entropy.c		\
-		libcperciva/util/entropy.c			\
-		libcperciva/util/insecure_memzero.c		\
-		libcperciva/util/readpass.c			\
-		libcperciva/util/warnp.c			\
-		lib/crypto/crypto_scrypt.c			\
-		lib/crypto/crypto_scrypt_smix.c			\
-		lib/scryptenc/scryptenc.c			\
-		lib/scryptenc/scryptenc_cpuperf.c		\
-		lib/util/memlimit.c				\
-		cpusupport-config.h
-test_test_scrypt_LDADD=  libcperciva_aesni.a libscrypt_sse2.a
+test_test_scrypt_SOURCES =	test/test_scrypt.c			\
+			libcperciva/alg/sha256.c			\
+			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
+			libcperciva/util/insecure_memzero.c		\
+			libcperciva/util/warnp.c			\
+			lib/crypto/crypto_scrypt.c			\
+			lib/crypto/crypto_scrypt_smix.c			\
+			cpusupport-config.h
+test_test_scrypt_LDADD=	libscrypt_sse2.a
