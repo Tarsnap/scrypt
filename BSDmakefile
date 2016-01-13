@@ -21,7 +21,9 @@ SRCS	+=	crypto_aesctr.c
 SRCS	+=	crypto_entropy.c
 CFLAGS	+=	-I libcperciva/crypto
 .PATH.c	:	libcperciva/util
+SRCS	+=	asprintf.c
 SRCS	+=	entropy.c
+SRCS	+=	humansize.c
 SRCS	+=	insecure_memzero.c
 SRCS	+=	readpass.c
 SRCS	+=	warnp.c

@@ -8,7 +8,9 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_entropy.c	\
+			libcperciva/util/asprintf.c		\
 			libcperciva/util/entropy.c		\
+			libcperciva/util/humansize.c		\
 			libcperciva/util/insecure_memzero.c	\
 			libcperciva/util/readpass.c		\
 			libcperciva/util/warnp.c		\
@@ -66,7 +68,9 @@ EXTRA_DIST = \
 	libcperciva/crypto/crypto_aes_aesni.h			\
 	libcperciva/crypto/crypto_aesctr.h			\
 	libcperciva/crypto/crypto_entropy.h			\
+	libcperciva/util/asprintf.h				\
 	libcperciva/util/entropy.h				\
+	libcperciva/util/humansize.h				\
 	libcperciva/util/insecure_memzero.h			\
 	libcperciva/util/readpass.h				\
 	libcperciva/util/sysendian.h				\
