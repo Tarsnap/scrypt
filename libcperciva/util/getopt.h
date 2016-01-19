@@ -30,6 +30,10 @@
 extern const char * optarg;
 extern int optind, opterr, optreset;
 
+/* Our custom global variable for error-checking. */
+char * opteptr;
+extern char * opteptr;
+
 /* Dummy option string, equal to "(dummy)". */
 #define GETOPT_DUMMY getopt_dummy
 
@@ -141,6 +145,18 @@ extern int optind, opterr, optreset;
 		}							\
 		siglongjmp(getopt_initloop, 1);				\
 	getopt_skip_ ## ln
+
+/**
+ * GETOPT_CHECKEPTR(vartype, option):
+ * Convenience function to simplify checking that numerical arguments
+ * have been converted correctly (e.g., with strtod or strtol).
+ */
+#define GETOPT_CHECKEPTR(vartype, option)				\
+	if (*opteptr != '\0') {						\
+		fprintf(stderr, "Invalid %s argument for %s\n",		\
+		    vartype, option);					\
+		exit(1);						\
+	}
 
 /*
  * The back-end implementation.  These should be considered internal
