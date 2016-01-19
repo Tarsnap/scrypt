@@ -83,13 +83,16 @@ main(int argc, char *argv[])
 	while ((ch = GETOPT(argc, argv)) != NULL) {
 		GETOPT_SWITCH(ch) {
 		GETOPT_OPTARG("-M"):
-			maxmem = strtoumax(optarg, NULL, 0);
+			maxmem = strtoumax(optarg, &opteptr, 0);
+			GETOPT_CHECKEPTR("unsigned integer", "-M");
 			break;
 		GETOPT_OPTARG("-m"):
-			maxmemfrac = strtod(optarg, NULL);
+			maxmemfrac = strtod(optarg, &opteptr);
+			GETOPT_CHECKEPTR("double", "-m");
 			break;
 		GETOPT_OPTARG("-t"):
-			maxtime = strtod(optarg, NULL);
+			maxtime = strtod(optarg, &opteptr);
+			GETOPT_CHECKEPTR("double", "-t");
 			break;
 		GETOPT_OPT("-v"):
 			verbose = 1;
