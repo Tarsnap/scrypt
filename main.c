@@ -59,6 +59,7 @@ main(int argc, char *argv[])
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
 	const char * ch;
+	char * eptr;
 	char * passwd;
 	int rc;
 	int verbose = 0;
@@ -83,13 +84,28 @@ main(int argc, char *argv[])
 	while ((ch = GETOPT(argc, argv)) != NULL) {
 		GETOPT_SWITCH(ch) {
 		GETOPT_OPTARG("-M"):
-			maxmem = strtoumax(optarg, NULL, 0);
+			maxmem = strtoumax(optarg, &eptr, 0);
+			if (*eptr != '\0') {
+				fprintf(stderr, "Invalid %s argument for %s\n",
+				    "unsigned integer", "-M");
+				exit(1);
+			}
 			break;
 		GETOPT_OPTARG("-m"):
-			maxmemfrac = strtod(optarg, NULL);
+			maxmemfrac = strtod(optarg, &eptr);
+			if (*eptr != '\0') {
+				fprintf(stderr, "Invalid %s argument for %s\n",
+				    "double", "-m");
+				exit(1);
+			}
 			break;
 		GETOPT_OPTARG("-t"):
-			maxtime = strtod(optarg, NULL);
+			maxtime = strtod(optarg, &eptr);
+			if (*eptr != '\0') {
+				fprintf(stderr, "Invalid %s argument for %s\n",
+				    "double", "-t");
+				exit(1);
+			}
 			break;
 		GETOPT_OPT("-v"):
 			verbose = 1;
