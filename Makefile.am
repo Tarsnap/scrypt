@@ -10,6 +10,7 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/util/asprintf.c		\
 			libcperciva/util/entropy.c		\
+			libcperciva/util/getopt.c		\
 			libcperciva/util/humansize.c		\
 			libcperciva/util/insecure_memzero.c	\
 			libcperciva/util/readpass.c		\
