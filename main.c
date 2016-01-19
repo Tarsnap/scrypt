@@ -32,6 +32,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "getopt.h"
 #include "insecure_memzero.h"
 #include "readpass.h"
 #include "scryptenc.h"
@@ -57,7 +58,8 @@ main(int argc, char *argv[])
 	size_t maxmem = 0;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
-	int ch;
+	const char * ch;
+	char * eptr;
 	char * passwd;
 	int rc;
 	int verbose = 0;
@@ -79,21 +81,38 @@ main(int argc, char *argv[])
 	argv++;
 
 	/* Parse arguments. */
-	while ((ch = getopt(argc, argv, "hm:M:t:v")) != -1) {
-		switch (ch) {
-		case 'M':
-			maxmem = strtoumax(optarg, NULL, 0);
+	while ((ch = GETOPT(argc, argv)) != NULL) {
+		GETOPT_SWITCH(ch) {
+		GETOPT_OPTARG("-M"):
+			maxmem = strtoumax(optarg, &eptr, 0);
+			if (*eptr != '\0') {
+				fprintf(stderr, "Invalid %s argument for %s\n",
+				    "unsigned integer", "-M");
+				exit(1);
+			}
 			break;
-		case 'm':
-			maxmemfrac = strtod(optarg, NULL);
+		GETOPT_OPTARG("-m"):
+			maxmemfrac = strtod(optarg, &eptr);
+			if (*eptr != '\0') {
+				fprintf(stderr, "Invalid %s argument for %s\n",
+				    "double", "-m");
+				exit(1);
+			}
 			break;
-		case 't':
-			maxtime = strtod(optarg, NULL);
+		GETOPT_OPTARG("-t"):
+			maxtime = strtod(optarg, &eptr);
+			if (*eptr != '\0') {
+				fprintf(stderr, "Invalid %s argument for %s\n",
+				    "double", "-t");
+				exit(1);
+			}
 			break;
-		case 'v':
+		GETOPT_OPT("-v"):
 			verbose = 1;
 			break;
-		default:
+		GETOPT_MISSING_ARG:
+			fprintf(stderr, "missing argument to %s\n", ch);
+		GETOPT_DEFAULT:
 			usage();
 		}
 	}
