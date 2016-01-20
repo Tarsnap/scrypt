@@ -32,6 +32,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "getopt.h"
 #include "insecure_memzero.h"
 #include "readpass.h"
 #include "scryptenc.h"
@@ -57,7 +58,7 @@ main(int argc, char *argv[])
 	size_t maxmem = 0;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
-	int ch;
+	const char * ch;
 	char * passwd;
 	int rc;
 	int verbose = 0;
@@ -79,21 +80,24 @@ main(int argc, char *argv[])
 	argv++;
 
 	/* Parse arguments. */
-	while ((ch = getopt(argc, argv, "hm:M:t:v")) != -1) {
-		switch (ch) {
-		case 'M':
+	while ((ch = GETOPT(argc, argv)) != NULL) {
+		GETOPT_SWITCH(ch) {
+		GETOPT_OPTARG("-M"):
 			maxmem = strtoumax(optarg, NULL, 0);
 			break;
-		case 'm':
+		GETOPT_OPTARG("-m"):
 			maxmemfrac = strtod(optarg, NULL);
 			break;
-		case 't':
+		GETOPT_OPTARG("-t"):
 			maxtime = strtod(optarg, NULL);
 			break;
-		case 'v':
+		GETOPT_OPT("-v"):
 			verbose = 1;
 			break;
-		default:
+		GETOPT_MISSING_ARG:
+			warn0("Missing argument to %s\n", ch);
+			/* FALLTHROUGH */
+		GETOPT_DEFAULT:
 			usage();
 		}
 	}
