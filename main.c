@@ -45,7 +45,8 @@ usage(void)
 	fprintf(stderr,
 	    "usage: scrypt {enc | dec} [-M maxmem] [-m maxmemfrac]"
 	    " [-t maxtime] [-v] infile\n"
-	    "              [outfile]\n");
+	    "              [outfile]\n"
+	    "       scrypt --version\n");
 	exit(1);
 }
 
@@ -74,6 +75,9 @@ main(int argc, char *argv[])
 		maxtime = 5.0;
 	} else if (strcmp(argv[1], "dec") == 0) {
 		dec = 1;
+	} else if (strcmp(argv[1], "--version") == 0) {
+		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
+		exit(0);
 	} else
 		usage();
 	argc--;
