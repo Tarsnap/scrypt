@@ -38,6 +38,12 @@
 #include "scryptenc.h"
 #include "warnp.h"
 
+enum {
+	MODE_NONE,
+	MODE_ENC,
+	MODE_DEC
+};
+
 static void
 usage(void)
 {
@@ -45,7 +51,8 @@ usage(void)
 	fprintf(stderr,
 	    "usage: scrypt {enc | dec} [-M maxmem] [-m maxmemfrac]"
 	    " [-t maxtime] [-v] infile\n"
-	    "              [outfile]\n");
+	    "              [outfile]\n"
+	    "       scrypt --version\n");
 	exit(1);
 }
 
@@ -54,7 +61,6 @@ main(int argc, char *argv[])
 {
 	FILE * infile;
 	FILE * outfile;
-	int dec = 0;
 	size_t maxmem = 0;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
@@ -62,6 +68,7 @@ main(int argc, char *argv[])
 	char * passwd;
 	int rc;
 	int verbose = 0;
+	int mode = MODE_NONE;
 
 	WARNP_INIT;
 
@@ -69,15 +76,17 @@ main(int argc, char *argv[])
 	if (argc < 2)
 		usage();
 	if (strcmp(argv[1], "enc") == 0) {
+		mode = MODE_ENC;
 		maxmem = 0;
 		maxmemfrac = 0.125;
 		maxtime = 5.0;
+		argc--;
+		argv++;
 	} else if (strcmp(argv[1], "dec") == 0) {
-		dec = 1;
-	} else
-		usage();
-	argc--;
-	argv++;
+		mode = MODE_DEC;
+		argc--;
+		argv++;
+	}
 
 	/* Parse arguments. */
 	while ((ch = GETOPT(argc, argv)) != NULL) {
@@ -94,6 +103,9 @@ main(int argc, char *argv[])
 		GETOPT_OPT("-v"):
 			verbose = 1;
 			break;
+		GETOPT_OPT("--version"):
+			fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
+			exit(0);
 		GETOPT_MISSING_ARG:
 			warn0("Missing argument to %s\n", ch);
 			/* FALLTHROUGH */
@@ -103,6 +115,10 @@ main(int argc, char *argv[])
 	}
 	argc -= optind;
 	argv += optind;
+
+	/* We must have a mode set. */
+	if (mode == MODE_NONE)
+		usage();
 
 	/* We must have one or two parameters left. */
 	if ((argc < 1) || (argc > 2))
@@ -130,11 +146,11 @@ main(int argc, char *argv[])
 
 	/* Prompt for a password. */
 	if (readpass(&passwd, "Please enter passphrase",
-	    dec ? NULL : "Please confirm passphrase", 1))
+	    mode == MODE_DEC ? NULL : "Please confirm passphrase", 1))
 		exit(1);
 
 	/* Encrypt or decrypt. */
-	if (dec)
+	if (mode == MODE_DEC)
 		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 	else
