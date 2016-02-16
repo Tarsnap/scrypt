@@ -7,6 +7,9 @@ WARNS?=	6
 CFLAGS	+=	-I .
 CFLAGS	+=	-DCONFIG_H_FILE=\"config_freebsd.h\"
 
+# We have a version number
+CFLAGS	+=	-DPACKAGE_VERSION=\"`cat scrypt-version`\"
+
 .PATH.c	:	libcperciva/alg
 SRCS	+=	sha256.c
 CFLAGS	+=	-I libcperciva/alg
@@ -23,6 +26,7 @@ CFLAGS	+=	-I libcperciva/crypto
 .PATH.c	:	libcperciva/util
 SRCS	+=	asprintf.c
 SRCS	+=	entropy.c
+SRCS	+=	getopt.c
 SRCS	+=	humansize.c
 SRCS	+=	insecure_memzero.c
 SRCS	+=	readpass.c
