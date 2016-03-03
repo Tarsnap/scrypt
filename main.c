@@ -55,6 +55,7 @@ main(int argc, char *argv[])
 {
 	FILE * infile;
 	FILE * outfile;
+	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
 	double maxmemfrac = 0.5;
@@ -98,6 +99,9 @@ main(int argc, char *argv[])
 		GETOPT_OPT("-v"):
 			verbose = 1;
 			break;
+		GETOPT_OPT("-P"):
+			devtty = 0;
+			break;
 		GETOPT_MISSING_ARG:
 			warn0("Missing argument to %s\n", ch);
 			/* FALLTHROUGH */
@@ -134,7 +138,7 @@ main(int argc, char *argv[])
 
 	/* Prompt for a password. */
 	if (readpass(&passwd, "Please enter passphrase",
-	    dec ? NULL : "Please confirm passphrase", 1))
+	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		exit(1);
 
 	/* Encrypt or decrypt. */
