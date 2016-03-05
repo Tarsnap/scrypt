@@ -38,6 +38,15 @@ handle(int sig)
 	gotsig[sig] = 1;
 }
 
+static void
+warnp_read(FILE *readfrom)
+{
+	if (feof(readfrom))
+		fprintf(stderr, "EOF reading password\n");
+	else
+		warnp("Cannot read password");
+}
+
 /**
  * readpass(passwd, prompt, confirmprompt, devtty)
  * If ${devtty} is non-zero, read a password from /dev/tty if possible; if
@@ -104,7 +113,7 @@ retry:
 
 	/* Read the password. */
 	if (fgets(passbuf, MAXPASSLEN, readfrom) == NULL) {
-		warnp("Cannot read password");
+		warnp_read(readfrom);
 		goto err3;
 	}
 
@@ -113,7 +122,7 @@ retry:
 		if (usingtty)
 			fprintf(stderr, "%s: ", confirmprompt);
 		if (fgets(confpassbuf, MAXPASSLEN, readfrom) == NULL) {
-			warnp("Cannot read password");
+			warnp_read(readfrom);
 			goto err3;
 		}
 		if (strcmp(passbuf, confpassbuf)) {
