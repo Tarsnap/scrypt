@@ -90,3 +90,11 @@ test_test_scrypt_SOURCES =	test/test_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			cpusupport-config.h
 test_test_scrypt_LDADD=	libscrypt_sse2.a
+
+.PHONY: test
+# we can't only build "scrypt test/test_scrypt" because that won't build
+# the BUILT_SOURCES.
+test: all
+	$(top_srcdir)/test/test_scrypt.sh \
+		test/test_scrypt \
+		$(top_srcdir)/test/test_scrypt.good
