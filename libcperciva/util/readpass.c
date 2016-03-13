@@ -155,8 +155,6 @@ retry:
 	if (usingtty)
 		tcsetattr(fileno(readfrom), TCSANOW, &term_old);
 
-	resetsigs(savedsa);
-
 	/* Close /dev/tty if we opened it. */
 	if (readfrom != stdin)
 		fclose(readfrom);
@@ -179,6 +177,8 @@ retry:
 	 */
 	insecure_memzero(passbuf, MAXPASSLEN);
 	insecure_memzero(confpassbuf, MAXPASSLEN);
+
+	resetsigs(savedsa);
 
 	/* Success! */
 	return (0);
