@@ -39,6 +39,22 @@ handle(int sig)
 }
 
 static void
+resetsigs(struct sigaction *savedsa)
+{
+	int i;
+
+	/* Restore old signals. */
+	for (i = 0; i < NSIGS; i++)
+		sigaction(badsigs[i], &savedsa[i], NULL);
+
+	/* If we intercepted a signal, re-issue it. */
+	for (i = 0; i < NSIGS; i++) {
+		if (gotsig[badsigs[i]])
+			raise(badsigs[i]);
+	}
+}
+
+static void
 warnp_read(FILE *readfrom)
 {
 	if (feof(readfrom))
@@ -139,15 +155,7 @@ retry:
 	if (usingtty)
 		tcsetattr(fileno(readfrom), TCSANOW, &term_old);
 
-	/* Restore old signals. */
-	for (i = 0; i < NSIGS; i++)
-		sigaction(badsigs[i], &savedsa[i], NULL);
-
-	/* If we intercepted a signal, re-issue it. */
-	for (i = 0; i < NSIGS; i++) {
-		if (gotsig[badsigs[i]])
-			raise(badsigs[i]);
-	}
+	resetsigs(savedsa);
 
 	/* Close /dev/tty if we opened it. */
 	if (readfrom != stdin)
