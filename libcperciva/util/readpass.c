@@ -196,6 +196,8 @@ err1:
 	insecure_memzero(passbuf, MAXPASSLEN);
 	insecure_memzero(confpassbuf, MAXPASSLEN);
 
+	resetsigs(savedsa);
+
 	/* Failure! */
 	return (-1);
 }
