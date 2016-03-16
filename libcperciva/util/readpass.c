@@ -38,6 +38,31 @@ handle(int sig)
 	gotsig[sig] = 1;
 }
 
+static void
+resetsigs(struct sigaction *savedsa)
+{
+	int i;
+
+	/* Restore old signals. */
+	for (i = 0; i < NSIGS; i++)
+		sigaction(badsigs[i], &savedsa[i], NULL);
+
+	/* If we intercepted a signal, re-issue it. */
+	for (i = 0; i < NSIGS; i++) {
+		if (gotsig[badsigs[i]])
+			raise(badsigs[i]);
+	}
+}
+
+static void
+warnp_read(FILE *readfrom)
+{
+	if (feof(readfrom))
+		fprintf(stderr, "EOF reading password\n");
+	else
+		warnp("Cannot read password");
+}
+
 /**
  * readpass(passwd, prompt, confirmprompt, devtty)
  * If ${devtty} is non-zero, read a password from /dev/tty if possible; if
@@ -104,7 +129,7 @@ retry:
 
 	/* Read the password. */
 	if (fgets(passbuf, MAXPASSLEN, readfrom) == NULL) {
-		warnp("Cannot read password");
+		warnp_read(readfrom);
 		goto err3;
 	}
 
@@ -113,7 +138,7 @@ retry:
 		if (usingtty)
 			fprintf(stderr, "%s: ", confirmprompt);
 		if (fgets(confpassbuf, MAXPASSLEN, readfrom) == NULL) {
-			warnp("Cannot read password");
+			warnp_read(readfrom);
 			goto err3;
 		}
 		if (strcmp(passbuf, confpassbuf)) {
@@ -129,16 +154,6 @@ retry:
 	/* If we changed terminal settings, reset them. */
 	if (usingtty)
 		tcsetattr(fileno(readfrom), TCSANOW, &term_old);
-
-	/* Restore old signals. */
-	for (i = 0; i < NSIGS; i++)
-		sigaction(badsigs[i], &savedsa[i], NULL);
-
-	/* If we intercepted a signal, re-issue it. */
-	for (i = 0; i < NSIGS; i++) {
-		if (gotsig[badsigs[i]])
-			raise(badsigs[i]);
-	}
 
 	/* Close /dev/tty if we opened it. */
 	if (readfrom != stdin)
@@ -163,6 +178,8 @@ retry:
 	insecure_memzero(passbuf, MAXPASSLEN);
 	insecure_memzero(confpassbuf, MAXPASSLEN);
 
+	resetsigs(savedsa);
+
 	/* Success! */
 	return (0);
 
@@ -178,6 +195,8 @@ err1:
 	/* Zero any stored passwords. */
 	insecure_memzero(passbuf, MAXPASSLEN);
 	insecure_memzero(confpassbuf, MAXPASSLEN);
+
+	resetsigs(savedsa);
 
 	/* Failure! */
 	return (-1);
