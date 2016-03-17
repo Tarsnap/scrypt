@@ -21,14 +21,14 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/util/memlimit.c			\
 			cpusupport-config.h
-AM_CPPFLAGS=		-I $(srcdir)/libcperciva/alg		\
-			-I $(srcdir)/libcperciva/cpusupport	\
-			-I $(srcdir)/libcperciva/crypto		\
-			-I $(srcdir)/libcperciva/util		\
-			-I $(srcdir)/lib/crypto			\
-			-I $(srcdir)/lib/scryptenc 		\
-			-I $(srcdir)/lib/util			\
-			-D CPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
+AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
+			-I$(srcdir)/libcperciva/cpusupport	\
+			-I$(srcdir)/libcperciva/crypto		\
+			-I$(srcdir)/libcperciva/util		\
+			-I$(srcdir)/lib/crypto			\
+			-I$(srcdir)/lib/scryptenc 		\
+			-I$(srcdir)/lib/util			\
+			-DCPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\"
 scrypt_LDADD=		libcperciva_aesni.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
