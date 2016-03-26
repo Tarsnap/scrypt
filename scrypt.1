@@ -33,6 +33,7 @@
 .Op Fl M Ar maxmem
 .Op Fl m Ar maxmemfrac
 .Op Fl t Ar maxtime
+.Op Fl P
 .Ar infile
 .Op Ar outfile
 .Nm
@@ -55,6 +56,19 @@ and writes the result to
 if specified, or the standard output otherwise.
 The user will be prompted to enter the passphrase used at
 encryption time to generate the derived encryption key.
+.Pp
+If
+.Fl P
+is not given,
+.Nm
+reads passphrases from its controlling terminal, or failing that,
+from stdin.  Prompts are only printed when
+.Nm
+is reading passphrases from some terminal.  If
+.Fl P
+is given, then
+.Nm
+does not print any prompts, and reads a passphrase from stdin.
 .Sh OPTIONS
 .Bl -tag -width "-m maxmemfrac"
 .It Fl M Ar maxmem
@@ -69,6 +83,9 @@ of the available RAM to compute the derived encryption key.
 Use at most
 .Ar maxtime
 seconds of CPU time to compute the derived encryption key.
+.It Fl P
+Always read passphrase from stdin, and do so only once even
+when encrypting.
 .It Fl -version
 Print version of scrypt, and exit.
 .El
