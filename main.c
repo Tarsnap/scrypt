@@ -44,7 +44,7 @@ usage(void)
 
 	fprintf(stderr,
 	    "usage: scrypt {enc | dec} [-M maxmem] [-m maxmemfrac]"
-	    " [-t maxtime] [-v] infile\n"
+	    " [-t maxtime] [-v] [-P] infile\n"
 	    "              [outfile]\n"
 	    "       scrypt --version\n");
 	exit(1);
