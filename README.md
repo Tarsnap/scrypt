@@ -81,7 +81,7 @@ Using scrypt as a KDF
 To use scrypt as a
 [key derivation function](https://en.wikipedia.org/wiki/Key_derivation_function)
 (KDF), take a
-look at the `lib/crypto/crypto_enc.h` header, which provides:
+look at the `lib/crypto/crypto_scrypt.h` header, which provides:
 
 ```
 /**
