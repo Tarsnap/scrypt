@@ -79,6 +79,7 @@ EXTRA_DIST = \
 	scrypt_platform.h					\
 	test/test_scrypt.c					\
 	test/test_scrypt.good					\
+	test/test_scrypt_good.enc				\
 	test/test_scrypt.sh
 
 test_test_scrypt_SOURCES =	test/test_scrypt.c			\
@@ -95,6 +96,8 @@ test_test_scrypt_LDADD=	libscrypt_sse2.a
 # we can't only build "scrypt test/test_scrypt" because that won't build
 # the BUILT_SOURCES.
 test: all
-	$(top_srcdir)/test/test_scrypt.sh \
-		test/test_scrypt \
-		$(top_srcdir)/test/test_scrypt.good
+	$(top_srcdir)/test/test_scrypt.sh			\
+		./scrypt					\
+		test/test_scrypt				\
+		$(top_srcdir)/test/test_scrypt.good		\
+		$(top_srcdir)/test/test_scrypt_good.enc
