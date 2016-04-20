@@ -15,6 +15,10 @@ decrypted_reference_file="attempt_reference.txt"
 
 ################################ Setup variables from the command-line
 
+# Find script directory and load helper functions.
+scriptdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+. $scriptdir/shared_test_functions.sh
+
 # Check for required arguments.
 if [ -z $scrypt_binary ] || [ -z $test_scrypt_binary ] || \
     [ -z $reference_txt ] || [ -z $reference_enc ]; then
@@ -40,16 +44,21 @@ test_known_values() {
 
 	# Run actual test command.
 	$test_scrypt_binary > $known_values
+	cmd_retval=$?
+
+	# Check results.
+	retval=$cmd_retval
 
 	# The generated values should match the known good values.
 	if cmp -s $known_values $reference_txt; then
+		# Clean up temporary file.
 		rm $known_values
-		echo "PASSED!"
-		retval=0
 	else
-		echo "FAILED!"
 		retval=1
 	fi
+
+	# Print PASS or FAIL, and return result.
+	notify_success_or_fail $retval
 	return "$retval"
 }
 
@@ -60,19 +69,21 @@ test_encrypt_file() {
 	# Run actual test command.
 	echo $password | $scrypt_binary enc -P $reference_txt \
 		$encrypted_file
+	cmd_retval=$?
+
+	# Check results.
+	retval=$cmd_retval
 
 	# The encrypted file should be different from the original file.
 	# We cannot check against the "reference" encrypted file, because
-	# encrypted files include random salt.
-	if ! cmp -s $encrypted_file $reference_txt; then
-		# don't delete $encrypted_file yet; we need it for the
-		# next test.
-		echo "PASSED!"
-		retval=0
-	else
-		echo "FAILED!"
+	# encrypted files include random salt.  If successful, don't delete
+	# $encrypted_file yet; we need it for the next test.
+	if cmp -s $encrypted_file $reference_txt; then
 		retval=1
 	fi
+
+	# Print PASS or FAIL, and return result.
+	notify_success_or_fail $retval
 	return "$retval"
 }
 
@@ -83,17 +94,22 @@ test_decrypt_file() {
 	# Run actual test command.
 	echo $password | $scrypt_binary dec -P $encrypted_file \
 		$decrypted_file
+	cmd_retval=$?
+
+	# Check results.
+	retval=$cmd_retval
 
 	# The decrypted file should match the reference.
 	if cmp -s $decrypted_file $reference_txt; then
+		# Clean up temporary files.
 		rm $encrypted_file
 		rm $decrypted_file
-		echo "PASSED!"
-		retval=0
 	else
-		echo "FAILED!"
 		retval=1
 	fi
+
+	# Print PASS or FAIL, and return result.
+	notify_success_or_fail $retval
 	return "$retval"
 }
 
@@ -104,16 +120,20 @@ test_decrypt_reference_file() {
 	# Run actual test command.
 	echo $password | $scrypt_binary dec -P $reference_enc \
 		$decrypted_reference_file
+	cmd_retval=$?
+
+	# Check results.
+	retval=$cmd_retval
 
 	# The decrypted reference file should match the reference.
 	if cmp -s $decrypted_reference_file $reference_txt; then
 		rm $decrypted_reference_file
-		echo "PASSED!"
-		retval=0
 	else
-		echo "FAILED!"
 		retval=1
 	fi
+
+	# Print PASS or FAIL, and return result.
+	notify_success_or_fail $retval
 	return "$retval"
 }
 
