@@ -105,6 +105,16 @@ A small test suite can be run with:
 
     make test
 
+Memory-testing normal operations with valgrind (takes approximately 4 times as
+long as no valgrind tests) can be enabled with:
+
+    make test USE_VALGRIND=1
+
+Memory-testing all tests with valgrind (requires over 1 GB memory, and takes
+approximately 4 times as long as `USE_VALGRIND=1`) can be enabled with:
+
+    make test USE_VALGRIND=2
+
 
 Mailing list
 ------------
