@@ -1,19 +1,12 @@
 #!/bin/sh
 
-# Process command-line and environment variables
+# Process command-line arguments
 SCRYPTVERSION=$1
-if [ -z "$SCRYPTVERSION" ]; then
-	echo "Please specify the version number"
-	exit 1
-fi
+GNUPG_SIGNING_HOME=$2
 
-if [ -z "$GPGKEYFILE" ]; then
-	echo "Please set your \$GPGKEYFILE"
-	exit 1
-fi
-
-if [ -z "$GPGKEYID" ]; then
-	echo "Please set your \$GPGKEYID"
+# Check for required arguments
+if [ -z "$SCRYPTVERSION" ] || [ -z "$GNUPG_SIGNING_HOME" ]; then
+	echo "Usage: $0 SCRYPTVERSION GNUPG_SIGNING_HOME"
 	exit 1
 fi
 
@@ -29,5 +22,5 @@ sh ${dir}/mktarball.sh $SCRYPTVERSION
 
 # Sign tarball
 sha256 ${PKGNAME}.tgz |			\
-    gpg --secret-keyring $GPGKEYFILE --clearsign -u $GPGKEYID \
+    GNUPGHOME=${GNUPG_SIGNING_HOME} gpg --clearsign \
     > ${PKGSIGS}.asc
