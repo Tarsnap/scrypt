@@ -10,6 +10,14 @@ if [ -z "$SCRYPTVERSION" ] || [ -z "$GNUPG_SIGNING_HOME" ]; then
 	exit 1
 fi
 
+# Check for correct OS
+if [ `uname` != "FreeBSD" ]; then
+	echo "Error: This script only works on FreeBSD due to the"
+	echo "    sha256 \${PKGNAME}.tgz"
+	echo "command, which has a different meaning on other OSes."
+	exit 1
+fi
+
 # Constants
 PKGNAME=scrypt-${SCRYPTVERSION}
 PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
