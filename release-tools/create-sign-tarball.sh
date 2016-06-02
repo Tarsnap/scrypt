@@ -1,19 +1,20 @@
 #!/bin/sh
 
-# Process command-line and environment variables
+# Process command-line arguments
 SCRYPTVERSION=$1
-if [ -z "$SCRYPTVERSION" ]; then
-	echo "Please specify the version number"
+GNUPG_SIGNING_HOME=$2
+
+# Check for required arguments
+if [ -z "$SCRYPTVERSION" ] || [ -z "$GNUPG_SIGNING_HOME" ]; then
+	echo "Usage: $0 SCRYPTVERSION GNUPG_SIGNING_HOME"
 	exit 1
 fi
 
-if [ -z "$GPGKEYFILE" ]; then
-	echo "Please set your \$GPGKEYFILE"
-	exit 1
-fi
-
-if [ -z "$GPGKEYID" ]; then
-	echo "Please set your \$GPGKEYID"
+# Check for correct OS
+if [ `uname` != "FreeBSD" ]; then
+	echo "Error: This script only works on FreeBSD due to the"
+	echo "    sha256 \${PKGNAME}.tgz"
+	echo "command, which has a different meaning on other OSes."
 	exit 1
 fi
 
@@ -29,5 +30,5 @@ sh ${dir}/mktarball.sh $SCRYPTVERSION
 
 # Sign tarball
 sha256 ${PKGNAME}.tgz |			\
-    gpg --secret-keyring $GPGKEYFILE --clearsign -u $GPGKEYID \
+    GNUPGHOME=${GNUPG_SIGNING_HOME} gpg --clearsign \
     > ${PKGSIGS}.asc
