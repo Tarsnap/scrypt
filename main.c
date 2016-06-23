@@ -79,8 +79,10 @@ main(int argc, char *argv[])
 	} else if (strcmp(argv[1], "--version") == 0) {
 		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
 		exit(0);
-	} else
+	} else {
+		warn0("First argument must be 'enc' or 'dec'.\n");
 		usage();
+	}
 	argc--;
 	argv++;
 
