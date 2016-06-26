@@ -79,8 +79,10 @@ main(int argc, char *argv[])
 	} else if (strcmp(argv[1], "--version") == 0) {
 		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
 		exit(0);
-	} else
+	} else {
+		warn0("First argument must be 'enc' or 'dec'.\n");
 		usage();
+	}
 	argc--;
 	argv++;
 
@@ -104,8 +106,9 @@ main(int argc, char *argv[])
 			break;
 		GETOPT_MISSING_ARG:
 			warn0("Missing argument to %s\n", ch);
-			/* FALLTHROUGH */
+			usage();
 		GETOPT_DEFAULT:
+			warn0("illegal option -- %s\n", ch);
 			usage();
 		}
 	}
