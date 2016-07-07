@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# File locations (allowing flexible out-of-tree builds).
-scrypt_binary=$1
-test_scrypt_binary=$2
-reference_txt=$3
-reference_enc=$4
+# Build directory (allowing flexible out-of-tree builds).
+bindir=$1
 
 # Constants
 password="hunter2"
@@ -21,21 +18,10 @@ out_valgrind="test-valgrind"
 scriptdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
 . $scriptdir/shared_test_functions.sh
 
-# Check for required arguments.
-if [ -z $scrypt_binary ] || [ -z $test_scrypt_binary ] || \
-    [ -z $reference_txt ] || [ -z $reference_enc ]; then
-	printf "Error: Scrypt binary, test binary, good file, or good "
-	printf "encrypted file not given.\n"
+if [ -z $bindir ]; then
+	printf "Error: Scrypt binary directory not given.\n"
 	printf "Attempting to use default values for in-source-tree build.\n"
-	scrypt_binary="../scrypt"
-	test_scrypt_binary="./test_scrypt"
-	reference_txt="./test_scrypt.good"
-	reference_enc="./test_scrypt_good.enc"
-fi
-if [ ! -f $scrypt_binary ] || [ ! -f $test_scrypt_binary ] || \
-    [ ! -f $reference_txt ] || [ ! -f $reference_enc ]; then
-	echo "Error: Cannot find at least one required file."
-	exit 1
+	bindir=".."
 fi
 
 # Check for optional valgrind
@@ -54,14 +40,14 @@ test_known_values() {
 	val_cmd=$( setup_valgrind_cmd $val_logfilename 1 )
 
 	# Run actual test command.
-	$val_cmd $test_scrypt_binary > $known_values
+	$val_cmd $bindir/test/test_scrypt > $known_values
 	cmd_retval=$?
 
 	# Check results.
 	retval=$cmd_retval
 
 	# The generated values should match the known good values.
-	if cmp -s $known_values $reference_txt; then
+	if cmp -s $known_values $scriptdir/test_scrypt.good; then
 		# Clean up temporary file.
 		rm $known_values
 	else
@@ -82,8 +68,8 @@ test_encrypt_file() {
 	val_cmd=$( setup_valgrind_cmd $val_logfilename )
 
 	# Run actual test command.
-	echo $password | $val_cmd $scrypt_binary enc -P $reference_txt \
-		$encrypted_file
+	echo $password | $val_cmd $bindir/scrypt enc -P \
+		$scriptdir/test_scrypt.good $encrypted_file
 	cmd_retval=$?
 
 	# Check results.
@@ -93,7 +79,7 @@ test_encrypt_file() {
 	# We cannot check against the "reference" encrypted file, because
 	# encrypted files include random salt.  If successful, don't delete
 	# $encrypted_file yet; we need it for the next test.
-	if cmp -s $encrypted_file $reference_txt; then
+	if cmp -s $encrypted_file $scriptdir/test_scrypt.good; then
 		retval=1
 	fi
 
@@ -111,7 +97,7 @@ test_decrypt_file() {
 	val_cmd=$( setup_valgrind_cmd $val_logfilename )
 
 	# Run actual test command.
-	echo $password | $val_cmd $scrypt_binary dec -P $encrypted_file \
+	echo $password | $val_cmd $bindir/scrypt dec -P $encrypted_file \
 		$decrypted_file
 	cmd_retval=$?
 
@@ -119,7 +105,7 @@ test_decrypt_file() {
 	retval=$cmd_retval
 
 	# The decrypted file should match the reference.
-	if cmp -s $decrypted_file $reference_txt; then
+	if cmp -s $decrypted_file $scriptdir/test_scrypt.good; then
 		# Clean up temporary files.
 		rm $encrypted_file
 		rm $decrypted_file
@@ -141,15 +127,15 @@ test_decrypt_reference_file() {
 	val_cmd=$( setup_valgrind_cmd $val_logfilename )
 
 	# Run actual test command.
-	echo $password | $val_cmd $scrypt_binary dec -P $reference_enc \
-		$decrypted_reference_file
+	echo $password | $val_cmd $bindir/scrypt dec -P \
+		$scriptdir/test_scrypt_good.enc $decrypted_reference_file
 	cmd_retval=$?
 
 	# Check results.
 	retval=$cmd_retval
 
 	# The decrypted reference file should match the reference.
-	if cmp -s $decrypted_reference_file $reference_txt; then
+	if cmp -s $decrypted_reference_file $scriptdir/test_scrypt.good; then
 		rm $decrypted_reference_file
 	else
 		retval=1

@@ -97,8 +97,4 @@ tests_test_scrypt_LDADD=	libscrypt_sse2.a
 # we can't only build "scrypt tests/test_scrypt" because that won't build
 # the BUILT_SOURCES.
 test: all
-	$(top_srcdir)/tests/test_scrypt.sh			\
-		./scrypt					\
-		tests/test_scrypt				\
-		$(top_srcdir)/tests/test_scrypt.good		\
-		$(top_srcdir)/tests/test_scrypt_good.enc
+	$(top_srcdir)/tests/test_scrypt.sh .
