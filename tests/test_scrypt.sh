@@ -9,7 +9,8 @@ known_values="known_values.txt"
 encrypted_file="attempt.enc"
 decrypted_file="attempt.txt"
 decrypted_reference_file="attempt_reference.txt"
-out_valgrind="test-valgrind"
+out="tests-output"
+out_valgrind="tests-valgrind"
 
 
 ################################ Setup variables from the command-line
@@ -40,16 +41,16 @@ test_known_values() {
 	val_cmd=$( setup_valgrind_cmd $val_logfilename 1 )
 
 	# Run actual test command.
-	$val_cmd $bindir/test/test_scrypt > $known_values
+	$val_cmd $bindir/test/test_scrypt > $out/$known_values
 	cmd_retval=$?
 
 	# Check results.
 	retval=$cmd_retval
 
 	# The generated values should match the known good values.
-	if cmp -s $known_values $scriptdir/test_scrypt.good; then
+	if cmp -s $out/$known_values $scriptdir/test_scrypt.good; then
 		# Clean up temporary file.
-		rm $known_values
+		rm $out/$known_values
 	else
 		retval=1
 	fi
@@ -69,7 +70,7 @@ test_encrypt_file() {
 
 	# Run actual test command.
 	echo $password | $val_cmd $bindir/scrypt enc -P \
-		$scriptdir/test_scrypt.good $encrypted_file
+		$scriptdir/test_scrypt.good $out/$encrypted_file
 	cmd_retval=$?
 
 	# Check results.
@@ -79,7 +80,7 @@ test_encrypt_file() {
 	# We cannot check against the "reference" encrypted file, because
 	# encrypted files include random salt.  If successful, don't delete
 	# $encrypted_file yet; we need it for the next test.
-	if cmp -s $encrypted_file $scriptdir/test_scrypt.good; then
+	if cmp -s $out/$encrypted_file $scriptdir/test_scrypt.good; then
 		retval=1
 	fi
 
@@ -97,18 +98,18 @@ test_decrypt_file() {
 	val_cmd=$( setup_valgrind_cmd $val_logfilename )
 
 	# Run actual test command.
-	echo $password | $val_cmd $bindir/scrypt dec -P $encrypted_file \
-		$decrypted_file
+	echo $password | $val_cmd $bindir/scrypt dec -P $out/$encrypted_file \
+		$out/$decrypted_file
 	cmd_retval=$?
 
 	# Check results.
 	retval=$cmd_retval
 
 	# The decrypted file should match the reference.
-	if cmp -s $decrypted_file $scriptdir/test_scrypt.good; then
+	if cmp -s $out/$decrypted_file $scriptdir/test_scrypt.good; then
 		# Clean up temporary files.
-		rm $encrypted_file
-		rm $decrypted_file
+		rm $out/$encrypted_file
+		rm $out/$decrypted_file
 	else
 		retval=1
 	fi
@@ -128,15 +129,15 @@ test_decrypt_reference_file() {
 
 	# Run actual test command.
 	echo $password | $val_cmd $bindir/scrypt dec -P \
-		$scriptdir/test_scrypt_good.enc $decrypted_reference_file
+		$scriptdir/test_scrypt_good.enc $out/$decrypted_reference_file
 	cmd_retval=$?
 
 	# Check results.
 	retval=$cmd_retval
 
 	# The decrypted reference file should match the reference.
-	if cmp -s $decrypted_reference_file $scriptdir/test_scrypt.good; then
-		rm $decrypted_reference_file
+	if cmp -s $out/$decrypted_reference_file $scriptdir/test_scrypt.good; then
+		rm $out/$decrypted_reference_file
 	else
 		retval=1
 	fi
@@ -148,11 +149,17 @@ test_decrypt_reference_file() {
 
 ################################ Run tests
 
-# Clean up previous valgrind (if in use).
+# Clean up previous directories.
+if [ -d "$out" ]; then
+	rm -rf $out
+fi
+if [ -d "$out_valgrind" ]; then
+	rm -rf $out_valgrind
+fi
+
+# Make new directories.
+mkdir $out
 if [ "$USE_VALGRIND" -gt 0 ]; then
-	if [ -d "$out_valgrind" ]; then
-		rm -rf $out_valgrind
-	fi
 	mkdir $out_valgrind
 fi
 
