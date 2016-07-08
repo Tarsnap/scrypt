@@ -5,10 +5,6 @@ bindir=$1
 
 # Constants
 password="hunter2"
-known_values="known_values.txt"
-encrypted_file="attempt.enc"
-decrypted_file="attempt.txt"
-decrypted_reference_file="attempt_reference.txt"
 out="tests-output"
 out_valgrind="tests-valgrind"
 
@@ -30,109 +26,22 @@ USE_VALGRIND=$( check_optional_valgrind )
 
 ################################ Test functions
 
-test_known_values() {
-	basename="01-generate-known-test-values"
-	printf "Running test: $basename... "
+scenario_runner() {
+	scenario_name=$1
+	. $scenario_name
 
-	# Set up valgrind command (if requested).  $test_scrypt_binary
-	# requires a lot of memory, so valgrind is only enabled if
-	# $USE_VALGRIND > 1.
-	val_logfilename=$out_valgrind/$basename-val.log
-	val_cmd=$( setup_valgrind_cmd $val_logfilename 1 )
-
-	# Run actual test command.
-	$val_cmd $bindir/test/test_scrypt > $out/$known_values
-	cmd_retval=$?
-
-	# Check results.
-	retval=$cmd_retval
-
-	# The generated values should match the known good values.
-	if ! cmp -s $out/$known_values $scriptdir/test_scrypt.good; then
-		retval=1
-	fi
-
-	# Print PASS or FAIL, and return result.
-	notify_success_or_fail $retval $cmd_retval $val_logfilename
-	return "$retval"
-}
-
-test_encrypt_file() {
-	basename="02-encrypt-a-file"
+	basename=`basename $scenario_name .sh`
 	printf "Running test: $basename... "
 
 	# Set up valgrind command (if requested).
 	val_logfilename=$out_valgrind/$basename-val.log
-	val_cmd=$( setup_valgrind_cmd $val_logfilename )
+	val_cmd=$( setup_valgrind_cmd $val_logfilename $scenario_need_valgrind )
 
 	# Run actual test command.
-	echo $password | $val_cmd $bindir/scrypt enc -P \
-		$scriptdir/test_scrypt.good $out/$encrypted_file
-	cmd_retval=$?
+	cmd_retval=$( scenario_cmd )
 
 	# Check results.
-	retval=$cmd_retval
-
-	# The encrypted file should be different from the original file.
-	# We cannot check against the "reference" encrypted file, because
-	# encrypted files include random salt.  If successful, don't delete
-	# $encrypted_file yet; we need it for the next test.
-	if cmp -s $out/$encrypted_file $scriptdir/test_scrypt.good; then
-		retval=1
-	fi
-
-	# Print PASS or FAIL, and return result.
-	notify_success_or_fail $retval $cmd_retval $val_logfilename
-	return "$retval"
-}
-
-test_decrypt_file() {
-	basename="03-decrypt-a-file"
-	printf "Running test: $basename... "
-
-	# Set up valgrind command (if requested).
-	val_logfilename=$out_valgrind/$basename-val.log
-	val_cmd=$( setup_valgrind_cmd $val_logfilename )
-
-	# Run actual test command.
-	echo $password | $val_cmd $bindir/scrypt dec -P $out/$encrypted_file \
-		$out/$decrypted_file
-	cmd_retval=$?
-
-	# Check results.
-	retval=$cmd_retval
-
-	# The decrypted file should match the reference.
-	if ! cmp -s $out/$decrypted_file $scriptdir/test_scrypt.good; then
-		retval=1
-	fi
-
-	# Print PASS or FAIL, and return result.
-	notify_success_or_fail $retval $cmd_retval $val_logfilename
-	return "$retval"
-}
-
-test_decrypt_reference_file() {
-	basename="04-decrypt-a-reference-encrypted-file"
-	printf "Running test: $basename... "
-
-	# Set up valgrind command (if requested).
-	val_logfilename=$out_valgrind/$basename-val.log
-	val_cmd=$( setup_valgrind_cmd $val_logfilename )
-
-	# Run actual test command.
-	echo $password | $val_cmd $bindir/scrypt dec -P \
-		$scriptdir/test_scrypt_good.enc $out/$decrypted_reference_file
-	cmd_retval=$?
-
-	# Check results.
-	retval=$cmd_retval
-
-	# The decrypted reference file should match the reference.
-	if ! cmp -s $out/$decrypted_reference_file \
-	    $scriptdir/test_scrypt.good; then
-		retval=1
-	fi
+	retval=$( scenario_check $cmd_retval )
 
 	# Print PASS or FAIL, and return result.
 	notify_success_or_fail $retval $cmd_retval $val_logfilename
@@ -156,10 +65,16 @@ if [ "$USE_VALGRIND" -gt 0 ]; then
 fi
 
 # Run tests.
-test_known_values &&			\
-	test_encrypt_file &&		\
-	test_decrypt_file &&		\
-	test_decrypt_reference_file	\
+scenario_filenames=$scriptdir/??-*.sh
+for scenario in $scenario_filenames; do
+	# We can't call this function with $( ... ) because we want to allow
+	# it to echo values to stdout.
+	scenario_runner $scenario
+	retval=$?
+	if [ $retval -gt 0 ]; then
+		exit $retval
+	fi
+done
 
 # Return value to Makefile.
 exit $?
