@@ -48,10 +48,7 @@ test_known_values() {
 	retval=$cmd_retval
 
 	# The generated values should match the known good values.
-	if cmp -s $out/$known_values $scriptdir/test_scrypt.good; then
-		# Clean up temporary file.
-		rm $out/$known_values
-	else
+	if ! cmp -s $out/$known_values $scriptdir/test_scrypt.good; then
 		retval=1
 	fi
 
@@ -106,11 +103,7 @@ test_decrypt_file() {
 	retval=$cmd_retval
 
 	# The decrypted file should match the reference.
-	if cmp -s $out/$decrypted_file $scriptdir/test_scrypt.good; then
-		# Clean up temporary files.
-		rm $out/$encrypted_file
-		rm $out/$decrypted_file
-	else
+	if ! cmp -s $out/$decrypted_file $scriptdir/test_scrypt.good; then
 		retval=1
 	fi
 
@@ -136,9 +129,8 @@ test_decrypt_reference_file() {
 	retval=$cmd_retval
 
 	# The decrypted reference file should match the reference.
-	if cmp -s $out/$decrypted_reference_file $scriptdir/test_scrypt.good; then
-		rm $out/$decrypted_reference_file
-	else
+	if ! cmp -s $out/$decrypted_reference_file \
+	    $scriptdir/test_scrypt.good; then
 		retval=1
 	fi
 
