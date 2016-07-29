@@ -6,8 +6,6 @@ bindir=$1
 # Constants used in multiple scenarios.
 password="hunter2"
 encrypted_file="attempt.enc"
-out="tests-output"
-out_valgrind="tests-valgrind"
 
 
 ################################ Setup variables from the command-line
@@ -24,30 +22,6 @@ fi
 
 # Check for optional valgrind
 USE_VALGRIND=$( check_optional_valgrind )
-
-################################ Test functions
-
-scenario_runner() {
-	scenario_name=$1
-	. $scenario_name
-
-	basename=`basename $scenario_name .sh`
-	printf "Running test: $basename... "
-
-	# Set up valgrind command (if requested).
-	val_logfilename=$out_valgrind/$basename-val.log
-	val_cmd=$( setup_valgrind_cmd $val_logfilename $scenario_valgrind_min )
-
-	# Run actual test command.
-	cmd_retval=$( scenario_cmd )
-
-	# Check results.
-	retval=$( scenario_check $cmd_retval )
-
-	# Print PASS or FAIL, and return result.
-	notify_success_or_fail $retval $cmd_retval $val_logfilename
-	return "$retval"
-}
 
 ################################ Run tests
 

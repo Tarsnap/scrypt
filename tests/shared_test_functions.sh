@@ -1,5 +1,9 @@
 #!/bin/sh
 
+### Constants
+out="tests-output"
+out_valgrind="tests-valgrind"
+
 # A non-zero value unlikely to be used as an exit code by the programs being
 # tested.
 valgrind_exit_code=108
@@ -80,3 +84,36 @@ notify_success_or_fail() {
 		done
 	fi
 }
+
+## scenario_runner (scenario_filename):
+# Runs a test scenario from $scenario_filename.  That file must define:
+# - scenario_valgrind_min: an integer specifying the minimum USE_VALGRIND
+#       value which enables valgrind memory testing.
+# - scenario_cmd: a function which runs any commands whose exit value(s) are
+#       checked, and produce any desired files.
+# - scenario_check: a function which checks any files produced by
+#       scenario_cmd.
+scenario_runner() {
+	scenario_filename=$1
+	basename=`basename $scenario_filename .sh`
+	printf "Running test: $basename... "
+
+	# Load variables from the scenario file.
+	. $scenario_filename
+
+	# Set up valgrind command (if requested).
+	val_logfilename=$out_valgrind/$basename-val.log
+	val_cmd=$( setup_valgrind_cmd $val_logfilename $scenario_valgrind_min )
+
+	# Run actual test command.
+	cmd_retval=$( scenario_cmd )
+
+	# Check results.
+	retval=$( scenario_check $cmd_retval )
+
+	# Print PASS or FAIL, and return result.
+	notify_success_or_fail $retval $cmd_retval $val_logfilename
+	return "$retval"
+}
+
+
