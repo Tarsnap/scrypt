@@ -3,8 +3,9 @@
 # Build directory (allowing flexible out-of-tree builds).
 bindir=$1
 
-# Constants
+# Constants used in multiple scenarios.
 password="hunter2"
+encrypted_file="attempt.enc"
 out="tests-output"
 out_valgrind="tests-valgrind"
 

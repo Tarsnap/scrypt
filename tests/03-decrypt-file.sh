@@ -3,8 +3,6 @@
 ### Constants
 scenario_valgrind_min=1
 
-# The encrypted_file must match the filename in 02-encrypt-file.sh
-encrypted_file="attempt.enc"
 decrypted_file="attempt.txt"
 
 # This requires the file created in 02-encrypt-file.sh

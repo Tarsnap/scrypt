@@ -3,8 +3,6 @@
 ### Constants
 scenario_valgrind_min=1
 
-encrypted_file="attempt.enc"
-
 scenario_cmd() {
 	echo $password | $val_cmd $bindir/scrypt enc -P \
 		$scriptdir/test_scrypt.good $out/$encrypted_file
