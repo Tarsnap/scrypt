@@ -3,7 +3,7 @@
 ### Constants
 # The scenario command requires a lot of memory, so valgrind is only enabled
 # if $USE_VALGRIND > 1.
-scenario_need_valgrind=1
+scenario_valgrind_min=2
 
 ### Actual command
 scenario_cmd() {

@@ -21,16 +21,16 @@ check_optional_valgrind() {
 	echo "$USE_VALGRIND"
 }
 
-## setup_valgrind_cmd (val_logfilename, valgrind_disable_number=0):
-# Return a valid valgrind command if $USE_VALGRIND is higher than
-# $valgrind_disable_number; otherwise, returns an empty string.
+## setup_valgrind_cmd (val_logfilename, valgrind_min=0):
+# Return a valid valgrind command if $USE_VALGRIND is greater than or equal to
+# $valgrind_min; otherwise, returns an empty string.
 setup_valgrind_cmd() {
 	val_logfilename=$1
 	# The user-specified $USE_VALGRIND number must be higher than
-	# $valgrind_disable_number; this allows us to specify certain tests as
-	# being "normal memory usage" or "lots of memory required; most people
-	# won't want to run valgrind on this".
-	valgrind_disable_number=${2:-0}
+	# $valgrind_min; this allows us to specify certain tests as being
+	# "normal memory usage" or "lots of memory required; most people won't
+	# want to run valgrind on this".
+	valgrind_min=${2:-0}
 
 	# Set up the valgrind command (if requested).  Using --error-exitcode
 	# means that if there is a serious problem (such that scrypt calls
@@ -39,7 +39,7 @@ setup_valgrind_cmd() {
 	# no memory leak, we still receive a non-zero exit code.  The most
 	# important thing is that we only receive an exit code of 0 if both
 	# the program and valgrind are happy.
-	if [ "$USE_VALGRIND" -gt "$valgrind_disable_number" ]; then
+	if [ "$USE_VALGRIND" -ge "$valgrind_min" ]; then
 		valgrind_cmd="valgrind \
 			--log-file=$val_logfilename \
 			--leak-check=full --show-leak-kinds=all \

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### Constants
-scenario_need_valgrind=0
+scenario_valgrind_min=1
 
 encrypted_file="attempt.enc"
 

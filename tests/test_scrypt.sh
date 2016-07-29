@@ -35,7 +35,7 @@ scenario_runner() {
 
 	# Set up valgrind command (if requested).
 	val_logfilename=$out_valgrind/$basename-val.log
-	val_cmd=$( setup_valgrind_cmd $val_logfilename $scenario_need_valgrind )
+	val_cmd=$( setup_valgrind_cmd $val_logfilename $scenario_valgrind_min )
 
 	# Run actual test command.
 	cmd_retval=$( scenario_cmd )

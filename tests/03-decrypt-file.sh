@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### Constants
-scenario_need_valgrind=0
+scenario_valgrind_min=1
 
 # The encrypted_file must match the filename in 02-encrypt-file.sh
 encrypted_file="attempt.enc"
