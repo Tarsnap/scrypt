@@ -25,19 +25,8 @@ USE_VALGRIND=$( check_optional_valgrind )
 
 ################################ Run tests
 
-# Clean up previous directories.
-if [ -d "$out" ]; then
-	rm -rf $out
-fi
-if [ -d "$out_valgrind" ]; then
-	rm -rf $out_valgrind
-fi
-
-# Make new directories.
-mkdir $out
-if [ "$USE_VALGRIND" -gt 0 ]; then
-	mkdir $out_valgrind
-fi
+# Clean up previous directories, and create new ones.
+prepare_directories
 
 # Run tests.
 scenario_filenames=$scriptdir/??-*.sh

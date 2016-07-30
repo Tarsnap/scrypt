@@ -8,6 +8,26 @@ out_valgrind="tests-valgrind"
 # tested.
 valgrind_exit_code=108
 
+## prepare_directories():
+# Delete any old directories, and create new ones as necessary.  Must be run
+# after check_optional_valgrind().
+prepare_directories() {
+	# Clean up previous directories.
+	if [ -d "$out" ]; then
+		rm -rf $out
+	fi
+	if [ -d "$out_valgrind" ]; then
+		rm -rf $out_valgrind
+	fi
+
+	# Make new directories.
+	mkdir $out
+	if [ "$USE_VALGRIND" -gt 0 ]; then
+		mkdir $out_valgrind
+	fi
+}
+
+
 ## check_optional_valgrind ():
 # Return a $USE_VALGRIND variable defined; if it was previously defined and
 # was greater than 0, then check that valgrind is available in the $PATH.
