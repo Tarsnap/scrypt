@@ -1,4 +1,4 @@
-bin_PROGRAMS=	scrypt test/test_scrypt
+bin_PROGRAMS=	scrypt tests/test_scrypt
 dist_man_MANS=$(scrypt_man_MANS)
 
 scrypt_SOURCES=		main.c					\
@@ -78,12 +78,12 @@ EXTRA_DIST = \
 	libcperciva/util/sysendian.h				\
 	libcperciva/util/warnp.h				\
 	scrypt_platform.h					\
-	test/test_scrypt.c					\
-	test/test_scrypt.good					\
-	test/test_scrypt_good.enc				\
-	test/test_scrypt.sh
+	tests/test_scrypt.c					\
+	tests/test_scrypt.good					\
+	tests/test_scrypt_good.enc				\
+	tests/test_scrypt.sh
 
-test_test_scrypt_SOURCES =	test/test_scrypt.c			\
+tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			libcperciva/alg/sha256.c			\
 			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
 			libcperciva/util/insecure_memzero.c		\
@@ -91,14 +91,10 @@ test_test_scrypt_SOURCES =	test/test_scrypt.c			\
 			lib/crypto/crypto_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			cpusupport-config.h
-test_test_scrypt_LDADD=	libscrypt_sse2.a
+tests_test_scrypt_LDADD=	libscrypt_sse2.a
 
 .PHONY: test
-# we can't only build "scrypt test/test_scrypt" because that won't build
+# we can't only build "scrypt tests/test_scrypt" because that won't build
 # the BUILT_SOURCES.
 test: all
-	$(top_srcdir)/test/test_scrypt.sh			\
-		./scrypt					\
-		test/test_scrypt				\
-		$(top_srcdir)/test/test_scrypt.good		\
-		$(top_srcdir)/test/test_scrypt_good.enc
+	$(top_srcdir)/tests/test_scrypt.sh .
