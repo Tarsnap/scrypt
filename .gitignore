@@ -15,3 +15,5 @@
 /stamp-h1
 Makefile
 Makefile.in
+# Other directories
+tests/test_scrypt
