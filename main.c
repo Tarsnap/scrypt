@@ -57,6 +57,7 @@ main(int argc, char *argv[])
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
+	uintmax_t maxmem_uintmax;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
 	const char * ch;
@@ -89,7 +90,12 @@ main(int argc, char *argv[])
 	while ((ch = GETOPT(argc, argv)) != NULL) {
 		GETOPT_SWITCH(ch) {
 		GETOPT_OPTARG("-M"):
-			maxmem = strtoumax(optarg, NULL, 0);
+			maxmem_uintmax = strtoumax(optarg, NULL, 0);
+			if (maxmem_uintmax > SIZE_MAX) {
+				warn0("The parameter to -M is too large.");
+				exit(1);
+			}
+			maxmem = (size_t)maxmem_uintmax;
 			break;
 		GETOPT_OPTARG("-m"):
 			maxmemfrac = strtod(optarg, NULL);
