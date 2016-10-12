@@ -1,4 +1,5 @@
-bin_PROGRAMS=	scrypt tests/test_scrypt
+bin_PROGRAMS=	scrypt
+noinst_PROGRAMS=	tests/test_scrypt
 dist_man_MANS=$(scrypt_man_MANS)
 
 scrypt_SOURCES=		main.c					\
