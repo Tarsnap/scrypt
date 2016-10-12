@@ -3,6 +3,8 @@
 ### Constants
 out="tests-output"
 out_valgrind="tests-valgrind"
+valgrind_suppressions="${out_valgrind}/suppressions"
+valgrind_suppressions_log="${out_valgrind}/suppressions.pre"
 
 # A non-zero value unlikely to be used as an exit code by the programs being
 # tested.
@@ -45,6 +47,40 @@ check_optional_valgrind() {
 	echo "$USE_VALGRIND"
 }
 
+## ensure_valgrind_suppresssion (potential_memleaks_binary):
+# Runs the ${potential_memleaks_binary} through valgrind, keeping
+# track of any apparent memory leak in order to suppress reporting
+# those leaks when testing other binaries.
+ensure_valgrind_suppression() {
+	potential_memleaks_binary=$1
+
+	# Quit if we're not using valgrind.
+	if [ ! "$USE_VALGRIND" -gt 0 ]; then
+		return
+	fi;
+	printf "Generating valgrind suppressions... "
+
+	# Run valgrind on the binary, sending it a "\n" so that
+	# a test which uses STDIN will not wait for user input.
+	printf "\n" | (valgrind --leak-check=full --show-leak-kinds=all	\
+		--gen-suppressions=all					\
+		--log-file=${valgrind_suppressions_log}			\
+		${potential_memleaks_binary})
+
+	# Strip out useless parts from the log file, as well as
+	# removing references to the main and "pl_*" ("potential
+	# loss") functions so that the suppressions can apply to
+	# other binaries.
+	(grep -v "^==" ${valgrind_suppressions_log} 			\
+		| grep -v "   fun:pl_" -				\
+		| grep -v "   fun:main" -				\
+		> ${valgrind_suppressions} )
+
+	# Clean up
+	rm -f ${valgrind_suppressions_log}
+	printf "done.\n"
+}
+
 ## setup_valgrind_cmd (val_logfilename, valgrind_min=0):
 # Return a valid valgrind command if $USE_VALGRIND is greater than or equal to
 # $valgrind_min; otherwise, returns an empty string.
@@ -68,6 +104,7 @@ setup_valgrind_cmd() {
 			--log-file=$val_logfilename \
 			--leak-check=full --show-leak-kinds=all \
 			--errors-for-leak-kinds=all \
+			--suppressions=${valgrind_suppressions} \
 			--error-exitcode=$valgrind_exit_code "
 	else
 		valgrind_cmd=""
@@ -135,5 +172,3 @@ scenario_runner() {
 	notify_success_or_fail $retval $cmd_retval $val_logfilename
 	return "$retval"
 }
-
-

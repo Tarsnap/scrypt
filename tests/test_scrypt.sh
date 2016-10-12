@@ -23,10 +23,14 @@ fi
 # Check for optional valgrind
 USE_VALGRIND=$( check_optional_valgrind )
 
-################################ Run tests
-
 # Clean up previous directories, and create new ones.
 prepare_directories
+
+# Generate valgrind suppression file if it is required.  Must be
+# done after preparing directories.
+ensure_valgrind_suppression ${bindir}/tests/valgrind/potential-memleaks
+
+################################ Run tests
 
 # Run tests.
 scenario_filenames=$scriptdir/??-*.sh

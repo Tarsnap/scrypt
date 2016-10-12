@@ -1,5 +1,5 @@
 bin_PROGRAMS=	scrypt
-noinst_PROGRAMS=	tests/test_scrypt
+noinst_PROGRAMS=	tests/test_scrypt tests/valgrind/potential-memleaks
 dist_man_MANS=$(scrypt_man_MANS)
 
 scrypt_SOURCES=		main.c					\
@@ -93,6 +93,8 @@ tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			cpusupport-config.h
 tests_test_scrypt_LDADD=	libscrypt_sse2.a
+
+tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
 .PHONY: test
 # we can't only build "scrypt tests/test_scrypt" because that won't build
