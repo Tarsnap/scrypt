@@ -51,7 +51,6 @@ EXTRA_DIST = \
 	FORMAT							\
 	lib/README						\
 	libcperciva/COPYRIGHT					\
-	BSDmakefile						\
 	README.md						\
 	config_freebsd.h					\
 	lib/crypto/crypto_scrypt-ref.c				\
