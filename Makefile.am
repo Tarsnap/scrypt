@@ -21,7 +21,29 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc.c		\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/util/memlimit.c			\
-			cpusupport-config.h
+			config_freebsd.h			\
+			lib/crypto/crypto_scrypt.h		\
+			lib/crypto/crypto_scrypt_smix.h		\
+			lib/crypto/crypto_scrypt_smix_sse2.h	\
+			lib/scryptenc/scryptenc.h		\
+			lib/scryptenc/scryptenc_cpuperf.h	\
+			lib/util/memlimit.h			\
+			libcperciva/alg/sha256.h		\
+			libcperciva/cpusupport/cpusupport.h	\
+			libcperciva/crypto/crypto_aes.h		\
+			libcperciva/crypto/crypto_aes_aesni.h	\
+			libcperciva/crypto/crypto_aesctr.h	\
+			libcperciva/crypto/crypto_entropy.h	\
+			libcperciva/util/asprintf.h		\
+			libcperciva/util/entropy.h		\
+			libcperciva/util/getopt.h		\
+			libcperciva/util/humansize.h		\
+			libcperciva/util/insecure_memzero.h	\
+			libcperciva/util/readpass.h		\
+			libcperciva/util/sysendian.h		\
+			libcperciva/util/warnp.h		\
+			scrypt_platform.h
+
 AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/libcperciva/cpusupport	\
 			-I$(srcdir)/libcperciva/crypto		\
@@ -31,6 +53,7 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/lib/util			\
 			-DCPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\" \
 			-D_POSIX_C_SOURCE=200809L
+
 scrypt_LDADD=		libcperciva_aesni.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
@@ -52,45 +75,28 @@ EXTRA_DIST = \
 	lib/README						\
 	libcperciva/COPYRIGHT					\
 	README.md						\
-	config_freebsd.h					\
 	lib/crypto/crypto_scrypt-ref.c				\
-	lib/crypto/crypto_scrypt.h				\
-	lib/crypto/crypto_scrypt_smix.h				\
-	lib/crypto/crypto_scrypt_smix_sse2.h			\
-	lib/scryptenc/scryptenc.h				\
-	lib/scryptenc/scryptenc_cpuperf.h			\
-	lib/util/memlimit.h					\
-	libcperciva/alg/sha256.h				\
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
-	libcperciva/cpusupport/cpusupport.h			\
-	libcperciva/crypto/crypto_aes.h				\
-	libcperciva/crypto/crypto_aes_aesni.h			\
-	libcperciva/crypto/crypto_aesctr.h			\
-	libcperciva/crypto/crypto_entropy.h			\
-	libcperciva/util/asprintf.h				\
-	libcperciva/util/entropy.h				\
-	libcperciva/util/humansize.h				\
-	libcperciva/util/insecure_memzero.h			\
-	libcperciva/util/readpass.h				\
-	libcperciva/util/sysendian.h				\
-	libcperciva/util/warnp.h				\
-	scrypt_platform.h					\
-	tests/test_scrypt.c					\
 	tests/test_scrypt.good					\
 	tests/test_scrypt_good.enc				\
 	tests/test_scrypt.sh
 
 tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			libcperciva/alg/sha256.c			\
+			libcperciva/alg/sha256.h			\
 			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
 			libcperciva/util/insecure_memzero.c		\
+			libcperciva/util/insecure_memzero.h		\
 			libcperciva/util/warnp.c			\
+			libcperciva/util/warnp.h			\
 			lib/crypto/crypto_scrypt.c			\
+			lib/crypto/crypto_scrypt.h			\
 			lib/crypto/crypto_scrypt_smix.c			\
-			cpusupport-config.h
+			lib/crypto/crypto_scrypt_smix.h
+
 tests_test_scrypt_LDADD=	libscrypt_sse2.a
 
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
