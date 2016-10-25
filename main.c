@@ -32,6 +32,7 @@
 #include <string.h>
 
 #include "getopt.h"
+#include "humansize.h"
 #include "insecure_memzero.h"
 #include "readpass.h"
 #include "scryptenc.h"
@@ -57,7 +58,7 @@ main(int argc, char *argv[])
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
-	uintmax_t maxmem_uintmax;
+	uint64_t maxmem64;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
 	const char * ch;
@@ -90,12 +91,15 @@ main(int argc, char *argv[])
 	while ((ch = GETOPT(argc, argv)) != NULL) {
 		GETOPT_SWITCH(ch) {
 		GETOPT_OPTARG("-M"):
-			maxmem_uintmax = strtoumax(optarg, NULL, 0);
-			if (maxmem_uintmax > SIZE_MAX) {
+			if (humansize_parse(optarg, &maxmem64)) {
+				warn0("Could not parse the parameter to -M.");
+				exit(1);
+			}
+			if (maxmem64 > SIZE_MAX) {
 				warn0("The parameter to -M is too large.");
 				exit(1);
 			}
-			maxmem = (size_t)maxmem_uintmax;
+			maxmem = (size_t)maxmem64;
 			break;
 		GETOPT_OPTARG("-m"):
 			maxmemfrac = strtod(optarg, NULL);
