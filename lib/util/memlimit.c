@@ -96,7 +96,7 @@ memlimit_sysctl_hw(size_t * memlimit, int mibleaf)
 	if (sysctlval > SIZE_MAX)
 		*memlimit = SIZE_MAX;
 	else
-		*memlimit = sysctlval;
+		*memlimit = (size_t)sysctlval;
 #else
 	*memlimit = sysctlval;
 #endif
