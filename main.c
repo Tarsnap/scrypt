@@ -43,9 +43,9 @@ usage(void)
 {
 
 	fprintf(stderr,
-	    "usage: scrypt {enc | dec} [-M maxmem] [-m maxmemfrac]"
-	    " [-t maxtime] [-v] [-P] infile\n"
-	    "              [outfile]\n"
+	    "usage: scrypt {enc | dec} [-f] [-M maxmem]"
+	    " [-m maxmemfrac]\n"
+	    "              [-t maxtime] [-v] [-P] infile [outfile]\n"
 	    "       scrypt --version\n");
 	exit(1);
 }
@@ -58,6 +58,7 @@ main(int argc, char *argv[])
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
+	int force_resources = 0;
 	uint64_t maxmem64;
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
@@ -90,6 +91,9 @@ main(int argc, char *argv[])
 	/* Parse arguments. */
 	while ((ch = GETOPT(argc, argv)) != NULL) {
 		GETOPT_SWITCH(ch) {
+		GETOPT_OPT("-f"):
+			force_resources = 1;
+			break;
 		GETOPT_OPTARG("-M"):
 			if (humansize_parse(optarg, &maxmem64)) {
 				warn0("Could not parse the parameter to -M.");
@@ -156,7 +160,8 @@ main(int argc, char *argv[])
 	/* Encrypt or decrypt. */
 	if (dec)
 		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
+		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
+		    force_resources);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
