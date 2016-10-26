@@ -4,7 +4,7 @@
 c_valgrind_min=1
 reference_file="${scriptdir}/test_scrypt.good"
 encrypted_reference_file="${scriptdir}/test_scrypt_good.enc"
-decrypted_reference_file="attempt_reference.txt"
+decrypted_reference_file="${out}/attempt_reference.txt"
 
 scenario_cmd() {
 	# Decrypt a reference file.
