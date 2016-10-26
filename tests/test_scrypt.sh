@@ -5,7 +5,6 @@ bindir=$1
 
 # Constants used in multiple scenarios.
 password="hunter2"
-encrypted_file="attempt.enc"
 
 
 ################################ Setup variables from the command-line

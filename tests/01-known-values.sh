@@ -3,25 +3,24 @@
 ### Constants
 # The scenario command requires a lot of memory, so valgrind is only enabled
 # if $USE_VALGRIND > 1.
-scenario_valgrind_min=2
+c_valgrind_min=2
+test_output="${s_basename}-stdout.txt"
+reference="${scriptdir}/test_scrypt.good"
 
 ### Actual command
 scenario_cmd() {
-	$val_cmd $bindir/tests/test_scrypt \
-		1> $out/$basename-stdout.txt
-	cmd_retval=$?
-
-	echo "$cmd_retval"
-}
-
-### Check output
-scenario_check() {
-	retval=$1
+	# Run the binary which tests known input/output strings.
+	setup_check_variables
+	(
+		${c_valgrind_cmd} ${bindir}/tests/test_scrypt 1> ${test_output}
+		echo $? > ${c_exitfile}
+	)
 
 	# The generated values should match the known good values.
-	if ! cmp -s $out/$basename-stdout.txt $scriptdir/test_scrypt.good; then
-		retval=1
-	fi
-
-	echo "$retval"
+	setup_check_variables
+	if cmp -s ${test_output} ${reference}; then
+		echo "0"
+	else
+		echo "1"
+	fi > ${c_exitfile}
 }
