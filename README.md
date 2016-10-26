@@ -111,7 +111,7 @@ for experimental development, use:
 In order to support the `AX_CFLAGS_WARN_ALL` autoconf directive, you will need
 to install the autoconf archive.  On Debian systems, use the
 `autoconf-archive` package; on FreeBSD, use `devel/autoconf-archive`.
-
+`automake` versions 1.12 and higher are needed to build scrypt.
 
 Testing
 -------
