@@ -221,3 +221,18 @@ scenario_runner() {
 
 	return "${s_retval}"
 }
+
+## run_scenarios (scenario_filenames):
+# Runs all scenarios matching ${scenario_filenames}.
+run_scenarios() {
+	scenario_filenames=$@
+	for scenario in ${scenario_filenames}; do
+		# We can't call this function with $( ... ) because we
+		# want to allow it to echo values to stdout.
+		scenario_runner ${scenario}
+		retval=$?
+		if [ ${retval} -gt 0 ]; then
+			exit ${retval}
+		fi
+	done
+}
