@@ -11,7 +11,7 @@ scenario_cmd() {
 	setup_check_variables
 	(
 		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
-		    enc -P ${reference_file} ${encrypted_file}
+		    enc -P -t 1 ${reference_file} ${encrypted_file}
 		echo $? > ${c_exitfile}
 	)
 
