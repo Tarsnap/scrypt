@@ -198,7 +198,7 @@ notify_success_or_fail() {
 scenario_runner() {
 	scenario_filename=$1
 	basename=`basename ${scenario_filename} .sh`
-	printf "Running test: ${basename}... " 1>&2
+	printf "  ${basename}... " 1>&2
 
 	# Initialize "scenario" and "check" variables.
 	s_basename=${out}/${basename}
@@ -230,6 +230,8 @@ scenario_runner() {
 ## run_scenarios (scenario_filenames):
 # Runs all scenarios matching ${scenario_filenames}.
 run_scenarios() {
+	printf -- "Running tests\n"
+	printf -- "-------------\n"
 	scenario_filenames=$@
 	for scenario in ${scenario_filenames}; do
 		# We can't call this function with $( ... ) because we
