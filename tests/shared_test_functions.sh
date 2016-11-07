@@ -196,7 +196,11 @@ notify_success_or_fail() {
 	# Check each exitfile.
 	for exitfile in `ls ${log_basename}-*.exit | sort`; do
 		ret=`cat ${exitfile}`
-		if [ "${ret}" -ne 0 ]; then
+		if [ "${ret}" -lt 0 ]; then
+			echo "SKIP!"
+			return
+		fi
+		if [ "${ret}" -gt 0 ]; then
 			echo "FAILED!"
 			retval=${ret}
 			if [ "${ret}" -eq "${valgrind_exit_code}" ]; then
