@@ -65,6 +65,25 @@ prepare_directories() {
 	fi
 }
 
+## find_system (cmd, args...):
+# Looks for ${cmd} in the $PATH, and ensure that it supports ${args}.
+find_system() {
+	cmd=$1
+	cmd_with_args=$@
+	# Look for ${cmd}.
+	system_binary=`command -v ${cmd}`
+	if [ -z "${system_binary}" ]; then
+		system_binary=""
+		printf "System ${cmd} not found.\n" 1>&2
+	# If the command exists, check it ensures the ${args}.
+	elif ${cmd_with_args} 2>&1 >/dev/null |	\
+	    grep -qE "(invalid|illegal) option"; then
+		system_binary=""
+		printf "Cannot use system ${cmd}; does not" 1>&2
+		printf " support necessary arguments.\n" 1>&2
+	fi
+	echo "${system_binary}"
+}
 
 ## check_optional_valgrind ():
 # Return a $USE_VALGRIND variable defined; if it was previously defined and
