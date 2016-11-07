@@ -23,6 +23,16 @@ presented at the [BSDCan'09](http://www.bsdcan.org/2009/) conference:
 * Conference presentation slides:
   [PDF](http://www.tarsnap.com/scrypt/scrypt-slides.pdf).
 
+More details are given in the Internet Engineering Task Force
+(IETF)
+[RFC 7914: The scrypt Password-Based Key Derivation Function](https://tools.ietf.org/html/rfc7914).
+
+It has been demonstrated that scrypt is maximally memory-hard:
+
+* J. Alwen, B. Chen, K. Pietrzak, L. Reyzin, S. Tessaro,
+  [Scrypt is Maximally Memory-Hard](http://eprint.iacr.org/2016/989),
+  Cryptology ePrint Archive: Report 2016/989.
+
 
 The scrypt encryption utility
 -----------------------------
