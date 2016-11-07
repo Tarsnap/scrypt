@@ -175,6 +175,10 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 			return (9);
 		if ((opslimit / N) / (r * p) < 4)
 			return (10);
+	} else {
+		/* We have no limit. */
+		memlimit = 0;
+		opps = 0;
 	}
 
 	if (verbose)
