@@ -13,7 +13,7 @@ mkdir ${DESTDIR} ${DESTDIR}/autocrap
 cp scrypt_platform.h main.c FORMAT ${DESTDIR}
 cp Makefile.am configure.ac .autom4te.cfg ${DESTDIR}
 cp Makefile.am configure.ac ${DESTDIR}/autocrap
-cp -R lib libcperciva ${DESTDIR}
+cp -R lib libcperciva tests ${DESTDIR}
 # Copy with substitution
 sed -e "s/@DATE@/$RELEASEDATE/" < scrypt.1 > ${DESTDIR}/scrypt.1
 
