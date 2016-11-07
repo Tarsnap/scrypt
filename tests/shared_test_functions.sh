@@ -125,6 +125,11 @@ setup_check_variables() {
 	# Set up the "exit" file.
 	c_exitfile="${s_basename}-`printf %02d ${s_count}`.exit"
 
+	# If we don't have a suppressions file, don't try to use it.
+	if [ ! -e ${valgrind_suppressions} ]; then
+		valgrind_suppressions=/dev/null
+	fi
+
 	# Set up the valgrind command if $USE_VALGRIND is greater
 	# than or equal to ${valgrind_min}; otherwise, produce an
 	# empty string.  Using --error-exitcode means that if
@@ -193,7 +198,7 @@ notify_success_or_fail() {
 scenario_runner() {
 	scenario_filename=$1
 	basename=`basename ${scenario_filename} .sh`
-	printf "Running test: ${basename}... " 1>&2
+	printf "  ${basename}... " 1>&2
 
 	# Initialize "scenario" and "check" variables.
 	s_basename=${out}/${basename}
@@ -220,4 +225,21 @@ scenario_runner() {
 	notify_success_or_fail ${s_basename} ${s_val_basename}
 
 	return "${s_retval}"
+}
+
+## run_scenarios (scenario_filenames):
+# Runs all scenarios matching ${scenario_filenames}.
+run_scenarios() {
+	printf -- "Running tests\n"
+	printf -- "-------------\n"
+	scenario_filenames=$@
+	for scenario in ${scenario_filenames}; do
+		# We can't call this function with $( ... ) because we
+		# want to allow it to echo values to stdout.
+		scenario_runner ${scenario}
+		retval=$?
+		if [ ${retval} -gt 0 ]; then
+			exit ${retval}
+		fi
+	done
 }
