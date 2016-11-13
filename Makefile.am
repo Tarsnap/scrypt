@@ -21,7 +21,6 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc.c		\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/util/memlimit.c			\
-			config_freebsd.h			\
 			lib/crypto/crypto_scrypt.h		\
 			lib/crypto/crypto_scrypt_smix.h		\
 			lib/crypto/crypto_scrypt_smix_sse2.h	\
