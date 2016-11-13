@@ -17,6 +17,9 @@ if [ -z ${bindir} ]; then
 	bindir=".."
 fi
 
+# Find system scrypt, and ensure it supports -P.
+system_scrypt=$( find_system scrypt enc -P )
+
 # Check for optional valgrind.
 USE_VALGRIND=$( check_optional_valgrind )
 
