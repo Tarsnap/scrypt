@@ -18,7 +18,7 @@ if [ -z ${bindir} ]; then
 fi
 
 # Check for optional valgrind.
-USE_VALGRIND=$( check_optional_valgrind )
+check_optional_valgrind
 
 # Clean up previous directories, and create new ones.
 prepare_directories

@@ -42,6 +42,9 @@ out_valgrind="tests-valgrind"
 valgrind_suppressions="${out_valgrind}/suppressions"
 valgrind_suppressions_log="${out_valgrind}/suppressions.pre"
 
+# Keep the user-specified ${USE_VALGRIND}, or initialize to 0.
+USE_VALGRIND=${USE_VALGRIND:-0}
+
 # A non-zero value unlikely to be used as an exit code by the programs being
 # tested.
 valgrind_exit_code=108
@@ -70,16 +73,13 @@ prepare_directories() {
 # Return a $USE_VALGRIND variable defined; if it was previously defined and
 # was greater than 0, then check that valgrind is available in the $PATH.
 check_optional_valgrind() {
-	# If USE_VALGRIND is null, assign it the value of 0.
-	USE_VALGRIND=${USE_VALGRIND:-0}
 	if [ "$USE_VALGRIND" -gt 0 ]; then
 		# Look for valgrind in $PATH.
 		if ! command -v valgrind >/dev/null 2>&1; then
-			echo "valgrind not detected"
+			printf "valgrind not found\n" 1>&2
 			exit 1
 		fi
 	fi
-	echo "$USE_VALGRIND"
 }
 
 ## ensure_valgrind_suppresssion (potential_memleaks_binary):
