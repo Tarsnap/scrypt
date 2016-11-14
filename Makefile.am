@@ -83,9 +83,10 @@ EXTRA_DIST = \
 	tests/test_scrypt_good.enc				\
 	tests/shared_test_functions.sh				\
 	tests/01-known-values.sh				\
-	tests/02-encrypt-file.sh				\
-	tests/03-decrypt-file.sh				\
-	tests/04-decrypt-reference-file.sh			\
+	tests/02-decrypt-reference-file.sh			\
+	tests/03-encrypt-decrypt-file.sh			\
+	tests/04-force-resources.sh				\
+	tests/05-system-scrypt-encrypt-decrypt.sh		\
 	tests/test_scrypt.sh
 
 tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
