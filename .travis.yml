@@ -1,7 +1,17 @@
 language: C
 sudo: required
 dist: trusty
-script: make && make test USE_VALGRIND=1
+# We can't use strict flags in CFLAGS as a general environment
+# variable, because that messes up ./configure.
+script: make CFLAGS="$CFLAGS $CFLAGS_STRICT" && make test USE_VALGRIND=1
+matrix:
+  include:
+    - compiler: gcc
+      env: CFLAGS="-std=c99 -O2 -Wall -Wextra -Werror"
+           CFLAGS_STRICT="-Wpedantic -pedantic-errors -Wno-clobbered"
+    - compiler: clang
+      env: CFLAGS="-std=c99 -O2 -Wall -Wextra -Werror"
+           CFLAGS_STRICT="-Weverything -Wno-#warnings -Wno-pedantic -Wno-padded -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-missing-noreturn"
 env:
   global:
     - secure: "Th4Z1fktV+H5Sgf7SvHCg5oUgRuLnfI+E4NzzfeJXOTKTlMUuf0OZCKRW7jQkj5ISwX/ovOl7tMLGc47CPiebWWCgdwe6sh8APTDZh++0unWLERmuEtiwmc3RjdwlZvgE+hmR+CzYRu/EjDoN3lKSUXUZ9vh2CANcpak0PMNht/A7nT5jzZ7NIN7o53VEpAK+8z0A6rn9p9ETZy/IqSidqVU41es6gg1pnHxbhiNunX33IalKeOPAjtLCm/H/a/vs8ibh2KXYCodbcEB6SFtF4l8sm70OI/bTdXCE3almFrSd28gzNgrwfXKgFB5tdkl4FgDNYlU2bfdrEjkDHfjN/B8B2zbeJh+8DyRP5jdF2hhEpOSyT/Y68vbowMDHQaBNDey0WoEFp6bfBSjRouu8GM/J0qrx9MrQCU39BUYbicT/zHMh4VsIrcfFGrWFL9nfFb9ml+Dd1AOxOfr0fZkaS0ouXvG3wB7X+ing2qGVLeZ+wqDaoNYcaat6TQxH6FtdSzm68G5YE48f7GoUSKcNe+APXXEwUdthrUL+gM5JQG41HXBCfWbAlvuSi9f6lfCoM5uIR2Hz39m/B4fqllwhmIPuRfGORiNGxxcgT7/x9WYurbcqtXWAbwbNGUQwl8WhFU7EkadhmJiv0Wu8xmT4ZEP/lg6kEQttf4JoKIxTkU="
