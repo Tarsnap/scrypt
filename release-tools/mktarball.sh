@@ -9,10 +9,10 @@ DESTDIR=scrypt-${VERSION}
 RELEASEDATE=`date "+%B %d, %Y"`
 
 # Copy bits in
-mkdir ${DESTDIR} ${DESTDIR}/autocrap
-cp scrypt_platform.h main.c FORMAT ${DESTDIR}
+mkdir ${DESTDIR} ${DESTDIR}/autotools
+cp scrypt_platform.h main.c FORMAT COPYRIGHT ${DESTDIR}
 cp Makefile.am configure.ac .autom4te.cfg ${DESTDIR}
-cp Makefile.am configure.ac ${DESTDIR}/autocrap
+cp Makefile.am configure.ac ${DESTDIR}/autotools
 cp -R lib libcperciva tests ${DESTDIR}
 # Copy with substitution
 sed -e "s/@DATE@/$RELEASEDATE/" < scrypt.1 > ${DESTDIR}/scrypt.1
