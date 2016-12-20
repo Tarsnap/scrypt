@@ -16,4 +16,6 @@
 Makefile
 Makefile.in
 # Other directories
-tests/test_scrypt
+/tests-output/
+/tests/test_scrypt
+/tests/valgrind/potential-memleaks
