@@ -19,3 +19,5 @@
 /tests-valgrind/
 /tests/test_scrypt
 /tests/valgrind/potential-memleaks
+# Standard out-of-tree build directory
+/build/
