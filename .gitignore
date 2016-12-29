@@ -1,6 +1,5 @@
-*.a
+/*.a
 *.o
-.deps/
 .deps/
 .dirstamp
 /aclocal.m4
@@ -13,8 +12,8 @@
 /cpusupport-config.h
 /scrypt
 /stamp-h1
-Makefile
-Makefile.in
+/Makefile
+/Makefile.in
 # Other directories
 /tests-output/
 /tests/test_scrypt
