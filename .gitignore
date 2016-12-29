@@ -14,7 +14,8 @@
 /stamp-h1
 /Makefile
 /Makefile.in
-# Other directories
+# Test infrastructure
 /tests-output/
+/tests-valgrind/
 /tests/test_scrypt
 /tests/valgrind/potential-memleaks
