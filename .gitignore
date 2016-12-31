@@ -1,6 +1,5 @@
-*.a
+/*.a
 *.o
-.deps/
 .deps/
 .dirstamp
 /aclocal.m4
@@ -13,7 +12,12 @@
 /cpusupport-config.h
 /scrypt
 /stamp-h1
-Makefile
-Makefile.in
-# Other directories
-tests/test_scrypt
+/Makefile
+/Makefile.in
+# Test infrastructure
+/tests-output/
+/tests-valgrind/
+/tests/test_scrypt
+/tests/valgrind/potential-memleaks
+# Standard out-of-tree build directory
+/build/
