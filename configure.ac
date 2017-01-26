@@ -1,6 +1,6 @@
 AC_PREREQ([2.69])
-m4_define([SCRYPT_VERS],m4_include([scrypt-version]))
-AC_INIT([scrypt],[SCRYPT_VERS()],[https://github.com/Tarsnap/scrypt],[scrypt],[http://www.tarsnap.com/scrypt/])
+AC_INIT([scrypt],[m4_esyscmd([sh get-version.sh])],
+  [https://github.com/Tarsnap/scrypt],[scrypt],[http://www.tarsnap.com/scrypt/])
 AC_CONFIG_SRCDIR([lib/scryptenc/scryptenc.c])
 AC_CONFIG_AUX_DIR([config.aux])
 AC_CONFIG_MACRO_DIR([m4])

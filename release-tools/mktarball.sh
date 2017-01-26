@@ -11,17 +11,19 @@ RELEASEDATE=`date "+%B %d, %Y"`
 # Copy bits in
 mkdir ${DESTDIR} ${DESTDIR}/autotools
 cp scrypt_platform.h main.c FORMAT COPYRIGHT ${DESTDIR}
-cp Makefile.am configure.ac .autom4te.cfg ${DESTDIR}
-cp Makefile.am configure.ac ${DESTDIR}/autotools
+cp Makefile.am .autom4te.cfg ${DESTDIR}
+cp Makefile.am ${DESTDIR}/autotools
 cp -R lib libcperciva tests ${DESTDIR}
 # Copy with substitution
 sed -e "s/@DATE@/$RELEASEDATE/" < scrypt.1 > ${DESTDIR}/scrypt.1
+sed -e "s/\[m4_esyscmd(\[sh get-version\.sh\])]/${VERSION}/" \
+	< configure.ac > ${DESTDIR}/configure.ac
+cp ${DESTDIR}/configure.ac ${DESTDIR}/autotools
 
 # Generate autotools files
 ( cd ${DESTDIR}
-printf ${VERSION} > scrypt-version
 autoreconf -i
-rm .autom4te.cfg Makefile.am aclocal.m4 configure.ac scrypt-version )
+rm .autom4te.cfg Makefile.am aclocal.m4 configure.ac )
 
 # Create tarball
 tar -czf ${DESTDIR}.tgz ${DESTDIR}
