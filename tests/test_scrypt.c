@@ -33,10 +33,15 @@ main(int argc, char * argv[])
 	for (test = tests;
 	    test < tests + sizeof(tests) / sizeof(tests[0]);
 	    test++) {
-		crypto_scrypt((const uint8_t *)test->passwd,
+		if (crypto_scrypt((const uint8_t *)test->passwd,
 		    strlen(test->passwd), (const uint8_t *)test->salt,
 		    strlen(test->salt), test->N, test->r, test->p,
-		    (uint8_t *)kbuf, 64);
+		    (uint8_t *)kbuf, 64)) {
+			warnp("crypto_scrypt(%u, %u, %u) failed",
+			    (unsigned int)test->N, (unsigned int)test->r,
+			    (unsigned int)test->p);
+			break;
+		}
 		printf("scrypt(\"%s\", \"%s\", %u, %u, %u, 64) =\n",
 		    test->passwd, test->salt, (unsigned int)test->N,
 		    (unsigned int)(test->r), (unsigned int)test->p);
