@@ -24,6 +24,7 @@ main(int argc, char * argv[])
 	struct scrypt_test * test;
 	char kbuf[64];
 	size_t i;
+	int failures = 0;
 
 	WARNP_INIT;
 
@@ -40,6 +41,7 @@ main(int argc, char * argv[])
 			warnp("crypto_scrypt(%u, %u, %u) failed",
 			    (unsigned int)test->N, (unsigned int)test->r,
 			    (unsigned int)test->p);
+			failures++;
 			break;
 		}
 		printf("scrypt(\"%s\", \"%s\", %u, %u, %u, 64) =\n",
@@ -52,5 +54,5 @@ main(int argc, char * argv[])
 		}
 	}
 
-	return (0);
+	return (failures ? 1 : 0);
 }
