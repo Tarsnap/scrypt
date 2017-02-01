@@ -112,23 +112,9 @@ Building
 --------
 
 :exclamation: We strongly recommend that people use the latest
-official release tarball on https://www.tarsnap.com/scrypt.html,
-and build with:
+official release tarball on https://www.tarsnap.com/scrypt.html
 
-    ./configure
-    make
-
-> For experimental development from git, build with:
->
->     autoreconf -i
->     ./configure
->     make
->
-> In order to support the `AX_CFLAGS_WARN_ALL` autoconf directive,
-> you will need to install the autoconf archive.  On Debian
-> systems, use the `autoconf-archive` package; on FreeBSD, use
-> `devel/autoconf-archive`.  You must have automake 1.11.2 or
-> higher.
+See the `BUILDING` file for more details (e.g., dealing with OpenSSL on OSX).
 
 
 Testing
