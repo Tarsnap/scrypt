@@ -10,7 +10,7 @@ RELEASEDATE=`date "+%B %d, %Y"`
 
 # Copy bits in
 mkdir ${DESTDIR} ${DESTDIR}/autotools
-cp scrypt_platform.h main.c FORMAT COPYRIGHT ${DESTDIR}
+cp scrypt_platform.h main.c FORMAT COPYRIGHT BUILDING ${DESTDIR}
 cp Makefile.am .autom4te.cfg ${DESTDIR}
 cp Makefile.am ${DESTDIR}/autotools
 cp -R lib libcperciva tests ${DESTDIR}
