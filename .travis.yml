@@ -1,5 +1,5 @@
 language: C
-sudo: required
+sudo: false
 dist: trusty
 # We can't use strict flags in CFLAGS as a general environment
 # variable, because that messes up ./configure.
@@ -19,9 +19,11 @@ env:
     - COVERITY_SCAN_BRANCH_PATTERN="coverity-scan"
     - COVERITY_SCAN_NOTIFICATION_EMAIL="cperciva@tarsnap.com"
     - COVERITY_SCAN_BUILD_COMMAND="make all clean"
+addons:
+  apt:
+    packages:
+      - valgrind
 before_install:
-  - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update; fi'
-  - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y valgrind; fi'
   - autoreconf -i
   - ./configure
   - curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true
