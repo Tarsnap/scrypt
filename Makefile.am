@@ -38,6 +38,7 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/getopt.h		\
 			libcperciva/util/humansize.h		\
 			libcperciva/util/insecure_memzero.h	\
+			libcperciva/util/parsenum.h		\
 			libcperciva/util/readpass.h		\
 			libcperciva/util/sysendian.h		\
 			libcperciva/util/warnp.h		\
