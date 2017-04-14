@@ -25,6 +25,7 @@
  */
 #include "scrypt_platform.h"
 
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +34,7 @@
 #include "getopt.h"
 #include "humansize.h"
 #include "insecure_memzero.h"
+#include "parsenum.h"
 #include "readpass.h"
 #include "scryptenc.h"
 #include "warnp.h"
@@ -105,10 +107,16 @@ main(int argc, char *argv[])
 			maxmem = (size_t)maxmem64;
 			break;
 		GETOPT_OPTARG("-m"):
-			maxmemfrac = strtod(optarg, NULL);
+			if (PARSENUM(&maxmemfrac, optarg, 0, 1)) {
+				warnp("Invalid option: -n %s", optarg);
+				exit(1);
+			}
 			break;
 		GETOPT_OPTARG("-t"):
-			maxtime = strtod(optarg, NULL);
+			if (PARSENUM(&maxtime, optarg, 0, INFINITY)) {
+				warnp("Invalid option: -n %s", optarg);
+				exit(1);
+			}
 			break;
 		GETOPT_OPT("-v"):
 			verbose = 1;
