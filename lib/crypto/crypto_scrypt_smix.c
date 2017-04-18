@@ -149,7 +149,11 @@ integerify(const void * B, size_t r)
 {
 	const uint32_t * X = (const void *)((uintptr_t)(B) + (2 * r - 1) * 64);
 
+#if SIZE_MAX > UINT32_MAX
 	return (((uint64_t)(X[1]) << 32) + X[0]);
+#else
+	return *X; /* High word is never never used */
+#endif
 }
 
 /**
