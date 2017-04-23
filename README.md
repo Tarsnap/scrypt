@@ -17,15 +17,15 @@ PBKDF2.
 Details of the `scrypt` key derivation function are given in a paper which was
 presented at the [BSDCan'09](http://www.bsdcan.org/2009/) conference:
 
-* Colin Percival, [Stronger Key Derivation via Sequential Memory-Hard
-  Functions](http://www.tarsnap.com/scrypt/scrypt.pdf), presented at BSDCan'09,
-  May 2009.
+* Colin Percival,
+  [Stronger Key Derivation via Sequential Memory-Hard Functions](
+  http://www.tarsnap.com/scrypt/scrypt.pdf), presented at BSDCan'09, May 2009.
 * Conference presentation slides:
   [PDF](http://www.tarsnap.com/scrypt/scrypt-slides.pdf).
 
 More details are given in the Internet Engineering Task Force
-(IETF)
-[RFC 7914: The scrypt Password-Based Key Derivation Function](https://tools.ietf.org/html/rfc7914).
+(IETF) [RFC 7914: The scrypt Password-Based Key Derivation Function](
+https://tools.ietf.org/html/rfc7914).
 
 It has been demonstrated that scrypt is maximally memory-hard:
 
@@ -73,12 +73,12 @@ location and check `scrypt`'s exit code before using the decrypted data.
 The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
 (Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd.
 
-* [scrypt version 1.2.1 source
-  tarball](https://www.tarsnap.com/scrypt/scrypt-1.2.1.tgz)
-* [GPG-signed SHA256 for scrypt version
-  1.2.1](https://www.tarsnap.com/scrypt/scrypt-sigs-1.2.1.asc) (signature
-  generated using Tarsnap [code signing
-  key](https://www.tarsnap.com/tarsnap-signing-key.asc))
+* [scrypt version 1.2.1 source tarball](
+  https://www.tarsnap.com/scrypt/scrypt-1.2.1.tgz)
+* [GPG-signed SHA256 for scrypt version 1.2.1](
+  https://www.tarsnap.com/scrypt/scrypt-sigs-1.2.1.asc) (signature
+  generated using Tarsnap [code signing key](
+  https://www.tarsnap.com/tarsnap-signing-key.asc))
 
 In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
 in NetBSD pkgsrc as `security/scrypt`.
@@ -87,10 +87,9 @@ in NetBSD pkgsrc as `security/scrypt`.
 Using scrypt as a KDF
 ---------------------
 
-To use scrypt as a
-[key derivation function](https://en.wikipedia.org/wiki/Key_derivation_function)
-(KDF), take a
-look at the `lib/crypto/crypto_scrypt.h` header, which provides:
+To use scrypt as a [key derivation function](
+https://en.wikipedia.org/wiki/Key_derivation_function) (KDF), take a look at
+the `lib/crypto/crypto_scrypt.h` header, which provides:
 
 ```
 /**
