@@ -3,10 +3,10 @@ The scrypt key derivation function
 
 
 The scrypt key derivation function was originally developed for use in the
-[Tarsnap online backup system](http://www.tarsnap.com/index.html) and is
+[Tarsnap online backup system](https://www.tarsnap.com/index.html) and is
 designed to be far more secure against hardware brute-force attacks than
-alternative functions such as [PBKDF2](http://en.wikipedia.org/wiki/PBKDF2) or
-[bcrypt](http://www.openbsd.org/papers/bcrypt-paper.ps).
+alternative functions such as [PBKDF2](https://en.wikipedia.org/wiki/PBKDF2) or
+[bcrypt](https://www.openbsd.org/papers/bcrypt-paper.ps).
 
 We estimate that on modern (2009) hardware, if 5 seconds are spent computing a
 derived key, the cost of a hardware brute-force attack against `scrypt` is
@@ -15,13 +15,13 @@ find the same password), and 20000 times greater than a similar attack against
 PBKDF2.
 
 Details of the `scrypt` key derivation function are given in a paper which was
-presented at the [BSDCan'09](http://www.bsdcan.org/2009/) conference:
+presented at the [BSDCan'09](https://www.bsdcan.org/2009/) conference:
 
 * Colin Percival,
   [Stronger Key Derivation via Sequential Memory-Hard Functions](
-  http://www.tarsnap.com/scrypt/scrypt.pdf), presented at BSDCan'09, May 2009.
+  https://www.tarsnap.com/scrypt/scrypt.pdf), presented at BSDCan'09, May 2009.
 * Conference presentation slides:
-  [PDF](http://www.tarsnap.com/scrypt/scrypt-slides.pdf).
+  [PDF](https://www.tarsnap.com/scrypt/scrypt-slides.pdf).
 
 More details are given in the Internet Engineering Task Force
 (IETF) [RFC 7914: The scrypt Password-Based Key Derivation Function](
@@ -30,7 +30,7 @@ https://tools.ietf.org/html/rfc7914).
 It has been demonstrated that scrypt is maximally memory-hard:
 
 * J. Alwen, B. Chen, K. Pietrzak, L. Reyzin, S. Tessaro,
-  [Scrypt is Maximally Memory-Hard](http://eprint.iacr.org/2016/989),
+  [Scrypt is Maximally Memory-Hard](https://eprint.iacr.org/2016/989),
   Cryptology ePrint Archive: Report 2016/989.
 
 
