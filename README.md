@@ -71,8 +71,7 @@ authenticated, you must store the output of `scrypt dec` in a temporary
 location and check `scrypt`'s exit code before using the decrypted data.
 
 The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
-(Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd. To
-build scrypt, extract the tarball and run `./configure` && `make`.
+(Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd.
 
 * [scrypt version 1.2.1 source
   tarball](https://www.tarsnap.com/scrypt/scrypt-1.2.1.tgz)
@@ -114,7 +113,8 @@ Building
 :exclamation: We strongly recommend that people use the latest
 official release tarball on https://www.tarsnap.com/scrypt.html
 
-See the `BUILDING` file for more details (e.g., dealing with OpenSSL on OSX).
+To build scrypt, extract the tarball and run `./configure` && `make`.  See the
+`BUILDING` file for more details (e.g., dealing with OpenSSL on OSX).
 
 
 Testing
