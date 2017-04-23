@@ -12,7 +12,12 @@ We estimate that on modern (2009) hardware, if 5 seconds are spent computing a
 derived key, the cost of a hardware brute-force attack against `scrypt` is
 roughly 4000 times greater than the cost of a similar attack against bcrypt (to
 find the same password), and 20000 times greater than a similar attack against
-PBKDF2.
+PBKDF2.  If the `scrypt` encryption utility is used with default parameters,
+the cost of cracking the password on a file encrypted by `scrypt enc` is
+approximately 100 billion times more than the cost of cracking the same
+password on a file encrypted by `openssl enc`; this means that a five-character
+password using `scrypt` is stronger than a ten-character password using
+`openssl`.
 
 Details of the `scrypt` key derivation function are given in a paper which was
 presented at the [BSDCan'09](https://www.bsdcan.org/2009/) conference:
@@ -38,18 +43,11 @@ The scrypt encryption utility
 -----------------------------
 
 A simple password-based encryption utility is available as a demonstration of
-the `scrypt` key derivation function. On modern hardware and with default
-parameters, the cost of cracking the password on a file encrypted by `scrypt
-enc` is approximately 100 billion times more than the cost of cracking the same
-password on a file encrypted by `openssl enc`; this means that a five-character
-password using `scrypt` is stronger than a ten-character password using
-`openssl`.
-
-The `scrypt` utility can be invoked as `scrypt enc infile [outfile]` to encrypt
-data (if `outfile` is not specified, the encrypted data is written to the
-standard output), or as `scrypt dec infile [outfile]` to decrypt data (if
-outfile is not specified, the decrypted data is written to the standard
-output). `scrypt` also supports three command-line options:
+the `scrypt` key derivation function.  It can be invoked as `scrypt enc infile
+[outfile]` to encrypt data (if `outfile` is not specified, the encrypted data
+is written to the standard output), or as `scrypt dec infile [outfile]` to
+decrypt data (if outfile is not specified, the decrypted data is written to the
+standard output). `scrypt` also supports three command-line options:
 
 * `-t maxtime` will instruct `scrypt` to spend at most maxtime seconds
   computing the derived encryption key from the password; for encryption, this
