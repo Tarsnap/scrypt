@@ -42,6 +42,9 @@ out_valgrind="tests-valgrind"
 valgrind_suppressions="${out_valgrind}/suppressions"
 valgrind_suppressions_log="${out_valgrind}/suppressions.pre"
 
+# Print output about test failures.
+VERBOSE=${VERBOSE:-0}
+
 # Keep the user-specified ${USE_VALGRIND}, or initialize to 0.
 USE_VALGRIND=${USE_VALGRIND:-0}
 
@@ -69,13 +72,13 @@ prepare_directories() {
 }
 
 ## find_system (cmd, args...):
-# Looks for ${cmd} in the $PATH, and ensure that it supports ${args}.
+# Look for ${cmd} in the $PATH, and ensure that it supports ${args}.
 find_system() {
 	cmd=$1
 	cmd_with_args=$@
-	# Look for ${cmd}.
-	system_binary=`command -v ${cmd}`
-	if [ -z "${system_binary}" ]; then
+	# Look for ${cmd}; the "|| true" and -} make this work with set -e.
+	system_binary=`command -v ${cmd}` || true
+	if [ -z "${system_binary-}" ]; then
 		system_binary=""
 		printf "System ${cmd} not found.\n" 1>&2
 	# If the command exists, check it ensures the ${args}.
@@ -86,6 +89,17 @@ find_system() {
 		printf " support necessary arguments.\n" 1>&2
 	fi
 	echo "${system_binary}"
+}
+
+## has_pid (cmd):
+# Look for ${cmd} in ps; return 0 if ${cmd} exists.
+has_pid() {
+	cmd=$1
+	pid=`ps -Aopid,args | grep "${cmd}" | grep -v "grep"` || true
+	if [ -n "${pid}" ]; then
+		return 0
+	fi
+	return 1
 }
 
 ## check_optional_valgrind ():
@@ -102,7 +116,7 @@ check_optional_valgrind() {
 }
 
 ## ensure_valgrind_suppresssion (potential_memleaks_binary):
-# Runs the ${potential_memleaks_binary} through valgrind, keeping
+# Run the ${potential_memleaks_binary} through valgrind, keeping
 # track of any apparent memory leak in order to suppress reporting
 # those leaks when testing other binaries.
 ensure_valgrind_suppression() {
@@ -193,8 +207,16 @@ notify_success_or_fail() {
 	log_basename=$1
 	val_log_basename=$2
 
+	# Bail if there's no exitfiles.
+	exitfiles=`ls ${log_basename}-*.exit` || true
+	if [ -z "$exitfiles" ]; then
+		echo "FAILED"
+		s_retval=1
+		return
+	fi
+
 	# Check each exitfile.
-	for exitfile in `ls ${log_basename}-*.exit | sort`; do
+	for exitfile in `echo $exitfiles | sort`; do
 		ret=`cat ${exitfile}`
 		if [ "${ret}" -lt 0 ]; then
 			echo "SKIP!"
@@ -203,6 +225,10 @@ notify_success_or_fail() {
 		if [ "${ret}" -gt 0 ]; then
 			echo "FAILED!"
 			retval=${ret}
+			if [ ${VERBOSE} -ne 0 ]; then
+				printf "File ${exitfile} contains exit" 1>&2
+				printf " code ${ret}.\n" 1>&2
+			fi
 			if [ "${ret}" -eq "${valgrind_exit_code}" ]; then
 				val_logfilename=$( get_val_logfile \
 					${val_log_basename} ${exitfile} )
@@ -217,7 +243,7 @@ notify_success_or_fail() {
 }
 
 ## scenario_runner (scenario_filename):
-# Runs a test scenario from ${scenario_filename}.
+# Run a test scenario from ${scenario_filename}.
 scenario_runner() {
 	scenario_filename=$1
 	basename=`basename ${scenario_filename} .sh`
@@ -251,7 +277,7 @@ scenario_runner() {
 }
 
 ## run_scenarios (scenario_filenames):
-# Runs all scenarios matching ${scenario_filenames}.
+# Run all scenarios matching ${scenario_filenames}.
 run_scenarios() {
 	printf -- "Running tests\n"
 	printf -- "-------------\n"
