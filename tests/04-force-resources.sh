@@ -21,11 +21,10 @@ scenario_cmd() {
 	# command to fail, so we negate the normal return code.
 	setup_check_variables
 	(
-		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
+		! echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
 		    	dec -P -t 1 ${longwait_encrypted_file}		\
 			${longwait_decrypted_file}			\
 			2> ${longwait_failed_log}
-		test ! $? -eq 0
 		echo $? > ${c_exitfile}
 	)
 
