@@ -1,24 +1,23 @@
 #!/bin/sh
 
-# Build directory (allowing flexible out-of-tree builds).
-bindir=$1
-
-# Constants used in multiple scenarios.
-password="hunter2"
-
-# Find script directory and load helper functions.
+### Find script directory and load helper functions.
 scriptdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
 . ${scriptdir}/shared_test_functions.sh
 
-# We need a ${bindir}.
-if [ -z ${bindir} ]; then
-	printf "Warning: Scrypt binary directory not given.\n"
-	printf "Attempting to use default values for in-source-tree build.\n"
-	bindir=".."
-fi
+
+### Project-specific constants and setup
+
+out="${bindir}/tests-output"
+out_valgrind="${bindir}/tests-valgrind"
+
+# Constants used in multiple scenarios for this project.
+password="hunter2"
 
 # Find system scrypt, and ensure it supports -P.
 system_scrypt=$( find_system scrypt enc -P )
+
+
+### Run tests using project-specific constants
 
 # Check for optional valgrind.
 check_optional_valgrind
