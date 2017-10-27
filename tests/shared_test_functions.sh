@@ -275,6 +275,16 @@ scenario_runner() {
 ## run_scenarios (scenario_filenames):
 # Run all scenarios matching ${scenario_filenames}.
 run_scenarios() {
+	# Check for optional valgrind.
+	check_optional_valgrind
+
+	# Clean up previous directories, and create new ones.
+	prepare_directories
+
+	# Generate valgrind suppression file if it is required.  Must be
+	# done after preparing directories.
+	ensure_valgrind_suppression ${bindir}/tests/valgrind/potential-memleaks
+
 	printf -- "Running tests\n"
 	printf -- "-------------\n"
 	scenario_filenames=$@
