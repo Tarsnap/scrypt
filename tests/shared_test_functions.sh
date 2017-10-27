@@ -34,7 +34,7 @@
 # - c_valgrind_cmd: this is the valgrind command (including
 #       appropriate log file) if necessary, or is "" otherwise.
 
-set -o nounset
+set -o noclobber -o nounset -e
 
 # Print output about test failures.
 VERBOSE=${VERBOSE:-0}
