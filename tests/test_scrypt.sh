@@ -18,16 +18,4 @@ system_scrypt=$( find_system scrypt enc -P )
 
 
 ### Run tests using project-specific constants
-
-# Check for optional valgrind.
-check_optional_valgrind
-
-# Clean up previous directories, and create new ones.
-prepare_directories
-
-# Generate valgrind suppression file if it is required.  Must be
-# done after preparing directories.
-ensure_valgrind_suppression ${bindir}/tests/valgrind/potential-memleaks
-
-# Run the test scenarios; this will exit on the first failure.
 run_scenarios ${scriptdir}/??-*.sh
