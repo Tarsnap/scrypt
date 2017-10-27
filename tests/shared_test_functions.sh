@@ -143,7 +143,7 @@ ensure_valgrind_suppression() {
 	(grep -v "^==" ${valgrind_suppressions_log} 			\
 		| grep -v "   fun:pl_" -				\
 		| grep -v "   fun:main" -				\
-		> ${valgrind_suppressions} )
+		> ${valgrind_suppressions} ) || true
 
 	# Clean up
 	rm -f ${valgrind_suppressions_log}
