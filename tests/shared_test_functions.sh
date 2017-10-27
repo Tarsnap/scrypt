@@ -36,12 +36,6 @@
 
 set -o nounset
 
-### Constants
-out="tests-output"
-out_valgrind="tests-valgrind"
-valgrind_suppressions="${out_valgrind}/suppressions"
-valgrind_suppressions_log="${out_valgrind}/suppressions.pre"
-
 # Print output about test failures.
 VERBOSE=${VERBOSE:-0}
 
@@ -126,7 +120,10 @@ ensure_valgrind_suppression() {
 	if [ ! "$USE_VALGRIND" -gt 0 ]; then
 		return
 	fi;
+
 	printf "Generating valgrind suppressions... "
+	valgrind_suppressions="${out_valgrind}/suppressions"
+	valgrind_suppressions_log="${out_valgrind}/suppressions.pre"
 
 	# Run valgrind on the binary, sending it a "\n" so that
 	# a test which uses STDIN will not wait for user input.
