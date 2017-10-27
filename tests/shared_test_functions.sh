@@ -46,6 +46,10 @@ USE_VALGRIND=${USE_VALGRIND:-0}
 # tested.
 valgrind_exit_code=108
 
+# Set ${bindir} to $1 if given, else use "." for in-tree builds.
+bindir=$(CDPATH= cd -- "$(dirname -- "${1-.}")" && pwd -P)
+
+
 ## prepare_directories():
 # Delete any old directories, and create new ones as necessary.  Must be run
 # after check_optional_valgrind().
