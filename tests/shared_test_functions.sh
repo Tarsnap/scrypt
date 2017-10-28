@@ -36,10 +36,12 @@
 
 set -o noclobber -o nounset -e
 
-# Print output about test failures.
+# Keep the user-specified "print info about test failures", or initialize to 0
+# (don't print extra info).
 VERBOSE=${VERBOSE:-0}
 
-# Keep the user-specified ${USE_VALGRIND}, or initialize to 0.
+# Keep the user-specified ${USE_VALGRIND}, or initialize to 0 (don't do memory
+# tests).
 USE_VALGRIND=${USE_VALGRIND:-0}
 
 # A non-zero value unlikely to be used as an exit code by the programs being
