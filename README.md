@@ -78,6 +78,13 @@ The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
   generated using Tarsnap [code signing key](
   https://www.tarsnap.com/tarsnap-signing-key.asc))
 
+  This cleartext signature of the SHA256 output can be verified with:
+
+      gpg --decrypt scrypt-sigs-1.2.1.asc
+
+  You may then compare the displayed hash to the SHA256 hash of
+  `scrypt-1.2.1.gz`.
+
 In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
 in NetBSD pkgsrc as `security/scrypt`.
 
