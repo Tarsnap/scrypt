@@ -1,9 +1,10 @@
 language: C
 sudo: false
 dist: trusty
-# We can't use strict flags in CFLAGS as a general environment
-# variable, because that messes up ./configure and coverity-scan.
-script: make CFLAGS="$CFLAGS $CFLAGS_STRICT" && make test USE_VALGRIND=1
+addons:
+  apt:
+    packages:
+      - valgrind
 matrix:
   include:
     - compiler: gcc
@@ -20,10 +21,6 @@ env:
     - COVERITY_SCAN_NOTIFICATION_EMAIL="cperciva@tarsnap.com"
     - COVERITY_SCAN_BUILD_COMMAND_PREPEND="autoreconf -i && ./configure"
     - COVERITY_SCAN_BUILD_COMMAND="make all clean"
-addons:
-  apt:
-    packages:
-      - valgrind
 before_install:
   # Handle Coverity scan
   - >
@@ -40,3 +37,6 @@ before_install:
   # Otherwise, act normally.
   - autoreconf -i
   - ./configure
+# We can't use strict flags in CFLAGS as a general environment
+# variable, because that messes up ./configure and coverity-scan.
+script: make CFLAGS="$CFLAGS $CFLAGS_STRICT" && make test USE_VALGRIND=1
