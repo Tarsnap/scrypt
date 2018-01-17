@@ -19,20 +19,23 @@ password on a file encrypted by `openssl enc`; this means that a five-character
 password using `scrypt` is stronger than a ten-character password using
 `openssl`.
 
-Details of the `scrypt` key derivation function are given in a paper which was
-presented at the [BSDCan'09](https://www.bsdcan.org/2009/) conference:
+Details of the `scrypt` key derivation function are given in:
 
-* Colin Percival,
+* The Internet Engineering Task Force (IETF)
+  [RFC 7914: The scrypt Password-Based Key Derivation Function](
+  https://tools.ietf.org/html/rfc7914).
+* The original conference paper: Colin Percival,
   [Stronger Key Derivation via Sequential Memory-Hard Functions](
-  https://www.tarsnap.com/scrypt/scrypt.pdf), presented at BSDCan'09, May 2009.
-* Conference presentation slides:
-  [PDF](https://www.tarsnap.com/scrypt/scrypt-slides.pdf).
+  https://www.tarsnap.com/scrypt/scrypt.pdf), presented at
+  [BSDCan'09](https://www.bsdcan.org/2009/), May 2009.
+  [Conference presentation slides](
+  https://www.tarsnap.com/scrypt/scrypt-slides.pdf).
 
-More details are given in the Internet Engineering Task Force
-(IETF) [RFC 7914: The scrypt Password-Based Key Derivation Function](
-https://tools.ietf.org/html/rfc7914).
+Some additional articles may be of interest:
 
-It has been demonstrated that scrypt is maximally memory-hard:
+* Filippo Valsorda presented a very well-written explanation about how
+  [the scrypt parameters](https://blog.filippo.io/the-scrypt-parameters/)
+  impact the memory usage and CPU time of the algorithm.
 
 * J. Alwen, B. Chen, K. Pietrzak, L. Reyzin, S. Tessaro,
   [Scrypt is Maximally Memory-Hard](https://eprint.iacr.org/2016/989),
