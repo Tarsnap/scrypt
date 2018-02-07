@@ -1,29 +1,42 @@
 language: C
 sudo: false
 dist: trusty
-# We can't use strict flags in CFLAGS as a general environment
-# variable, because that messes up ./configure.
-script: make CFLAGS="$CFLAGS $CFLAGS_STRICT" && make test USE_VALGRIND=1
-matrix:
-  include:
-    - compiler: gcc
-      env: CFLAGS="-std=c99 -O2 -Wall -Wextra -Werror"
-           CFLAGS_STRICT="-Wpedantic -pedantic-errors -Wno-clobbered"
-    - compiler: clang
-      env: CFLAGS="-std=c99 -O2 -Wall -Wextra -Werror"
-           CFLAGS_STRICT="-Weverything -Wno-#warnings -Wno-pedantic -Wno-padded -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-missing-noreturn -Wno-reserved-id-macro -Wno-cast-align"
-env:
-  global:
-    - secure: "Lc/FFVefKMmvzxQ0Tv6fB64nZbby6slUdjSxuIVg8cvSfQh8I3J9AN6fRDcDZ1VB5JLIdyddNNQvcMb4qFS08qp1/Q24uLYRC+vmzkdCY5dIJKBAzpmm6i35UTdTdQG1D1g3B8K1jwQl5CdSj9JFHThaxlNC3y2GDFzs1LGQpIHYrEZ8bMBk2wh8mYnggXagQheGp7RMsIMisdDzq2mzd5gR2w+1oGLAearGfY1MpxfQm8fkk7pIWNnpag9oQ5p16UvHm3A1r4RLsaZVJR9iwkYDwma6wXsU26vBkixX9D5ZCloql55u/HCK+GKm2wTHSuwtKnDup2tTarSao+fMfVEEF8p4GCMQZSffhb7mVcUO7qjiKt+Uod45EkxUxRf02PKsSWU8m078cycNwz5/+vpg2or/T/JIn2g91OKbbufPXtH9LHFD+YTLlYqZjvfwF79Ea9st8JRomJ2N+mc9cqaXoB2r4ckzJrtdxamoSjibIQa1gjM0TT2jyvkOqCFDkePVaNXbhOxq1lwAPnlKoMV3yXPUKytEo9a9ug6y+SQUFzHzRgbF67KV2Jb7r/J7lTkaB15fxZQ8aJhugcG7vLRUkT239vj4TciRmrMrjfVrIWONs1B3QI0G0C+clV3TTHWosFNrA1F4FmOrNUYb7hnzd1dGZIfHrGQrmKiabs8="
-    - COVERITY_SCAN_PROJECT_NAME="Tarsnap/scrypt"
-    - COVERITY_SCAN_BRANCH_PATTERN="coverity-scan"
-    - COVERITY_SCAN_NOTIFICATION_EMAIL="cperciva@tarsnap.com"
-    - COVERITY_SCAN_BUILD_COMMAND="make all clean"
 addons:
   apt:
     packages:
       - valgrind
+matrix:
+  include:
+    - compiler: gcc
+      env: CFLAGS_STRICT="-Wall -Wextra -Werror -Wpedantic -pedantic-errors -Wno-clobbered"
+    - compiler: clang
+      env: CFLAGS_STRICT="-Wall -Wextra -Werror -Weverything -Wno-#warnings -Wno-pedantic -Wno-padded -Wno-format-nonliteral -Wno-disabled-macro-expansion -Wno-missing-noreturn -Wno-reserved-id-macro -Wno-cast-align"
+env:
+  global:
+    # Some projects need -std=c99 to specify library support for ./configure
+    - CFLAGS="-std=c99 -O2"
+    - secure: "FDGqRY+fCRQDkkY5YohCNqecntL6/AV0N4qqrJ1F+FOOOr3SKwt6dH4dJ30CZQWG/0qHNeaCDdE0HNwgCv4xjreh80NPLL6FyHz8mkz/hajKc47LYXvIxv1u8DQyUtSYA+cxEyNtJt8lb4+7ZL2lm6E1UXTjYl+8far1vpI8RjkOFIdLx2cW6LzQ6OZ2vQq5INfW6PIEPdjLD7PreLmEZY385Tjh2C77UAnq7AcG2xVd7SMAjZjkqOyVs0Eo8JD2+xhBIVCQ5H0FUIL8Upp1Th2LhxcYAccj0W5r58D6HWZLzsoNi09eb6ozKZbQRyTqfdRKuVxDZznjHsdkbGme81q7epFxOB+2ushu9lnpvFko7vJ1wstjdCcrs6lAVrCP43gU3DpyGb7BKGPLEX6ty2PWLkj5lQVOiHxxhlHkSGSn79PDOnsJsLkEqw4MEeOtcVPBF+qLLrqntLJnMAr1npdCsLgyfc1bdV6ZpgO6bdW6EOGMwl6L9ZBQgAW+CemZEy5TSAUjHS6VspMKCE2FIkzftKhq2adR0Wi1tJU1OiYVEBSgFzceNVNPQgyLojgXq8VEej7G0loj9ni4t2hd7jMhZKwQjPeYrf4xiw1rpvu64Ro7ZeAlfzqzlg4EaNcqcy+uB2gaeWW74z0j09RZd3HBkAADgbadIvgbly9lW/E="
+    - COVERITY_SCAN_PROJECT_NAME="Tarsnap/scrypt"
+    - COVERITY_SCAN_BRANCH_PATTERN="coverity-scan"
+    - COVERITY_SCAN_NOTIFICATION_EMAIL="cperciva@tarsnap.com"
+    - COVERITY_SCAN_BUILD_COMMAND_PREPEND="autoreconf -i && ./configure"
+    - COVERITY_SCAN_BUILD_COMMAND="make all clean"
 before_install:
+  # Handle Coverity scan
+  - >
+    if [[ "${TRAVIS_BRANCH}" == "coverity-scan" ]]; then
+      if [[ "${TRAVIS_JOB_NUMBER##*.}" == "1" ]]; then
+        curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true
+      else
+        echo "Not main job; do nothing."
+      fi
+      echo "Done Coverity scan."
+      sleep 1
+      exit 0
+    fi
+  # Otherwise, act normally.
   - autoreconf -i
   - ./configure
-  - curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true
+# We can't use strict flags in CFLAGS as a general environment
+# variable, because that messes up ./configure and coverity-scan.
+script: make CFLAGS="$CFLAGS $CFLAGS_STRICT" && make test USE_VALGRIND=1
