@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "getopt.h"
 #include "humansize.h"
@@ -192,8 +193,13 @@ main(int argc, char *argv[])
 	if (outfile != stdout)
 		fclose(outfile);
 
-	/* If we failed, print the right error message and exit. */
+	/* If we failed... */
 	if (rc != 0) {
+		/* ... remove the output file (if applicable). */
+		if (outfile != stdout)
+			unlink(outfilename);
+
+		/* ... print the right error message, then exit. */
 		switch (rc) {
 		case 1:
 			warnp("Error determining amount of available memory");
