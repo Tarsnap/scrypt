@@ -56,6 +56,8 @@ main(int argc, char *argv[])
 {
 	FILE * infile;
 	FILE * outfile;
+	const char * infilename;
+	const char * outfilename;
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
@@ -139,10 +141,17 @@ main(int argc, char *argv[])
 	if ((argc < 1) || (argc > 2))
 		usage();
 
+	/* Get filenames. */
+	infilename = argv[0];
+	if (argc > 1)
+		outfilename = argv[1];
+	else
+		outfilename = NULL;
+
 	/* If the input isn't stdin, open the file. */
-	if (strcmp(argv[0], "-")) {
-		if ((infile = fopen(argv[0], "rb")) == NULL) {
-			warnp("Cannot open input file: %s", argv[0]);
+	if (strcmp(infilename, "-")) {
+		if ((infile = fopen(infilename, "rb")) == NULL) {
+			warnp("Cannot open input file: %s", infilename);
 			goto err0;
 		}
 	} else {
@@ -150,9 +159,9 @@ main(int argc, char *argv[])
 	}
 
 	/* If we have an output file, open it. */
-	if (argc > 1) {
-		if ((outfile = fopen(argv[1], "wb")) == NULL) {
-			warnp("Cannot open output file: %s", argv[1]);
+	if (outfilename != NULL) {
+		if ((outfile = fopen(outfilename, "wb")) == NULL) {
+			warnp("Cannot open output file: %s", outfilename);
 			goto err1;
 		}
 	} else {
