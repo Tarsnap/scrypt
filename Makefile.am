@@ -82,6 +82,7 @@ EXTRA_DIST = \
 	lib/README						\
 	README.md						\
 	lib/crypto/crypto_scrypt-ref.c				\
+	libcperciva/cpusupport/Build/cpusupport-X86-SHANI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
