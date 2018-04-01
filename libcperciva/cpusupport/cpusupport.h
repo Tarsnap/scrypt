@@ -100,6 +100,7 @@
  * corresponding run-time detection code (cpusupport_arch_feature.c) must be
  * compiled and linked in.
  */
+CPUSUPPORT_FEATURE(x86, shani, X86_SHANI);
 CPUSUPPORT_FEATURE(x86, aesni, X86_AESNI);
 CPUSUPPORT_FEATURE(x86, sse2, X86_SSE2);
 

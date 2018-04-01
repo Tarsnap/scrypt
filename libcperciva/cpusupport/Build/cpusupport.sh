@@ -46,3 +46,4 @@ feature() {
 feature X86 CPUID ""
 feature X86 SSE2 "" "-msse2" "-msse2 -Wno-cast-align"
 feature X86 AESNI "" "-maes" "-maes -Wno-cast-align" "-maes -Wno-missing-prototypes -Wno-cast-qual"
+feature X86 SHANI "" "-msse4.1 -msha" "-msse4.1 -msha -Wno-cast-align" "-maes -Wno-missing-prototypes -Wno-cast-qual"
