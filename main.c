@@ -25,6 +25,8 @@
  */
 #include "scrypt_platform.h"
 
+#include <sys/stat.h>
+
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -50,6 +52,25 @@ usage(void)
 	    "              [-t maxtime] [-v] [-P] infile [outfile]\n"
 	    "       scrypt --version\n");
 	exit(1);
+}
+
+/* Check that it's a normal file before deleting it. */
+static void
+clean_output(const char * outfilename)
+{
+	struct stat fileinfo;
+
+	/* Bail if we're using stdout. */
+	if (outfilename == NULL)
+		return;
+
+	/* Bail if we can't get file info. */
+	if (stat(outfilename, &fileinfo))
+		return;
+
+	/* If output is a regular file, delete it. */
+	if (S_ISREG(fileinfo.st_mode))
+		unlink(outfilename);
 }
 
 int
@@ -196,8 +217,7 @@ main(int argc, char *argv[])
 	/* If we failed... */
 	if (rc != 0) {
 		/* ... remove the output file (if applicable). */
-		if (outfile != stdout)
-			unlink(outfilename);
+		clean_output(outfilename);
 
 		/* ... print the right error message, then exit. */
 		switch (rc) {
