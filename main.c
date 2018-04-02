@@ -269,10 +269,11 @@ main(int argc, char *argv[])
 	exit(0);
 
 err2:
-	if (outfile != stdout) {
+	if (outfile != stdout)
 		fclose(outfile);
-		unlink(outfilename);
-	}
+
+	/* ... remove the output file (if applicable). */
+	clean_output(outfilename);
 err1:
 	if (infile != stdin)
 		fclose(infile);
