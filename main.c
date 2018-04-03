@@ -25,11 +25,14 @@
  */
 #include "scrypt_platform.h"
 
+#include <sys/stat.h>
+
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "getopt.h"
 #include "humansize.h"
@@ -51,11 +54,44 @@ usage(void)
 	exit(1);
 }
 
+/* Check that it's a normal file before deleting it. */
+static void
+clean_output(const char * outfilename)
+{
+	struct stat fileinfo;
+	const char * actualfilename;
+
+	/* Bail if we're using stdout. */
+	if (outfilename == NULL)
+		return;
+
+	/* Bail if we can't get file info. */
+	if (lstat(outfilename, &fileinfo))
+		return;
+
+	/* If output is a regular file, delete it. */
+	if (S_ISREG(fileinfo.st_mode))
+		unlink(outfilename);
+	else if (S_ISLNK(fileinfo.st_mode)) {
+		/* Handle symlinks. */
+		if ((actualfilename = realpath(outfilename, NULL)) == NULL) {
+			warnp("realpath");
+			return;
+		}
+		if (lstat(actualfilename, &fileinfo))
+			return;
+		if (S_ISREG(fileinfo.st_mode))
+			unlink(actualfilename);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
 	FILE * infile;
 	FILE * outfile;
+	const char * infilename;
+	const char * outfilename;
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
@@ -81,7 +117,7 @@ main(int argc, char *argv[])
 		dec = 1;
 	} else if (strcmp(argv[1], "--version") == 0) {
 		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
-		exit(0);
+		goto err0;
 	} else {
 		warn0("First argument must be 'enc' or 'dec'.\n");
 		usage();
@@ -98,24 +134,24 @@ main(int argc, char *argv[])
 		GETOPT_OPTARG("-M"):
 			if (humansize_parse(optarg, &maxmem64)) {
 				warn0("Could not parse the parameter to -M.");
-				exit(1);
+				goto err0;
 			}
 			if (maxmem64 > SIZE_MAX) {
 				warn0("The parameter to -M is too large.");
-				exit(1);
+				goto err0;
 			}
 			maxmem = (size_t)maxmem64;
 			break;
 		GETOPT_OPTARG("-m"):
 			if (PARSENUM(&maxmemfrac, optarg, 0, 1)) {
 				warnp("Invalid option: -n %s", optarg);
-				exit(1);
+				goto err0;
 			}
 			break;
 		GETOPT_OPTARG("-t"):
 			if (PARSENUM(&maxtime, optarg, 0, INFINITY)) {
 				warnp("Invalid option: -n %s", optarg);
-				exit(1);
+				goto err0;
 			}
 			break;
 		GETOPT_OPT("-v"):
@@ -139,21 +175,28 @@ main(int argc, char *argv[])
 	if ((argc < 1) || (argc > 2))
 		usage();
 
+	/* Get filenames. */
+	infilename = argv[0];
+	if (argc > 1)
+		outfilename = argv[1];
+	else
+		outfilename = NULL;
+
 	/* If the input isn't stdin, open the file. */
-	if (strcmp(argv[0], "-")) {
-		if ((infile = fopen(argv[0], "rb")) == NULL) {
-			warnp("Cannot open input file: %s", argv[0]);
-			exit(1);
+	if (strcmp(infilename, "-")) {
+		if ((infile = fopen(infilename, "rb")) == NULL) {
+			warnp("Cannot open input file: %s", infilename);
+			goto err0;
 		}
 	} else {
 		infile = stdin;
 	}
 
 	/* If we have an output file, open it. */
-	if (argc > 1) {
-		if ((outfile = fopen(argv[1], "wb")) == NULL) {
-			warnp("Cannot open output file: %s", argv[1]);
-			exit(1);
+	if (outfilename != NULL) {
+		if ((outfile = fopen(outfilename, "wb")) == NULL) {
+			warnp("Cannot open output file: %s", outfilename);
+			goto err1;
 		}
 	} else {
 		outfile = stdout;
@@ -162,7 +205,7 @@ main(int argc, char *argv[])
 	/* Prompt for a password. */
 	if (readpass(&passwd, "Please enter passphrase",
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
-		exit(1);
+		goto err2;
 
 	/* Encrypt or decrypt. */
 	if (dec)
@@ -183,8 +226,12 @@ main(int argc, char *argv[])
 	if (outfile != stdout)
 		fclose(outfile);
 
-	/* If we failed, print the right error message and exit. */
+	/* If we failed... */
 	if (rc != 0) {
+		/* ... remove the output file (if applicable). */
+		clean_output(outfilename);
+
+		/* ... print the right error message, then exit. */
 		switch (rc) {
 		case 1:
 			warnp("Error determining amount of available memory");
@@ -227,8 +274,22 @@ main(int argc, char *argv[])
 			warnp("Error reading file: %s", argv[0]);
 			break;
 		}
-		exit(1);
+		goto err0;
 	}
 
-	return (0);
+	/* Success! */
+	exit(0);
+
+err2:
+	if (outfile != stdout)
+		fclose(outfile);
+
+	/* ... remove the output file (if applicable). */
+	clean_output(outfilename);
+err1:
+	if (infile != stdin)
+		fclose(infile);
+err0:
+	/* Failure! */
+	exit(1);
 }
