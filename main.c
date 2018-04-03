@@ -59,18 +59,30 @@ static void
 clean_output(const char * outfilename)
 {
 	struct stat fileinfo;
+	const char * actualfilename;
 
 	/* Bail if we're using stdout. */
 	if (outfilename == NULL)
 		return;
 
 	/* Bail if we can't get file info. */
-	if (stat(outfilename, &fileinfo))
+	if (lstat(outfilename, &fileinfo))
 		return;
 
 	/* If output is a regular file, delete it. */
 	if (S_ISREG(fileinfo.st_mode))
 		unlink(outfilename);
+	else if (S_ISLNK(fileinfo.st_mode)) {
+		/* Handle symlinks. */
+		if ((actualfilename = realpath(outfilename, NULL)) == NULL) {
+			warnp("realpath");
+			return;
+		}
+		if (lstat(actualfilename, &fileinfo))
+			return;
+		if (S_ISREG(fileinfo.st_mode))
+			unlink(actualfilename);
+	}
 }
 
 int
