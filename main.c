@@ -154,6 +154,16 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		exit(1);
 
+	/* Check that the passphrase works. */
+	if (dec) {
+		if ((rc = scryptdec_file_check_passphrase(infile,
+		    (uint8_t *)passwd, strlen(passwd), maxmem, maxmemfrac,
+		    maxtime, force_resources)) != 0) {
+			goto result;
+		}
+		rewind(infile);
+	}
+
 	/* If we have an output file, open it. */
 	if (argc > 1) {
 		if ((outfile = fopen(argv[1], "wb")) == NULL) {
@@ -183,6 +193,7 @@ main(int argc, char *argv[])
 	if (outfile != stdout)
 		fclose(outfile);
 
+result:
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {
 		switch (rc) {

@@ -110,6 +110,14 @@ int scryptenc_file(FILE *, FILE *, const uint8_t *, size_t,
     size_t, double, double, int);
 
 /**
+ * scryptdec_file_check_passphrase(infile, passwd, passwdlen, maxmem,
+ *     maxmemfrac, maxtime, force):
+ * Check that the passphrase works.
+ */
+int scryptdec_file_check_passphrase(FILE *, const uint8_t *, size_t, size_t,
+    double, double, int);
+
+/**
  * scryptdec_file(infile, outfile, passwd, passwdlen,
  *     maxmem, maxmemfrac, maxtime, verbose, force):
  * Read a stream from infile and decrypt it, writing the resulting stream to

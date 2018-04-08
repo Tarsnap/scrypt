@@ -542,6 +542,23 @@ scryptdec_file_passphrase(FILE * infile, const uint8_t * passwd,
 }
 
 /**
+ * scryptdec_file_passphrase(infile, passwd, passwdlen, maxmem, maxmemfrac,
+ *     maxtime, force):
+ * Check that the passphrase works.
+ */
+int
+scryptdec_file_check_passphrase(FILE * infile, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int force)
+{
+	uint8_t header[96];
+	uint8_t dk[64];
+
+	return (scryptdec_file_passphrase(infile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, 0, force, header, dk));
+}
+
+/**
  * scryptdec_file(infile, outfile, passwd, passwdlen,
  *     maxmem, maxmemfrac, maxtime, verbose, force):
  * Read a stream from infile and decrypt it, writing the resulting stream to
