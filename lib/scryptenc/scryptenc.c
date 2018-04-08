@@ -497,30 +497,11 @@ scryptenc_file(FILE * infile, FILE * outfile,
 	return (0);
 }
 
-/**
- * scryptdec_file(infile, outfile, passwd, passwdlen,
- *     maxmem, maxmemfrac, maxtime, verbose, force):
- * Read a stream from infile and decrypt it, writing the resulting stream to
- * outfile.  If ${force} is 1, do not check whether decryption
- * will exceed the estimated available memory or time.
- */
-int
-scryptdec_file(FILE * infile, FILE * outfile,
-    const uint8_t * passwd, size_t passwdlen,
-    size_t maxmem, double maxmemfrac, double maxtime, int verbose,
-    int force)
+static int
+scryptdec_file_passphrase(FILE * infile, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int verbose, int force, uint8_t header[96], uint8_t dk[64])
 {
-	uint8_t buf[ENCBLOCK + 32];
-	uint8_t header[96];
-	uint8_t hbuf[32];
-	uint8_t dk[64];
-	uint8_t * key_enc = dk;
-	uint8_t * key_hmac = &dk[32];
-	size_t buflen = 0;
-	size_t readlen;
-	HMAC_SHA256_CTX hctx;
-	struct crypto_aes_key * key_enc_exp;
-	struct crypto_aesctr * AES;
 	int rc;
 
 	/*
@@ -555,6 +536,58 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	if ((rc = scryptdec_setup(header, dk, passwd, passwdlen,
 	    maxmem, maxmemfrac, maxtime, verbose, force)) != 0)
 		return (rc);
+
+	/* Success! */
+	return (0);
+}
+
+/**
+ * scryptdec_file_passphrase(infile, passwd, passwdlen, maxmem, maxmemfrac,
+ *     maxtime, force):
+ * Check that the passphrase works.
+ */
+int
+scryptdec_file_check_passphrase(FILE * infile, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int force)
+{
+	uint8_t header[96];
+	uint8_t dk[64];
+
+	return (scryptdec_file_passphrase(infile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, 0, force, header, dk));
+}
+
+/**
+ * scryptdec_file(infile, outfile, passwd, passwdlen,
+ *     maxmem, maxmemfrac, maxtime, verbose, force):
+ * Read a stream from infile and decrypt it, writing the resulting stream to
+ * outfile.  If ${force} is 1, do not check whether decryption
+ * will exceed the estimated available memory or time.
+ */
+int
+scryptdec_file(FILE * infile, FILE * outfile,
+    const uint8_t * passwd, size_t passwdlen,
+    size_t maxmem, double maxmemfrac, double maxtime, int verbose,
+    int force)
+{
+	uint8_t buf[ENCBLOCK + 32];
+	uint8_t header[96];
+	uint8_t hbuf[32];
+	uint8_t dk[64];
+	uint8_t * key_enc = dk;
+	uint8_t * key_hmac = &dk[32];
+	size_t buflen = 0;
+	size_t readlen;
+	HMAC_SHA256_CTX hctx;
+	struct crypto_aes_key * key_enc_exp;
+	struct crypto_aesctr * AES;
+	int rc;
+
+	/* Parse the header and generate derived keys. */
+	if ((rc = scryptdec_file_passphrase(infile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, verbose, force, header, dk)) != 0)
+		return rc;
 
 	/* Start hashing with the header. */
 	HMAC_SHA256_Init(&hctx, key_hmac, 32);
