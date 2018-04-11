@@ -149,6 +149,11 @@ main(int argc, char *argv[])
 		infile = stdin;
 	}
 
+	/* Prompt for a password. */
+	if (readpass(&passwd, "Please enter passphrase",
+	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
+		exit(1);
+
 	/* If we have an output file, open it. */
 	if (argc > 1) {
 		if ((outfile = fopen(argv[1], "wb")) == NULL) {
@@ -158,11 +163,6 @@ main(int argc, char *argv[])
 	} else {
 		outfile = stdout;
 	}
-
-	/* Prompt for a password. */
-	if (readpass(&passwd, "Please enter passphrase",
-	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
-		exit(1);
 
 	/* Encrypt or decrypt. */
 	if (dec)
