@@ -143,7 +143,7 @@ main(int argc, char *argv[])
 	if (strcmp(argv[0], "-")) {
 		if ((infile = fopen(argv[0], "rb")) == NULL) {
 			warnp("Cannot open input file: %s", argv[0]);
-			exit(1);
+			goto err0;
 		}
 	} else {
 		infile = stdin;
@@ -153,7 +153,7 @@ main(int argc, char *argv[])
 	if (argc > 1) {
 		if ((outfile = fopen(argv[1], "wb")) == NULL) {
 			warnp("Cannot open output file: %s", argv[1]);
-			exit(1);
+			goto err1;
 		}
 	} else {
 		outfile = stdout;
@@ -162,7 +162,7 @@ main(int argc, char *argv[])
 	/* Prompt for a password. */
 	if (readpass(&passwd, "Please enter passphrase",
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
-		exit(1);
+		goto err2;
 
 	/* Encrypt or decrypt. */
 	if (dec)
@@ -227,8 +227,19 @@ main(int argc, char *argv[])
 			warnp("Error reading file: %s", argv[0]);
 			break;
 		}
-		exit(1);
+		goto err0;
 	}
 
+	/* Success! */
 	return (0);
+
+err2:
+	if (outfile != stdin)
+		fclose(outfile);
+err1:
+	if (infile != stdin)
+		fclose(infile);
+err0:
+	/* Failure! */
+	exit(1);
 }
