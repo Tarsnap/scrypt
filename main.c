@@ -108,13 +108,13 @@ main(int argc, char *argv[])
 			break;
 		GETOPT_OPTARG("-m"):
 			if (PARSENUM(&maxmemfrac, optarg, 0, 1)) {
-				warnp("Invalid option: -n %s", optarg);
+				warnp("Invalid option: -m %s", optarg);
 				exit(1);
 			}
 			break;
 		GETOPT_OPTARG("-t"):
 			if (PARSENUM(&maxtime, optarg, 0, INFINITY)) {
-				warnp("Invalid option: -n %s", optarg);
+				warnp("Invalid option: -t %s", optarg);
 				exit(1);
 			}
 			break;
