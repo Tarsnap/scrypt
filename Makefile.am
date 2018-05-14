@@ -5,6 +5,7 @@ dist_man_MANS=$(scrypt_man_MANS)
 scrypt_SOURCES=		main.c					\
 			libcperciva/alg/sha256.c		\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
+			libcperciva/cpusupport/cpusupport_x86_rdrand.c \
 			libcperciva/cpusupport/cpusupport_x86_sse2.c \
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aesctr.c	\
@@ -33,6 +34,7 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_aes_aesni.h	\
 			libcperciva/crypto/crypto_aesctr.h	\
 			libcperciva/crypto/crypto_entropy.h	\
+			libcperciva/crypto/crypto_entropy_rdrand.h \
 			libcperciva/util/asprintf.h		\
 			libcperciva/util/entropy.h		\
 			libcperciva/util/getopt.h		\
@@ -54,7 +56,8 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-DCPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\" \
 			-D_POSIX_C_SOURCE=200809L
 
-scrypt_LDADD=		libcperciva_aesni.a libscrypt_sse2.a
+scrypt_LDADD=		libcperciva_aesni.a libcperciva_rdrand.a \
+			libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
@@ -65,6 +68,11 @@ CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
 libcperciva_aesni_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
+
+noinst_LIBRARIES+=	libcperciva_rdrand.a
+libcperciva_rdrand_a_SOURCES=	libcperciva/crypto/crypto_entropy_rdrand.c
+libcperciva_rdrand_a_CFLAGS=						\
+	`. ./cpusupport-config.h; echo $${CFLAGS_X86_RDRAND}`
 
 noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
@@ -78,6 +86,7 @@ EXTRA_DIST = \
 	lib/crypto/crypto_scrypt-ref.c				\
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
 	tests/test_scrypt.good					\
