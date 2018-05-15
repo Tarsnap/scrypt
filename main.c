@@ -51,6 +51,30 @@ usage(void)
 	exit(1);
 }
 
+/* If we have an output file, open it; otherwise, use stdout. */
+static FILE *
+open_output(const char * filename)
+{
+	FILE * outfile;
+
+	/* If we have an output file, open it; otherwise, use stdout. */
+	if (filename != NULL) {
+		if ((outfile = fopen(filename, "wb")) == NULL) {
+			warnp("Cannot open output file: %s", filename);
+			goto err0;
+		}
+	} else {
+		outfile = stdout;
+	}
+
+	/* Success! */
+	return (outfile);
+
+err0:
+	/* Failure! */
+	return (NULL);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -168,15 +192,9 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		goto err1;
 
-	/* If we have an output file, open it. */
-	if (outfilename != NULL) {
-		if ((outfile = fopen(outfilename, "wb")) == NULL) {
-			warnp("Cannot open output file: %s", outfilename);
-			goto err2;
-		}
-	} else {
-		outfile = stdout;
-	}
+	/* If we have an output file, open it; otherwise, use stdout. */
+	if ((outfile = open_output(outfilename)) == NULL)
+		goto err2;
 
 	/* Encrypt or decrypt. */
 	if (dec)
