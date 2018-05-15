@@ -81,30 +81,38 @@ decrypt_file(FILE * infile, const char * outfilename, const uint8_t * passwd,
     size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
     int verbose, int force_resources)
 {
+	struct scryptdec_file_cookie * C;
 	FILE * outfile;
 	int rc;
+
+	/* Prepare for decryption. */
+	if ((rc = scryptdec_file_prep(infile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, verbose, force_resources, &C)))
+		goto err0;
 
 	/* If we have an output file, open it; otherwise, use stdout. */
 	if ((outfile = open_output(outfilename)) == NULL) {
 		rc = 12;
-		goto err0;
+		goto err1;
 	}
 
-	/* Decrypt. */
-	if ((rc = scryptdec_file(infile, outfile, passwd, passwdlen, maxmem,
-	    maxmemfrac, maxtime, verbose, force_resources)))
-		goto err1;
+	/* Decrypt file. */
+	if ((rc = scryptdec_file_copy(C, outfile)))
+		goto err2;
 
 	/* Clean up. */
 	if (outfile != stdout)
 		fclose(outfile);
+	scryptdec_file_cookie_free(C);
 
 	/* Success! */
 	return (0);
 
-err1:
+err2:
 	if (outfile != stdout)
 		fclose(outfile);
+err1:
+	scryptdec_file_cookie_free(C);
 err0:
 	/* Failure! */
 	return (rc);
