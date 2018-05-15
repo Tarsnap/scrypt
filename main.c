@@ -65,6 +65,7 @@ main(int argc, char *argv[])
 	double maxtime = 300.0;
 	const char * ch;
 	const char * infilename;
+	const char * outfilename;
 	char * passwd;
 	int rc;
 	int verbose = 0;
@@ -146,6 +147,12 @@ main(int argc, char *argv[])
 	else
 		infilename = NULL;
 
+	/* Set the output filename. */
+	if (argc > 1)
+		outfilename = argv[1];
+	else
+		outfilename = NULL;
+
 	/* If the input isn't stdin, open the file. */
 	if (infilename != NULL) {
 		if ((infile = fopen(infilename, "rb")) == NULL) {
@@ -162,9 +169,9 @@ main(int argc, char *argv[])
 		goto err1;
 
 	/* If we have an output file, open it. */
-	if (argc > 1) {
-		if ((outfile = fopen(argv[1], "wb")) == NULL) {
-			warnp("Cannot open output file: %s", argv[1]);
+	if (outfilename != NULL) {
+		if ((outfile = fopen(outfilename, "wb")) == NULL) {
+			warnp("Cannot open output file: %s", outfilename);
 			goto err2;
 		}
 	} else {
@@ -228,7 +235,8 @@ main(int argc, char *argv[])
 			break;
 		case 12:
 			warnp("Error writing file: %s",
-			    (argc > 1) ? argv[1] : "standard output");
+			    (outfilename != NULL) ? outfilename
+			    : "standard output");
 			break;
 		case 13:
 			warnp("Error reading file: %s",
