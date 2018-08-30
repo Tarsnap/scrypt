@@ -64,6 +64,8 @@ main(int argc, char *argv[])
 	double maxmemfrac = 0.5;
 	double maxtime = 300.0;
 	const char * ch;
+	const char * infilename;
+	const char * outfilename;
 	char * passwd;
 	int rc;
 	int verbose = 0;
@@ -139,10 +141,22 @@ main(int argc, char *argv[])
 	if ((argc < 1) || (argc > 2))
 		usage();
 
+	/* Set the input filename. */
+	if (strcmp(argv[0], "-"))
+		infilename = argv[0];
+	else
+		infilename = NULL;
+
+	/* Set the output filename. */
+	if (argc > 1)
+		outfilename = argv[1];
+	else
+		outfilename = NULL;
+
 	/* If the input isn't stdin, open the file. */
-	if (strcmp(argv[0], "-")) {
-		if ((infile = fopen(argv[0], "rb")) == NULL) {
-			warnp("Cannot open input file: %s", argv[0]);
+	if (infilename != NULL) {
+		if ((infile = fopen(infilename, "rb")) == NULL) {
+			warnp("Cannot open input file: %s", infilename);
 			goto err0;
 		}
 	} else {
@@ -155,9 +169,9 @@ main(int argc, char *argv[])
 		goto err1;
 
 	/* If we have an output file, open it. */
-	if (argc > 1) {
-		if ((outfile = fopen(argv[1], "wb")) == NULL) {
-			warnp("Cannot open output file: %s", argv[1]);
+	if (outfilename != NULL) {
+		if ((outfile = fopen(outfilename, "wb")) == NULL) {
+			warnp("Cannot open output file: %s", outfilename);
 			goto err2;
 		}
 	} else {
@@ -221,10 +235,13 @@ main(int argc, char *argv[])
 			break;
 		case 12:
 			warnp("Error writing file: %s",
-			    (argc > 1) ? argv[1] : "standard output");
+			    (outfilename != NULL) ? outfilename
+			    : "standard output");
 			break;
 		case 13:
-			warnp("Error reading file: %s", argv[0]);
+			warnp("Error reading file: %s",
+			    (infilename != NULL) ? infilename
+			    : "standard input");
 			break;
 		}
 		goto err0;
