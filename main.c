@@ -69,6 +69,7 @@ main(int argc, char *argv[])
 	char * passwd;
 	int rc;
 	int verbose = 0;
+	struct scryptdec_file_cookie * C = NULL;
 
 	WARNP_INIT;
 
@@ -168,6 +169,22 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		goto err1;
 
+	/* If decrypting, check passphrase. */
+	if (dec) {
+		if ((rc = scryptdec_file_prep(infile, (uint8_t *)passwd,
+		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
+		    force_resources, &C)) != 0) {
+			/*
+			 * We want to clear passwd and print the scrypt error
+			 * message, but not to fclose(outfile) and not to
+			 * clear C.
+			 */
+			outfile = stdout;
+			C = NULL;
+			goto cleanup;
+		}
+	}
+
 	/* If we have an output file, open it. */
 	if (outfilename != NULL) {
 		if ((outfile = fopen(outfilename, "wb")) == NULL) {
@@ -180,16 +197,19 @@ main(int argc, char *argv[])
 
 	/* Encrypt or decrypt. */
 	if (dec)
-		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
-		    force_resources);
+		rc = scryptdec_file_copy(C, outfile);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 
+cleanup:
 	/* Zero and free the password. */
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
+
+	/* Free the dec cookie if applicable. */
+	if (dec)
+		scryptdec_file_cookie_free(C);
 
 	/* Close any files we opened. */
 	if (infile != stdin)
