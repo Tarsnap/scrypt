@@ -56,6 +56,12 @@ static int pickparams(size_t, double, double,
 static int checkparams(size_t, double, double, int, uint32_t, uint32_t, int,
     int);
 
+struct scryptdec_file_cookie {
+	FILE *	infile;		/* This is not owned by this cookie. */
+	uint8_t	header[96];
+	uint8_t	dk[64];
+};
+
 static void
 display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
     double opps, double maxtime)
@@ -548,37 +554,52 @@ err1:
 }
 
 /**
- * scryptdec_file(infile, outfile, passwd, passwdlen,
- *     maxmem, maxmemfrac, maxtime, verbose, force):
- * Read a stream from infile and decrypt it, writing the resulting stream to
- * outfile.  If ${force} is 1, do not check whether decryption
- * will exceed the estimated available memory or time.
+ * scryptdec_file_cookie_free(cookie):
+ * Free the ${cookie}.
  */
-int
-scryptdec_file(FILE * infile, FILE * outfile,
-    const uint8_t * passwd, size_t passwdlen,
-    size_t maxmem, double maxmemfrac, double maxtime, int verbose,
-    int force)
+static void
+scryptdec_file_cookie_free(struct scryptdec_file_cookie * C)
 {
-	uint8_t buf[ENCBLOCK + 32];
-	uint8_t header[96];
-	uint8_t hbuf[32];
-	uint8_t dk[64];
-	uint8_t * key_enc = dk;
-	uint8_t * key_hmac = &dk[32];
-	size_t buflen = 0;
-	size_t readlen;
-	HMAC_SHA256_CTX hctx;
-	struct crypto_aes_key * key_enc_exp;
-	struct crypto_aesctr * AES;
+
+	/* Behave consistently with free(NULL). */
+	if (C == NULL)
+		return;
+
+	/* Zero sensitive data. */
+	insecure_memzero(C->dk, 64);
+
+	/* We do not free C->infile because it is not owned by this cookie. */
+
+	/* Free the cookie. */
+	free(C);
+}
+
+/**
+ * scryptdec_file_prep(infile, passwd, passwdlen, maxmem, maxmemfrac,
+ *     maxtime, force, cookie):
+ * Prepare to decrypt ${infile}, including checking the passphrase.  Allocate
+ * a cookie at ${cookie}.  After calling this function, ${infile} should not
+ * be modified until the decryption is completed by scryptdec_file_copy.
+ */
+static int
+scryptdec_file_prep(FILE * infile, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int verbose, int force, struct scryptdec_file_cookie ** cookie)
+{
+	struct scryptdec_file_cookie * C;
 	int rc;
+
+	/* Allocate the cookie. */
+	if ((C = malloc(sizeof(struct scryptdec_file_cookie))) == NULL)
+		return (6);
+	C->infile = infile;
 
 	/*
 	 * Read the first 7 bytes of the file; all future versions of scrypt
 	 * are guaranteed to have at least 7 bytes of header.
 	 */
-	if (fread(header, 7, 1, infile) < 1) {
-		if (ferror(infile)) {
+	if (fread(C->header, 7, 1, C->infile) < 1) {
+		if (ferror(C->infile)) {
 			rc = 13;
 			goto err0;
 		} else {
@@ -588,11 +609,11 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	}
 
 	/* Do we have the right magic? */
-	if (memcmp(header, "scrypt", 6)) {
+	if (memcmp(C->header, "scrypt", 6)) {
 		rc = 7;
 		goto err0;
 	}
-	if (header[6] != 0) {
+	if (C->header[6] != 0) {
 		rc = 8;
 		goto err0;
 	}
@@ -601,8 +622,8 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	 * Read another 89 bytes of the file; version 0 of the scrypt file
 	 * format has a 96-byte header.
 	 */
-	if (fread(&header[7], 89, 1, infile) < 1) {
-		if (ferror(infile)) {
+	if (fread(&C->header[7], 89, 1, C->infile) < 1) {
+		if (ferror(C->infile)) {
 			rc = 13;
 			goto err0;
 		} else {
@@ -612,13 +633,54 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	}
 
 	/* Parse the header and generate derived keys. */
-	if ((rc = scryptdec_setup(header, dk, passwd, passwdlen,
+	if ((rc = scryptdec_setup(C->header, C->dk, passwd, passwdlen,
 	    maxmem, maxmemfrac, maxtime, verbose, force)) != 0)
 		goto err1;
 
+	/* Set cookie for calling function. */
+	*cookie = C;
+
+	/* Success! */
+	return (0);
+
+err1:
+	scryptdec_file_cookie_free(C);
+err0:
+	/* Failure! */
+	return (rc);
+}
+
+/**
+ * scryptdec_file_copy(cookie, outfile):
+ * Read a stream from the file that was passed into the ${cookie} by
+ * scryptdec_file_prep, decrypt it, and write the resulting stream to
+ * ${outfile}.  After this function completes, it is safe to modify/close
+ * ${outfile} and the ${infile} which was given to scryptdec_file_prep.
+ */
+static int
+scryptdec_file_copy(struct scryptdec_file_cookie * C, FILE * outfile)
+{
+	uint8_t buf[ENCBLOCK + 32];
+	uint8_t hbuf[32];
+	uint8_t * key_enc;
+	uint8_t * key_hmac;
+	size_t buflen = 0;
+	size_t readlen;
+	HMAC_SHA256_CTX hctx;
+	struct crypto_aes_key * key_enc_exp;
+	struct crypto_aesctr * AES;
+	int rc;
+
+	/* Sanity check. */
+	assert(C != NULL);
+
+	/* Use existing array for these pointers. */
+	key_enc = C->dk;
+	key_hmac = &C->dk[32];
+
 	/* Start hashing with the header. */
 	HMAC_SHA256_Init(&hctx, key_hmac, 32);
-	HMAC_SHA256_Update(&hctx, header, 96);
+	HMAC_SHA256_Update(&hctx, C->header, 96);
 
 	/*
 	 * We don't know how long the encrypted data block is (we can't know,
@@ -628,17 +690,17 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	 */
 	if ((key_enc_exp = crypto_aes_key_expand(key_enc, 32)) == NULL) {
 		rc = 5;
-		goto err1;
+		goto err0;
 	}
 	if ((AES = crypto_aesctr_init(key_enc_exp, 0)) == NULL) {
 		crypto_aes_key_free(key_enc_exp);
 		rc = 6;
-		goto err1;
+		goto err0;
 	}
 	do {
 		/* Read data until we have more than 32 bytes of it. */
 		if ((readlen = fread(&buf[buflen], 1,
-		    ENCBLOCK + 32 - buflen, infile)) == 0)
+		    ENCBLOCK + 32 - buflen, C->infile)) == 0)
 			break;
 		buflen += readlen;
 		if (buflen <= 32)
@@ -653,7 +715,7 @@ scryptdec_file(FILE * infile, FILE * outfile,
 		if (fwrite(buf, 1, buflen - 32, outfile) < buflen - 32) {
 			crypto_aesctr_free(AES);
 			rc = 12;
-			goto err1;
+			goto err0;
 		}
 
 		/* Move the last 32 bytes to the start of the buffer. */
@@ -664,32 +726,64 @@ scryptdec_file(FILE * infile, FILE * outfile,
 	crypto_aes_key_free(key_enc_exp);
 
 	/* Did we exit the loop due to a read error? */
-	if (ferror(infile)) {
+	if (ferror(C->infile)) {
 		rc = 13;
-		goto err1;
+		goto err0;
 	}
 
 	/* Did we read enough data that we *might* have a valid signature? */
 	if (buflen < 32) {
 		rc = 7;
-		goto err1;
+		goto err0;
 	}
 
 	/* Verify signature. */
 	HMAC_SHA256_Final(hbuf, &hctx);
 	if (memcmp(hbuf, buf, 32)) {
 		rc = 7;
-		goto err1;
+		goto err0;
 	}
 
-	/* Zero sensitive data. */
-	insecure_memzero(dk, 64);
+	/* Success! */
+	return (0);
+
+err0:
+	/* Failure! */
+	return (rc);
+}
+
+/**
+ * scryptdec_file(infile, outfile, passwd, passwdlen,
+ *     maxmem, maxmemfrac, maxtime, verbose, force):
+ * Read a stream from infile and decrypt it, writing the resulting stream to
+ * outfile.  If ${force} is 1, do not check whether decryption
+ * will exceed the estimated available memory or time.
+ */
+int
+scryptdec_file(FILE * infile, FILE * outfile, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int verbose, int force)
+{
+	struct scryptdec_file_cookie * C;
+	int rc;
+
+	/* Check header, including passphrase. */
+	if ((rc = scryptdec_file_prep(infile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, verbose, force, &C)) != 0)
+		goto err0;
+
+	/* Copy unencrypted data to outfile. */
+	if ((rc = scryptdec_file_copy(C, outfile)) != 0)
+		goto err1;
+
+	/* Clean up cookie, attempting to zero sensitive data. */
+	scryptdec_file_cookie_free(C);
 
 	/* Success! */
 	return (0);
 
 err1:
-	insecure_memzero(dk, 64);
+	scryptdec_file_cookie_free(C);
 err0:
 	/* Failure! */
 	return (rc);
