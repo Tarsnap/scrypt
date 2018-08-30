@@ -179,8 +179,6 @@ main(int argc, char *argv[])
 			 * message, but not to fclose(outfile) and not to
 			 * clear C.
 			 */
-			outfile = stdout;
-			C = NULL;
 			goto cleanup;
 		}
 	}
@@ -202,20 +200,22 @@ main(int argc, char *argv[])
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 
+	/* Free the dec cookie (if applicable). */
+	if (dec)
+		scryptdec_file_cookie_free(C);
+
+	/* Close outfile (if applicable). */
+	if (outfile != stdout)
+		fclose(outfile);
+
 cleanup:
 	/* Zero and free the password. */
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 
-	/* Free the dec cookie if applicable. */
-	if (dec)
-		scryptdec_file_cookie_free(C);
-
-	/* Close any files we opened. */
+	/* Close infile (if applicable). */
 	if (infile != stdin)
 		fclose(infile);
-	if (outfile != stdout)
-		fclose(outfile);
 
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {
