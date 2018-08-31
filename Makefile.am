@@ -6,7 +6,9 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/alg/sha256.c		\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c \
+			libcperciva/cpusupport/cpusupport_x86_shani.c \
 			libcperciva/cpusupport/cpusupport_x86_sse2.c \
+			libcperciva/cpusupport/cpusupport_x86_ssse3.c \
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_entropy.c	\
@@ -29,6 +31,7 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc_cpuperf.h	\
 			lib/util/memlimit.h			\
 			libcperciva/alg/sha256.h		\
+			libcperciva/alg/sha256_shani.h		\
 			libcperciva/cpusupport/cpusupport.h	\
 			libcperciva/crypto/crypto_aes.h		\
 			libcperciva/crypto/crypto_aes_aesni.h	\
@@ -57,7 +60,7 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-D_POSIX_C_SOURCE=200809L
 
 scrypt_LDADD=		libcperciva_aesni.a libcperciva_rdrand.a \
-			libscrypt_sse2.a
+			libscrypt_shani.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
@@ -78,6 +81,10 @@ noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
 libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
+noinst_LIBRARIES+=	libscrypt_shani.a
+libscrypt_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
+libscrypt_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
+
 EXTRA_DIST = \
 	COPYRIGHT						\
 	FORMAT							\
@@ -87,7 +94,9 @@ EXTRA_DIST = \
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-SHANI2.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-SSSE3.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
 	tests/test_scrypt.good					\
 	tests/test_scrypt_good.enc				\
@@ -102,7 +111,10 @@ EXTRA_DIST = \
 tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			libcperciva/alg/sha256.c			\
 			libcperciva/alg/sha256.h			\
+			libcperciva/alg/sha256_shani.h			\
 			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
+			libcperciva/cpusupport/cpusupport_x86_shani.c	\
+			libcperciva/cpusupport/cpusupport_x86_ssse3.c	\
 			libcperciva/util/insecure_memzero.c		\
 			libcperciva/util/insecure_memzero.h		\
 			libcperciva/util/warnp.c			\
@@ -112,7 +124,7 @@ tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			lib/crypto/crypto_scrypt_smix.h
 
-tests_test_scrypt_LDADD=	libscrypt_sse2.a
+tests_test_scrypt_LDADD=	libscrypt_shani.a libscrypt_sse2.a
 
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
