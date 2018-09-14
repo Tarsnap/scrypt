@@ -601,21 +601,21 @@ scryptdec_file_prep(FILE * infile, const uint8_t * passwd,
 	if (fread(C->header, 7, 1, C->infile) < 1) {
 		if (ferror(C->infile)) {
 			rc = 13;
-			goto err0;
+			goto err1;
 		} else {
 			rc = 7;
-			goto err0;
+			goto err1;
 		}
 	}
 
 	/* Do we have the right magic? */
 	if (memcmp(C->header, "scrypt", 6)) {
 		rc = 7;
-		goto err0;
+		goto err1;
 	}
 	if (C->header[6] != 0) {
 		rc = 8;
-		goto err0;
+		goto err1;
 	}
 
 	/*
@@ -625,10 +625,10 @@ scryptdec_file_prep(FILE * infile, const uint8_t * passwd,
 	if (fread(&C->header[7], 89, 1, C->infile) < 1) {
 		if (ferror(C->infile)) {
 			rc = 13;
-			goto err0;
+			goto err1;
 		} else {
 			rc = 7;
-			goto err0;
+			goto err1;
 		}
 	}
 
@@ -645,7 +645,7 @@ scryptdec_file_prep(FILE * infile, const uint8_t * passwd,
 
 err1:
 	scryptdec_file_cookie_free(C);
-err0:
+
 	/* Failure! */
 	return (rc);
 }
