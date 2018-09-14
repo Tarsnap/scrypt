@@ -55,7 +55,7 @@ int
 main(int argc, char *argv[])
 {
 	FILE * infile;
-	FILE * outfile;
+	FILE * outfile = stdout;
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
@@ -182,12 +182,7 @@ main(int argc, char *argv[])
 		if ((rc = scryptdec_file_prep(infile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
 		    force_resources, &C)) != 0) {
-			/*
-			 * We want to clear passwd and print the scrypt error
-			 * message, but not to fclose(outfile) and not to
-			 * clear C.
-			 */
-			goto cleanup;
+			goto openfailed;
 		}
 	}
 
@@ -197,8 +192,6 @@ main(int argc, char *argv[])
 			warnp("Cannot open output file: %s", outfilename);
 			goto err2;
 		}
-	} else {
-		outfile = stdout;
 	}
 
 	/* Encrypt or decrypt. */
@@ -208,21 +201,17 @@ main(int argc, char *argv[])
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 
-	/*
-	 * If we were decrypting, free the cookie containing the
-	 * decryption parameters.
-	 */
-	if (dec)
-		scryptdec_file_cookie_free(C);
+openfailed:
+	/* Free the decryption cookie, if any. */
+	scryptdec_file_cookie_free(C);
+
+	/* Zero and free the password. */
+	insecure_memzero(passwd, strlen(passwd));
+	free(passwd);
 
 	/* Close outfile (if applicable). */
 	if (outfile != stdout)
 		fclose(outfile);
-
-cleanup:
-	/* Zero and free the password. */
-	insecure_memzero(passwd, strlen(passwd));
-	free(passwd);
 
 	/* Close infile (if applicable). */
 	if (infile != stdin)
@@ -282,8 +271,7 @@ cleanup:
 	return (0);
 
 err2:
-	if (dec)
-		scryptdec_file_cookie_free(C);
+	scryptdec_file_cookie_free(C);
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 err1:
