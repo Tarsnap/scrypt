@@ -55,7 +55,7 @@ int
 main(int argc, char *argv[])
 {
 	FILE * infile;
-	FILE * outfile;
+	FILE * outfile = stdout;
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
@@ -174,8 +174,6 @@ main(int argc, char *argv[])
 			warnp("Cannot open output file: %s", outfilename);
 			goto err2;
 		}
-	} else {
-		outfile = stdout;
 	}
 
 	/* Encrypt or decrypt. */
