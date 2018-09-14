@@ -282,6 +282,8 @@ cleanup:
 	return (0);
 
 err2:
+	if (dec)
+		scryptdec_file_cookie_free(C);
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 err1:
