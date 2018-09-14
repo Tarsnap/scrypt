@@ -169,7 +169,15 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		goto err1;
 
-	/* If decrypting, check passphrase. */
+	/*-
+	 * If we're decrypting, open the input file and process its header;
+	 * doing this here allows us to abort without creating an output
+	 * file if the input file does not have a valid scrypt header or if
+	 * we have the wrong passphrase.
+	 *
+	 * If successful, we get back a cookie containing the decryption
+	 * parameters (which we'll use after we open the output file).
+	 */
 	if (dec) {
 		if ((rc = scryptdec_file_prep(infile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
@@ -200,7 +208,10 @@ main(int argc, char *argv[])
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 
-	/* Free the dec cookie (if applicable). */
+	/*
+	 * If we were decrypting, free the cookie containing the
+	 * decryption parameters.
+	 */
 	if (dec)
 		scryptdec_file_cookie_free(C);
 
