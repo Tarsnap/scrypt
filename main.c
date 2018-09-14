@@ -55,7 +55,7 @@ int
 main(int argc, char *argv[])
 {
 	FILE * infile;
-	FILE * outfile;
+	FILE * outfile = stdout;
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
@@ -69,6 +69,7 @@ main(int argc, char *argv[])
 	char * passwd;
 	int rc;
 	int verbose = 0;
+	struct scryptdec_file_cookie * C = NULL;
 
 	WARNP_INIT;
 
@@ -168,24 +169,41 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		goto err1;
 
+	/*-
+	 * If we're decrypting, open the input file and process its header;
+	 * doing this here allows us to abort without creating an output
+	 * file if the input file does not have a valid scrypt header or if
+	 * we have the wrong passphrase.
+	 *
+	 * If successful, we get back a cookie containing the decryption
+	 * parameters (which we'll use after we open the output file).
+	 */
+	if (dec) {
+		if ((rc = scryptdec_file_prep(infile, (uint8_t *)passwd,
+		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
+		    force_resources, &C)) != 0) {
+			goto cleanup;
+		}
+	}
+
 	/* If we have an output file, open it. */
 	if (outfilename != NULL) {
 		if ((outfile = fopen(outfilename, "wb")) == NULL) {
 			warnp("Cannot open output file: %s", outfilename);
 			goto err2;
 		}
-	} else {
-		outfile = stdout;
 	}
 
 	/* Encrypt or decrypt. */
 	if (dec)
-		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
-		    force_resources);
+		rc = scryptdec_file_copy(C, outfile);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
+
+cleanup:
+	/* Free the decryption cookie, if any. */
+	scryptdec_file_cookie_free(C);
 
 	/* Zero and free the password. */
 	insecure_memzero(passwd, strlen(passwd));
@@ -251,6 +269,7 @@ main(int argc, char *argv[])
 	return (0);
 
 err2:
+	scryptdec_file_cookie_free(C);
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 err1:
