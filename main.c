@@ -51,11 +51,112 @@ usage(void)
 	exit(1);
 }
 
+/* If we have an output file, open it; otherwise, use stdout. */
+static FILE *
+open_output(const char * filename)
+{
+	FILE * outfile;
+
+	/* If we have an output file, open it; otherwise, use stdout. */
+	if (filename != NULL) {
+		if ((outfile = fopen(filename, "wb")) == NULL) {
+			warnp("Cannot open output file: %s", filename);
+			goto err0;
+		}
+	} else {
+		outfile = stdout;
+	}
+
+	/* Success! */
+	return (outfile);
+
+err0:
+	/* Failure! */
+	return (NULL);
+}
+
+/* Decrypt a file. */
+static int
+decrypt_file(FILE * infile, const char * outfilename, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int verbose, int force_resources)
+{
+	struct scryptdec_file_cookie * C;
+	FILE * outfile;
+	int rc;
+
+	/* Prepare for decryption. */
+	if ((rc = scryptdec_file_prep(infile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, verbose, force_resources, &C)))
+		goto err0;
+
+	/* If we have an output file, open it; otherwise, use stdout. */
+	if ((outfile = open_output(outfilename)) == NULL) {
+		rc = 12;
+		goto err1;
+	}
+
+	/* Decrypt file. */
+	if ((rc = scryptdec_file_copy(C, outfile)))
+		goto err2;
+
+	/* Clean up. */
+	if (outfile != stdout)
+		fclose(outfile);
+	scryptdec_file_cookie_free(C);
+
+	/* Success! */
+	return (0);
+
+err2:
+	if (outfile != stdout)
+		fclose(outfile);
+err1:
+	scryptdec_file_cookie_free(C);
+err0:
+	/* Failure! */
+	return (rc);
+}
+
+/* Encrypt a file. */
+static int
+encrypt_file(FILE * infile, const char * outfilename, const uint8_t * passwd,
+    size_t passwdlen, size_t maxmem, double maxmemfrac, double maxtime,
+    int verbose)
+{
+	FILE * outfile;
+	int rc;
+
+	/* If we have an output file, open it; otherwise, use stdout. */
+	if ((outfile = open_output(outfilename)) == NULL) {
+		rc = 12;
+		goto err0;
+	}
+
+	/* Encrypt. */
+	if ((rc = scryptenc_file(infile, outfile, passwd, passwdlen, maxmem,
+	    maxmemfrac, maxtime, verbose)))
+		goto err1;
+
+	/* Clean up. */
+	if (outfile != stdout)
+		fclose(outfile);
+
+	/* Success! */
+	return (0);
+
+err1:
+	if (outfile != stdout)
+		fclose(outfile);
+err0:
+	/* Failure! */
+	return (rc);
+}
+
 int
 main(int argc, char *argv[])
 {
 	FILE * infile;
-	FILE * outfile;
 	int devtty = 1;
 	int dec = 0;
 	size_t maxmem = 0;
@@ -168,34 +269,22 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		goto err1;
 
-	/* If we have an output file, open it. */
-	if (outfilename != NULL) {
-		if ((outfile = fopen(outfilename, "wb")) == NULL) {
-			warnp("Cannot open output file: %s", outfilename);
-			goto err2;
-		}
-	} else {
-		outfile = stdout;
-	}
-
 	/* Encrypt or decrypt. */
 	if (dec)
-		rc = scryptdec_file(infile, outfile, (uint8_t *)passwd,
+		rc = decrypt_file(infile, outfilename, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
 		    force_resources);
 	else
-		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
+		rc = encrypt_file(infile, outfilename, (uint8_t *)passwd,
 		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
 
 	/* Zero and free the password. */
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 
-	/* Close any files we opened. */
+	/* Close input file (if applicable). */
 	if (infile != stdin)
 		fclose(infile);
-	if (outfile != stdout)
-		fclose(outfile);
 
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {
@@ -250,9 +339,6 @@ main(int argc, char *argv[])
 	/* Success! */
 	return (0);
 
-err2:
-	insecure_memzero(passwd, strlen(passwd));
-	free(passwd);
 err1:
 	if (infile != stdin)
 		fclose(infile);
