@@ -60,7 +60,7 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-D_POSIX_C_SOURCE=200809L
 
 scrypt_LDADD=		libcperciva_aesni.a libcperciva_rdrand.a \
-			libscrypt_shani.a libscrypt_sse2.a
+			libcperciva_shani.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
@@ -81,9 +81,9 @@ noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
 libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
-noinst_LIBRARIES+=	libscrypt_shani.a
-libscrypt_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
-libscrypt_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
+noinst_LIBRARIES+=	libcperciva_shani.a
+libcperciva_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
+libcperciva_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
 
 EXTRA_DIST = \
 	COPYRIGHT						\
@@ -124,7 +124,7 @@ tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			lib/crypto/crypto_scrypt_smix.h
 
-tests_test_scrypt_LDADD=	libscrypt_shani.a libscrypt_sse2.a
+tests_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
 
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
