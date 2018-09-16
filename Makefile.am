@@ -68,6 +68,7 @@ cpusupport-config.h:
 BUILT_SOURCES=	cpusupport-config.h
 CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 
+# Libraries from libcperciva code.
 noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
 libcperciva_aesni_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
@@ -77,13 +78,14 @@ libcperciva_rdrand_a_SOURCES=	libcperciva/crypto/crypto_entropy_rdrand.c
 libcperciva_rdrand_a_CFLAGS=						\
 	`. ./cpusupport-config.h; echo $${CFLAGS_X86_RDRAND}`
 
-noinst_LIBRARIES+=	libscrypt_sse2.a
-libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
-libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
-
 noinst_LIBRARIES+=	libcperciva_shani.a
 libcperciva_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
 libcperciva_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
+
+# Library from scrypt code.
+noinst_LIBRARIES+=	libscrypt_sse2.a
+libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
+libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
 EXTRA_DIST = \
 	COPYRIGHT						\
