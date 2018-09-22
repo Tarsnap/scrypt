@@ -3,49 +3,49 @@ noinst_PROGRAMS=	tests/test_scrypt tests/valgrind/potential-memleaks
 dist_man_MANS=$(scrypt_man_MANS)
 
 scrypt_SOURCES=		main.c					\
+			lib/crypto/crypto_scrypt.c		\
+			lib/crypto/crypto_scrypt.h		\
+			lib/crypto/crypto_scrypt_smix.c		\
+			lib/crypto/crypto_scrypt_smix.h		\
+			lib/crypto/crypto_scrypt_smix_sse2.h	\
+			lib/scryptenc/scryptenc.c		\
+			lib/scryptenc/scryptenc.h		\
+			lib/scryptenc/scryptenc_cpuperf.c	\
+			lib/scryptenc/scryptenc_cpuperf.h	\
+			lib/util/memlimit.c			\
+			lib/util/memlimit.h			\
 			libcperciva/alg/sha256.c		\
+			libcperciva/alg/sha256.h		\
+			libcperciva/alg/sha256_shani.h		\
+			libcperciva/cpusupport/cpusupport.h	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c \
 			libcperciva/cpusupport/cpusupport_x86_shani.c \
 			libcperciva/cpusupport/cpusupport_x86_sse2.c \
 			libcperciva/cpusupport/cpusupport_x86_ssse3.c \
 			libcperciva/crypto/crypto_aes.c		\
-			libcperciva/crypto/crypto_aesctr.c	\
-			libcperciva/crypto/crypto_entropy.c	\
-			libcperciva/util/asprintf.c		\
-			libcperciva/util/entropy.c		\
-			libcperciva/util/getopt.c		\
-			libcperciva/util/humansize.c		\
-			libcperciva/util/insecure_memzero.c	\
-			libcperciva/util/readpass.c		\
-			libcperciva/util/warnp.c		\
-			lib/crypto/crypto_scrypt.c		\
-			lib/crypto/crypto_scrypt_smix.c		\
-			lib/scryptenc/scryptenc.c		\
-			lib/scryptenc/scryptenc_cpuperf.c	\
-			lib/util/memlimit.c			\
-			lib/crypto/crypto_scrypt.h		\
-			lib/crypto/crypto_scrypt_smix.h		\
-			lib/crypto/crypto_scrypt_smix_sse2.h	\
-			lib/scryptenc/scryptenc.h		\
-			lib/scryptenc/scryptenc_cpuperf.h	\
-			lib/util/memlimit.h			\
-			libcperciva/alg/sha256.h		\
-			libcperciva/alg/sha256_shani.h		\
-			libcperciva/cpusupport/cpusupport.h	\
 			libcperciva/crypto/crypto_aes.h		\
 			libcperciva/crypto/crypto_aes_aesni.h	\
+			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_aesctr.h	\
+			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/crypto/crypto_entropy.h	\
 			libcperciva/crypto/crypto_entropy_rdrand.h \
+			libcperciva/util/asprintf.c		\
 			libcperciva/util/asprintf.h		\
+			libcperciva/util/entropy.c		\
 			libcperciva/util/entropy.h		\
+			libcperciva/util/getopt.c		\
 			libcperciva/util/getopt.h		\
+			libcperciva/util/humansize.c		\
 			libcperciva/util/humansize.h		\
+			libcperciva/util/insecure_memzero.c	\
 			libcperciva/util/insecure_memzero.h	\
 			libcperciva/util/parsenum.h		\
+			libcperciva/util/readpass.c		\
 			libcperciva/util/readpass.h		\
 			libcperciva/util/sysendian.h		\
+			libcperciva/util/warnp.c		\
 			libcperciva/util/warnp.h		\
 			scrypt_platform.h
 
@@ -60,7 +60,7 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-D_POSIX_C_SOURCE=200809L
 
 scrypt_LDADD=		libcperciva_aesni.a libcperciva_rdrand.a \
-			libscrypt_shani.a libscrypt_sse2.a
+			libcperciva_shani.a libscrypt_sse2.a
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
@@ -68,6 +68,7 @@ cpusupport-config.h:
 BUILT_SOURCES=	cpusupport-config.h
 CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 
+# Libraries from libcperciva code.
 noinst_LIBRARIES=	libcperciva_aesni.a
 libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
 libcperciva_aesni_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
@@ -77,13 +78,14 @@ libcperciva_rdrand_a_SOURCES=	libcperciva/crypto/crypto_entropy_rdrand.c
 libcperciva_rdrand_a_CFLAGS=						\
 	`. ./cpusupport-config.h; echo $${CFLAGS_X86_RDRAND}`
 
+noinst_LIBRARIES+=	libcperciva_shani.a
+libcperciva_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
+libcperciva_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
+
+# Library from scrypt code.
 noinst_LIBRARIES+=	libscrypt_sse2.a
 libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
 libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
-
-noinst_LIBRARIES+=	libscrypt_shani.a
-libscrypt_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
-libscrypt_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
 
 EXTRA_DIST = \
 	COPYRIGHT						\
@@ -109,22 +111,22 @@ EXTRA_DIST = \
 	tests/test_scrypt.sh
 
 tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
+			lib/crypto/crypto_scrypt.c			\
+			lib/crypto/crypto_scrypt.h			\
+			lib/crypto/crypto_scrypt_smix.c			\
+			lib/crypto/crypto_scrypt_smix.h			\
 			libcperciva/alg/sha256.c			\
 			libcperciva/alg/sha256.h			\
 			libcperciva/alg/sha256_shani.h			\
-			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
 			libcperciva/cpusupport/cpusupport_x86_shani.c	\
+			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
 			libcperciva/cpusupport/cpusupport_x86_ssse3.c	\
 			libcperciva/util/insecure_memzero.c		\
 			libcperciva/util/insecure_memzero.h		\
 			libcperciva/util/warnp.c			\
-			libcperciva/util/warnp.h			\
-			lib/crypto/crypto_scrypt.c			\
-			lib/crypto/crypto_scrypt.h			\
-			lib/crypto/crypto_scrypt_smix.c			\
-			lib/crypto/crypto_scrypt_smix.h
+			libcperciva/util/warnp.h
 
-tests_test_scrypt_LDADD=	libscrypt_shani.a libscrypt_sse2.a
+tests_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
 
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
