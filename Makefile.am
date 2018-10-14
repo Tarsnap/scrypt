@@ -96,7 +96,7 @@ EXTRA_DIST = \
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
-	libcperciva/cpusupport/Build/cpusupport-X86-SHANI2.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-SHANI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSSE3.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
@@ -110,6 +110,7 @@ EXTRA_DIST = \
 	tests/05-system-scrypt-encrypt-decrypt.sh		\
 	tests/test_scrypt.sh
 
+# Binary to test the crypto_scrypt() function.
 tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 			lib/crypto/crypto_scrypt.c			\
 			lib/crypto/crypto_scrypt.h			\
@@ -128,6 +129,7 @@ tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
 
 tests_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
 
+# Eliminate false positives while memory-checking for the test framework.
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
 .PHONY: test
