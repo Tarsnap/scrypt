@@ -2,27 +2,39 @@ bin_PROGRAMS=	scrypt
 noinst_PROGRAMS=	tests/test_scrypt tests/valgrind/potential-memleaks
 dist_man_MANS=$(scrypt_man_MANS)
 
+# These files fulfill the crypto_scrypt() function, with the exception of
+#     libcperciva/alg/sha256_shani.c
+#     lib/crypto/crypto_scrypt_smix_sse2.c
+# which require special compiler flags and are thus compiled as separate
+# libraries.  See test_scrypt for an example.
+crypto_scrypt_files=	lib/crypto/crypto_scrypt.c			\
+			lib/crypto/crypto_scrypt.h			\
+			lib/crypto/crypto_scrypt_smix.c			\
+			lib/crypto/crypto_scrypt_smix.h			\
+			lib/crypto/crypto_scrypt_smix_sse2.h		\
+			libcperciva/alg/sha256.c			\
+			libcperciva/alg/sha256.h			\
+			libcperciva/alg/sha256_shani.h			\
+			libcperciva/cpusupport/cpusupport.h		\
+			libcperciva/cpusupport/cpusupport_x86_shani.c	\
+			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
+			libcperciva/cpusupport/cpusupport_x86_ssse3.c	\
+			libcperciva/util/insecure_memzero.c		\
+			libcperciva/util/insecure_memzero.h		\
+			libcperciva/util/warnp.c			\
+			libcperciva/util/warnp.h			\
+			scrypt_platform.h
+
 scrypt_SOURCES=		main.c					\
-			lib/crypto/crypto_scrypt.c		\
-			lib/crypto/crypto_scrypt.h		\
-			lib/crypto/crypto_scrypt_smix.c		\
-			lib/crypto/crypto_scrypt_smix.h		\
-			lib/crypto/crypto_scrypt_smix_sse2.h	\
+			$(crypto_scrypt_files)			\
 			lib/scryptenc/scryptenc.c		\
 			lib/scryptenc/scryptenc.h		\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/scryptenc/scryptenc_cpuperf.h	\
 			lib/util/memlimit.c			\
 			lib/util/memlimit.h			\
-			libcperciva/alg/sha256.c		\
-			libcperciva/alg/sha256.h		\
-			libcperciva/alg/sha256_shani.h		\
-			libcperciva/cpusupport/cpusupport.h	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c \
-			libcperciva/cpusupport/cpusupport_x86_shani.c \
-			libcperciva/cpusupport/cpusupport_x86_sse2.c \
-			libcperciva/cpusupport/cpusupport_x86_ssse3.c \
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aes.h		\
 			libcperciva/crypto/crypto_aes_aesni.h	\
@@ -39,15 +51,10 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/getopt.h		\
 			libcperciva/util/humansize.c		\
 			libcperciva/util/humansize.h		\
-			libcperciva/util/insecure_memzero.c	\
-			libcperciva/util/insecure_memzero.h	\
 			libcperciva/util/parsenum.h		\
 			libcperciva/util/readpass.c		\
 			libcperciva/util/readpass.h		\
-			libcperciva/util/sysendian.h		\
-			libcperciva/util/warnp.c		\
-			libcperciva/util/warnp.h		\
-			scrypt_platform.h
+			libcperciva/util/sysendian.h
 
 AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/libcperciva/cpusupport	\
@@ -96,7 +103,7 @@ EXTRA_DIST = \
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
-	libcperciva/cpusupport/Build/cpusupport-X86-SHANI2.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-SHANI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSSE3.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
@@ -110,24 +117,13 @@ EXTRA_DIST = \
 	tests/05-system-scrypt-encrypt-decrypt.sh		\
 	tests/test_scrypt.sh
 
+# Binary to test the crypto_scrypt() function.
 tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
-			lib/crypto/crypto_scrypt.c			\
-			lib/crypto/crypto_scrypt.h			\
-			lib/crypto/crypto_scrypt_smix.c			\
-			lib/crypto/crypto_scrypt_smix.h			\
-			libcperciva/alg/sha256.c			\
-			libcperciva/alg/sha256.h			\
-			libcperciva/alg/sha256_shani.h			\
-			libcperciva/cpusupport/cpusupport_x86_shani.c	\
-			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
-			libcperciva/cpusupport/cpusupport_x86_ssse3.c	\
-			libcperciva/util/insecure_memzero.c		\
-			libcperciva/util/insecure_memzero.h		\
-			libcperciva/util/warnp.c			\
-			libcperciva/util/warnp.h
+			$(crypto_scrypt_files)
 
 tests_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
 
+# Eliminate false positives while memory-checking for the test framework.
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
 .PHONY: test
