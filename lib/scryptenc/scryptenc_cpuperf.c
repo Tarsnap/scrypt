@@ -28,7 +28,12 @@
  */
 #include "scrypt_platform.h"
 
+#ifndef _MSC_VER
 #include <sys/time.h>
+#else /* For 'struct timeval' and custom gettimeofday() on windows */
+#include <winsock2.h>
+#include "gettimeofday.h"
+#endif /* _MSC_VER */
 
 #include <stdint.h>
 #include <stdio.h>
