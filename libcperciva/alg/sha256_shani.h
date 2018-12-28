@@ -3,6 +3,14 @@
 
 #include <stdint.h>
 
+#ifndef STATICRESTRICT
+#ifndef _MSC_VER
+#define STATICRESTRICT static restrict
+#else /* STATICRESTRICT not supported by msvc */
+#define STATICRESTRICT 
+#endif
+#endif
+
 /**
  * SHA256_Transform_shani(state, block):
  * Compute the SHA256 block compression function, transforming ${state} using
@@ -11,7 +19,7 @@
  * are defined and cpusupport_x86_shani() and _ssse3() return nonzero.
  */
 void
-SHA256_Transform_shani(uint32_t[static restrict 8],
-    const uint8_t[static restrict 64]);
+SHA256_Transform_shani(uint32_t[STATICRESTRICT 8],
+    const uint8_t[STATICRESTRICT 64]);
 
 #endif /* !_SHA256_SHANI_H_ */

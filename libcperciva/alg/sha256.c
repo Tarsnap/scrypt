@@ -10,9 +10,10 @@
 
 #include "sha256.h"
 
-static void SHA256_Transform(uint32_t[static restrict 8],
-    const uint8_t[static restrict 64], uint32_t[static restrict 64],
-    uint32_t[static restrict 8]);
+
+static void SHA256_Transform(uint32_t[STATICRESTRICT 8],
+    const uint8_t[STATICRESTRICT 64], uint32_t[STATICRESTRICT 64],
+    uint32_t[STATICRESTRICT 8]);
 
 /*
  * Encode a length len/4 vector of (uint32_t) into a length len vector of
@@ -80,9 +81,9 @@ static const uint32_t initial_state[8] = {
  * Must be called with usesha() returning 0 (software).
  */
 static int
-shanitest(const uint32_t state[static restrict 8],
-    const uint8_t block[static restrict 64],
-    uint32_t W[static restrict 64], uint32_t S[static restrict 8])
+shanitest(const uint32_t state[STATICRESTRICT 8],
+    const uint8_t block[STATICRESTRICT 64],
+    uint32_t W[STATICRESTRICT 64], uint32_t S[STATICRESTRICT 8])
 {
 	uint32_t state_sw[8];
 	uint32_t state_shani[8];
@@ -171,9 +172,9 @@ useshani(void)
  * the 512-bit input block to produce a new state.
  */
 static void
-SHA256_Transform(uint32_t state[static restrict 8],
-    const uint8_t block[static restrict 64],
-    uint32_t W[static restrict 64], uint32_t S[static restrict 8])
+SHA256_Transform(uint32_t state[STATICRESTRICT 8],
+    const uint8_t block[STATICRESTRICT 64],
+    uint32_t W[STATICRESTRICT 64], uint32_t S[STATICRESTRICT 8])
 {
 	int i;
 
@@ -244,7 +245,7 @@ static const uint8_t PAD[64] = {
 
 /* Add padding and terminating bit-count. */
 static void
-SHA256_Pad(SHA256_CTX * ctx, uint32_t tmp32[static restrict 72])
+SHA256_Pad(SHA256_CTX * ctx, uint32_t tmp32[STATICRESTRICT 72])
 {
 	size_t r;
 
@@ -292,7 +293,7 @@ SHA256_Init(SHA256_CTX * ctx)
  */
 static void
 _SHA256_Update(SHA256_CTX * ctx, const void * in, size_t len,
-    uint32_t tmp32[static restrict 72])
+    uint32_t tmp32[STATICRESTRICT 72])
 {
 	uint32_t r;
 	const uint8_t * src = in;
@@ -350,7 +351,7 @@ SHA256_Update(SHA256_CTX * ctx, const void * in, size_t len)
  */
 static void
 _SHA256_Final(uint8_t digest[32], SHA256_CTX * ctx,
-    uint32_t tmp32[static restrict 72])
+    uint32_t tmp32[STATICRESTRICT 72])
 {
 
 	/* Add padding. */
@@ -402,8 +403,8 @@ SHA256_Buf(const void * in, size_t len, uint8_t digest[32])
  */
 static void
 _HMAC_SHA256_Init(HMAC_SHA256_CTX * ctx, const void * _K, size_t Klen,
-    uint32_t tmp32[static restrict 72], uint8_t pad[static restrict 64],
-    uint8_t khash[static restrict 32])
+    uint32_t tmp32[STATICRESTRICT 72], uint8_t pad[STATICRESTRICT 64],
+    uint8_t khash[STATICRESTRICT 32])
 {
 	const uint8_t * K = _K;
 	size_t i;
@@ -455,7 +456,7 @@ HMAC_SHA256_Init(HMAC_SHA256_CTX * ctx, const void * _K, size_t Klen)
  */
 static void
 _HMAC_SHA256_Update(HMAC_SHA256_CTX * ctx, const void * in, size_t len,
-    uint32_t tmp32[static restrict 72])
+    uint32_t tmp32[STATICRESTRICT 72])
 {
 
 	/* Feed data to the inner SHA256 operation. */
@@ -482,7 +483,7 @@ HMAC_SHA256_Update(HMAC_SHA256_CTX * ctx, const void * in, size_t len)
  */
 static void
 _HMAC_SHA256_Final(uint8_t digest[32], HMAC_SHA256_CTX * ctx,
-    uint32_t tmp32[static restrict 72], uint8_t ihash[static restrict 32])
+    uint32_t tmp32[STATICRESTRICT 72], uint8_t ihash[STATICRESTRICT 32])
 {
 
 	/* Finish the inner SHA256 operation. */

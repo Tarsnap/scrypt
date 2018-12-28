@@ -4,6 +4,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef STATICRESTRICT
+#ifndef _MSC_VER
+#define STATICRESTRICT static restrict
+#else /* STATICRESTRICT not supported by msvc */
+#define STATICRESTRICT 
+#endif
+#endif
+
 /*
  * Use #defines in order to avoid namespace collisions with anyone else's
  * SHA256 code (e.g., the code in OpenSSL).

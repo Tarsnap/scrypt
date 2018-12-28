@@ -78,8 +78,8 @@ be32dec_128(const uint8_t * src)
  * are defined and cpusupport_x86_shani() and _ssse3() return nonzero.
  */
 void
-SHA256_Transform_shani(uint32_t state[static restrict 8],
-    const uint8_t block[static restrict 64])
+SHA256_Transform_shani(uint32_t state[STATICRESTRICT 8],
+    const uint8_t block[STATICRESTRICT 64])
 {
 	__m128i S3210, S7654;
 	__m128i S0123, S4567;
