@@ -8,6 +8,12 @@ https://www.tarsnap.com/scrypt.html, and build with:
     make
     make install
 
+Scrypt should build and run on any IEEE Std 1003.1 (POSIX) compliant
+system which
+  1. Includes the Software Development Utilities option,
+  2. Has OpenSSL available via -lcrypto and #include <openssl/foo>, and
+  3. Provides /dev/urandom.
+
 
 Platform-specific notes
 -----------------------
