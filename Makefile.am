@@ -1,5 +1,6 @@
 bin_PROGRAMS=	scrypt
-noinst_PROGRAMS=	tests/test_scrypt tests/valgrind/potential-memleaks
+noinst_PROGRAMS=	tests/verify-strings/test_scrypt			\
+	tests/valgrind/potential-memleaks
 dist_man_MANS=$(scrypt_man_MANS)
 
 # These files fulfill the crypto_scrypt() function, with the exception of
@@ -114,8 +115,8 @@ EXTRA_DIST = \
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSSE3.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
-	tests/test_scrypt.good					\
-	tests/test_scrypt_good.enc				\
+	tests/verify-strings/test_scrypt.good			\
+	tests/verify-strings/test_scrypt_good.enc		\
 	tests/shared_test_functions.sh				\
 	tests/01-known-values.sh				\
 	tests/02-decrypt-reference-file.sh			\
@@ -125,16 +126,17 @@ EXTRA_DIST = \
 	tests/test_scrypt.sh
 
 # Binary to test the crypto_scrypt() function.
-tests_test_scrypt_SOURCES =	tests/test_scrypt.c			\
-			$(crypto_scrypt_files)
+tests_verify_strings_test_scrypt_SOURCES =			\
+	tests/verify-strings/test_scrypt.c			\
+	$(crypto_scrypt_files)
 
-tests_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
+tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
 
 # Eliminate false positives while memory-checking for the test framework.
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
 
 .PHONY: test
-# we can't only build "scrypt tests/test_scrypt" because that won't build
-# the BUILT_SOURCES.
+# we can't only build "scrypt tests/verify-strings/test_scrypt" because that
+# won't build the BUILT_SOURCES.
 test: all
 	$(top_srcdir)/tests/test_scrypt.sh .

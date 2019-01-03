@@ -2,7 +2,7 @@
 
 ### Constants
 c_valgrind_min=1
-reference_file="${scriptdir}/test_scrypt.good"
+reference_file="${scriptdir}/verify-strings/test_scrypt.good"
 encrypted_file_1="${out}/sys-scrypt.enc"
 decrypted_file_1="${out}/sys-scrypt.txt"
 encrypted_file_2="${out}/our-scrypt.enc"

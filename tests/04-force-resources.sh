@@ -2,7 +2,7 @@
 
 ### Constants
 c_valgrind_min=1
-reference_file="${scriptdir}/test_scrypt.good"
+reference_file="${scriptdir}/verify-strings/test_scrypt.good"
 longwait_encrypted_file="${out}/longwait.enc"
 longwait_decrypted_file="${out}/longwait.txt"
 longwait_failed_log="${out}/longwait-failed.log"
