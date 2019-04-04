@@ -43,6 +43,8 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/crypto/crypto_entropy.h	\
 			libcperciva/crypto/crypto_entropy_rdrand.h \
+			libcperciva/crypto/crypto_verify_bytes.c \
+			libcperciva/crypto/crypto_verify_bytes.h \
 			libcperciva/util/asprintf.c		\
 			libcperciva/util/asprintf.h		\
 			libcperciva/util/entropy.c		\
