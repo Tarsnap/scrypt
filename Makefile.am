@@ -68,10 +68,12 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/lib/util			\
 			-DCPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\" \
 			-D_POSIX_C_SOURCE=200809L		\
-			-D_XOPEN_SOURCE=700
+			-D_XOPEN_SOURCE=700			\
+			${CFLAGS_POSIX}
 
 scrypt_LDADD=		libcperciva_aesni.a libcperciva_rdrand.a \
-			libcperciva_shani.a libscrypt_sse2.a
+			libcperciva_shani.a libscrypt_sse2.a	\
+			${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
 
 cpusupport-config.h:
@@ -108,6 +110,14 @@ EXTRA_DIST = \
 	lib/README						\
 	README.md						\
 	lib/crypto/crypto_scrypt-ref.c				\
+	libcperciva/POSIX/README				\
+	libcperciva/POSIX/posix-cflags.sh			\
+	libcperciva/POSIX/posix-clock_gettime.c			\
+	libcperciva/POSIX/posix-clock_realtime.c		\
+	libcperciva/POSIX/posix-l.c				\
+	libcperciva/POSIX/posix-l.sh				\
+	libcperciva/POSIX/posix-msg_nosignal.c			\
+	libcperciva/POSIX/posix-restrict.c			\
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
@@ -130,7 +140,9 @@ tests_verify_strings_test_scrypt_SOURCES =			\
 	tests/verify-strings/test_scrypt.c			\
 	$(crypto_scrypt_files)
 
-tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.a libscrypt_sse2.a
+tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.a	\
+	libscrypt_sse2.a					\
+	${LDADD_POSIX}
 
 # Eliminate false positives while memory-checking for the test framework.
 tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
