@@ -54,6 +54,8 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/getopt.h		\
 			libcperciva/util/humansize.c		\
 			libcperciva/util/humansize.h		\
+			libcperciva/util/monoclock.c		\
+			libcperciva/util/monoclock.h		\
 			libcperciva/util/parsenum.h		\
 			libcperciva/util/readpass.c		\
 			libcperciva/util/readpass.h		\
