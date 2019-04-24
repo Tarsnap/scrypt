@@ -12,6 +12,7 @@
 /cpusupport-config.h
 /scrypt
 /stamp-h1
+/m4
 /Makefile
 /Makefile.in
 # Test infrastructure

@@ -8,8 +8,8 @@ AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 
 # Checks for programs.
 AC_PROG_CC_C99
-AC_PROG_RANLIB
 AM_PROG_AR
+LT_INIT
 
 # Don't rebuild the configure script.  I'm distributing a perfectly good one.
 AM_MAINTAINER_MODE

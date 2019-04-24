@@ -2,6 +2,7 @@ bin_PROGRAMS=	scrypt
 noinst_PROGRAMS=	tests/verify-strings/test_scrypt			\
 	tests/valgrind/potential-memleaks
 dist_man_MANS=$(scrypt_man_MANS)
+ACLOCAL_AMFLAGS=	-I m4
 
 # These files fulfill the crypto_scrypt() function, with the exception of
 #     libcperciva/alg/sha256_shani.c
