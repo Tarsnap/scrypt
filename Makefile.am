@@ -74,8 +74,8 @@ AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
 			-D_XOPEN_SOURCE=700			\
 			${CFLAGS_POSIX}
 
-scrypt_LDADD=		libcperciva_aesni.a libcperciva_rdrand.a \
-			libcperciva_shani.a libscrypt_sse2.a	\
+scrypt_LDADD=		libcperciva_aesni.la libcperciva_rdrand.la \
+			libcperciva_shani.la libscrypt_sse2.la	\
 			${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
 
@@ -85,27 +85,27 @@ BUILT_SOURCES=	cpusupport-config.h
 CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 
 # Libraries from libcperciva code.
-noinst_LIBRARIES=	libcperciva_aesni.a
-libcperciva_aesni_a_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
-nodist_libcperciva_aesni_a_SOURCES=	cpusupport-config.h
-libcperciva_aesni_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
+noinst_LTLIBRARIES=	libcperciva_aesni.la
+libcperciva_aesni_la_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
+nodist_libcperciva_aesni_la_SOURCES=	cpusupport-config.h
+libcperciva_aesni_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
 
-noinst_LIBRARIES+=	libcperciva_rdrand.a
-libcperciva_rdrand_a_SOURCES=	libcperciva/crypto/crypto_entropy_rdrand.c
-nodist_libcperciva_rdrand_a_SOURCES=	cpusupport-config.h
-libcperciva_rdrand_a_CFLAGS=						\
+noinst_LTLIBRARIES+=	libcperciva_rdrand.la
+libcperciva_rdrand_la_SOURCES=	libcperciva/crypto/crypto_entropy_rdrand.c
+nodist_libcperciva_rdrand_la_SOURCES=	cpusupport-config.h
+libcperciva_rdrand_la_CFLAGS=						\
 	`. ./cpusupport-config.h; echo $${CFLAGS_X86_RDRAND}`
 
-noinst_LIBRARIES+=	libcperciva_shani.a
-libcperciva_shani_a_SOURCES=	libcperciva/alg/sha256_shani.c
-nodist_libcperciva_shani_a_SOURCES=	cpusupport-config.h
-libcperciva_shani_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
+noinst_LTLIBRARIES+=	libcperciva_shani.la
+libcperciva_shani_la_SOURCES=	libcperciva/alg/sha256_shani.c
+nodist_libcperciva_shani_la_SOURCES=	cpusupport-config.h
+libcperciva_shani_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
 
 # Library from scrypt code.
-noinst_LIBRARIES+=	libscrypt_sse2.a
-libscrypt_sse2_a_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
-nodist_libscrypt_sse2_a_SOURCES=	cpusupport-config.h
-libscrypt_sse2_a_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
+noinst_LTLIBRARIES+=	libscrypt_sse2.la
+libscrypt_sse2_la_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
+nodist_libscrypt_sse2_la_SOURCES=	cpusupport-config.h
+libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
 EXTRA_DIST = \
 	COPYRIGHT						\
@@ -143,8 +143,8 @@ tests_verify_strings_test_scrypt_SOURCES =			\
 	tests/verify-strings/test_scrypt.c			\
 	$(crypto_scrypt_files)
 
-tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.a	\
-	libscrypt_sse2.a					\
+tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.la	\
+	libscrypt_sse2.la					\
 	${LDADD_POSIX}
 
 # Eliminate false positives while memory-checking for the test framework.
