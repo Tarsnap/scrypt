@@ -48,9 +48,11 @@ main(int argc, char * argv[])
 		    test->passwd, test->salt, (unsigned int)test->N,
 		    (unsigned int)(test->r), (unsigned int)test->p);
 		for (i = 0; i < 64; i++) {
-			printf("%02x ", (uint8_t)kbuf[i]);
+			printf("%02x", (uint8_t)kbuf[i]);
 			if ((i % 16) == 15)
 				printf("\n");
+			else
+				printf(" ");
 		}
 	}
 
