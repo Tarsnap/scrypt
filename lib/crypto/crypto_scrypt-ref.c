@@ -26,8 +26,6 @@
  * This file was originally written by Colin Percival as part of the Tarsnap
  * online backup system.
  */
-#include "scrypt_platform.h"
-
 #include <errno.h>
 #include <stdint.h>
 #include <stdlib.h>
