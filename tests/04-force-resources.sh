@@ -48,9 +48,6 @@ scenario_cmd() {
 
 	# The decrypted reference file should match the reference.
 	setup_check_variables
-	if cmp -s ${longwait_decrypted_file} ${reference_file}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	cmp -s ${longwait_decrypted_file} ${reference_file}
+	echo $? > ${c_exitfile}
 }
