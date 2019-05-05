@@ -36,11 +36,8 @@ scenario_cmd() {
 
 	# The decrypted file should match the reference.
 	setup_check_variables
-	if cmp -s ${decrypted_file_1} ${reference_file}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	cmp -s ${decrypted_file_1} ${reference_file}
+	echo $? > ${c_exitfile}
 
 	# Encrypt a file with the system scrypt.  Don't use
 	# valgrind for this.
@@ -61,9 +58,6 @@ scenario_cmd() {
 
 	# The decrypted file should match the reference.
 	setup_check_variables
-	if cmp -s ${decrypted_file_2} ${reference_file}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	cmp -s ${decrypted_file_2} ${reference_file}
+	echo $? > ${c_exitfile}
 }

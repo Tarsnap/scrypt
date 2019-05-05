@@ -20,11 +20,8 @@ scenario_cmd() {
 
 	# The decrypted reference file should match the reference.
 	setup_check_variables
-	if cmp -s ${decrypted_reference_file} ${reference_file}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	cmp -s ${decrypted_reference_file} ${reference_file}
+	echo $? > ${c_exitfile}
 
 	# Attempt to decrypt the reference file with an incorrect passphrase.
 	# We want this command to fail with 1.

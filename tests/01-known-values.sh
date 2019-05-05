@@ -19,9 +19,6 @@ scenario_cmd() {
 
 	# The generated values should match the known good values.
 	setup_check_variables
-	if cmp -s ${test_output} ${reference}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	cmp -s ${test_output} ${reference}
+	echo $? > ${c_exitfile}
 }
