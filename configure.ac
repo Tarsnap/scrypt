@@ -32,7 +32,7 @@ AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit], [], [],
 # to work.
 AC_CHECK_HEADERS([sys/param.h])
 
-# Check if we have <openssl/aes.h>, to fix the make failing when configure 
+# Check if we have <openssl/aes.h>, to fix the make failing when configure
 # passes.
 AC_CHECK_HEADERS([openssl/aes.h],,
   [AC_MSG_ERROR([Unable to find the openssl/aes.h header])])
