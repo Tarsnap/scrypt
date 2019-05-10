@@ -24,7 +24,7 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt.c			\
 			libcperciva/util/insecure_memzero.h		\
 			libcperciva/util/warnp.c			\
 			libcperciva/util/warnp.h			\
-			scrypt_platform.h
+			platform.h
 
 scrypt_SOURCES=		main.c					\
 			$(crypto_scrypt_files)			\

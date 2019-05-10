@@ -23,7 +23,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#include "scrypt_platform.h"
+#include "platform.h"
 
 #include <math.h>
 #include <stdint.h>

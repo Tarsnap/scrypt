@@ -1,5 +1,5 @@
-#ifndef _SCRYPT_PLATFORM_H_
-#define	_SCRYPT_PLATFORM_H_
+#ifndef _PLATFORM_H_
+#define	_PLATFORM_H_
 
 #if defined(CONFIG_H_FILE)
 #include CONFIG_H_FILE
@@ -9,4 +9,4 @@
 #error Need either CONFIG_H_FILE or HAVE_CONFIG_H defined.
 #endif
 
-#endif /* !_SCRYPT_PLATFORM_H_ */
+#endif /* !_PLATFORM_H_ */
