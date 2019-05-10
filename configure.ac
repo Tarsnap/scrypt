@@ -69,6 +69,11 @@ AC_SUBST([LDADD_POSIX])
 AC_SUBST([CFLAGS_POSIX])
 AC_MSG_RESULT([... done checking POSIX compatibility])
 
+# Check whether the user wants to install libscrypt-kdf
+AC_ARG_ENABLE(libscrypt-kdf, AS_HELP_STRING([--enable-libscrypt-kdf],
+    [Install libscrypt-kdf and development headers.]))
+AM_CONDITIONAL([LIBSCRYPT_KDF], [test "x${enable_libscrypt_kdf}" = "xyes"])
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

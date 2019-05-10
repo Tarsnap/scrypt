@@ -107,6 +107,24 @@ libscrypt_sse2_la_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
 nodist_libscrypt_sse2_la_SOURCES=	cpusupport-config.h
 libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
+# Install libscrypt-kdf?
+if LIBSCRYPT_KDF
+lib_LTLIBRARIES=		libscrypt-kdf.la
+libscrypt_kdf_la_LDFLAGS=	-version-info 0
+include_HEADERS=		libscrypt-kdf/scrypt-kdf.h
+else
+# Allow the user to get a usable library even if they didn't run configure
+# with --enable-libscrypt-kdf.  If we didn't include this, they would get
+# empty libraries if they ran `make libscrypt-kdf.la`.
+EXTRA_LTLIBRARIES=		libscrypt-kdf.la
+endif
+
+# Shared definitions for libscrypt-kdf.
+libscrypt_kdf_la_SOURCES=	$(crypto_scrypt_files)
+libscrypt_kdf_la_LIBADD=	libcperciva_shani.la libscrypt_sse2.la
+# Workaround for "created with both libtool and without"
+libscrypt_kdf_la_CFLAGS=	$(AM_CFLAGS)
+
 EXTRA_DIST = \
 	COPYRIGHT						\
 	FORMAT							\
