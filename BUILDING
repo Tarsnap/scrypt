@@ -8,8 +8,8 @@ https://www.tarsnap.com/scrypt.html, and build with:
     make
     make install
 
-Scrypt should build and run on any IEEE Std 1003.1 (POSIX) compliant
-system which
+Official scrypt tarball releases should build and run on any IEEE Std 1003.1
+(POSIX) compliant system which
   1. Includes the Software Development Utilities option,
   2. Has OpenSSL available via -lcrypto and #include <openssl/foo>, and
   3. Provides /dev/urandom.
@@ -50,3 +50,5 @@ For experimental development from git, build with:
 - In order to support the `AX_CFLAGS_WARN_ALL` autoconf directive, you will
   need to install the autoconf archive.  On Debian systems, use the
   `autoconf-archive` package; on FreeBSD, use `devel/autoconf-archive`.
+- Ignore this message if it appears:
+  aclocal: warning: couldn't open directory 'm4': No such file or directory
