@@ -113,6 +113,17 @@ int crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
     uint32_t, uint32_t, uint8_t *, size_t);
 ```
 
+The same function is provided in the optional `libscrypt-kdf` library; there
+is a sample of using it in `tests/libscrypt-kdf`.  If you installed the
+library, you can compile that file and run the binary:
+
+```
+$ cd tests/libscrypt-kdf/
+$ c99 sample-libscrypt-kdf.c -lscrypt-kdf
+$ ./a.out
+crypto_scrypt(): success
+```
+
 
 Building
 --------
