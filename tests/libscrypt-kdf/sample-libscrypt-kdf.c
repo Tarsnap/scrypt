@@ -12,7 +12,8 @@
 /* How much data should scrypt return? */
 #define OUTPUT_BUFLEN 8
 
-int main()
+int
+main(void)
 {
 	const char * passwd = "hunter2";
 	const char * salt = "DANGER -- this should be a random salt -- DANGER";
