@@ -112,7 +112,7 @@ if LIBSCRYPT_KDF
 lib_LTLIBRARIES=		libscrypt-kdf.la
 libscrypt_kdf_la_LDFLAGS=	-version-info 0
 include_HEADERS=		libscrypt-kdf/scrypt-kdf.h
-noinst_PROGRAMS+=		tests/libscrypt/sample-libscrypt-kdf
+noinst_PROGRAMS+=		tests/libscrypt-kdf/sample-libscrypt-kdf
 else
 # Allow the user to get a usable library even if they didn't run configure
 # with --enable-libscrypt-kdf.  If we didn't include this, they would get
@@ -127,10 +127,11 @@ libscrypt_kdf_la_LIBADD=	libcperciva_shani.la libscrypt_sse2.la
 libscrypt_kdf_la_CFLAGS=	$(AM_CFLAGS)
 
 # Test libscrypt-kdf compile
-tests_libscrypt_sample_libscrypt_kdf_SOURCES=	\
+tests_libscrypt_kdf_sample_libscrypt_kdf_SOURCES=	\
 	tests/libscrypt-kdf/sample-libscrypt-kdf.c
-tests_libscrypt_sample_libscrypt_kdf_CPPFLAGS=	-I$(srcdir)/libscrypt-kdf/
-tests_libscrypt_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
+tests_libscrypt_kdf_sample_libscrypt_kdf_CPPFLAGS=	\
+	-I$(srcdir)/libscrypt-kdf/
+tests_libscrypt_kdf_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
 
 EXTRA_DIST = \
 	COPYRIGHT						\
