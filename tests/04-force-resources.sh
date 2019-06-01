@@ -12,7 +12,7 @@ scenario_cmd() {
 	setup_check_variables
 	(
 		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
-		    	enc -P -t 10 ${reference_file}			\
+			enc -P -t 10 ${reference_file}			\
 			${longwait_encrypted_file}
 		echo $? > ${c_exitfile}
 	)
@@ -22,7 +22,7 @@ scenario_cmd() {
 	setup_check_variables
 	(
 		! echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
-		    	dec -P -t 1 ${longwait_encrypted_file}		\
+			dec -P -t 1 ${longwait_encrypted_file}		\
 			${longwait_decrypted_file}			\
 			2> ${longwait_failed_log}
 		echo $? > ${c_exitfile}
@@ -41,7 +41,7 @@ scenario_cmd() {
 	setup_check_variables
 	(
 		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
-		    	dec -P -t 1 -f ${longwait_encrypted_file}	\
+			dec -P -t 1 -f ${longwait_encrypted_file}	\
 			${longwait_decrypted_file}
 		echo $? > ${c_exitfile}
 	)
