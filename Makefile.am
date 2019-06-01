@@ -63,13 +63,13 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/sysendian.h
 
 AM_CPPFLAGS=		-I$(srcdir)/lib				\
+			-I$(srcdir)/lib/crypto			\
+			-I$(srcdir)/lib/scryptenc		\
+			-I$(srcdir)/lib/util			\
 			-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/libcperciva/cpusupport	\
 			-I$(srcdir)/libcperciva/crypto		\
 			-I$(srcdir)/libcperciva/util		\
-			-I$(srcdir)/lib/crypto			\
-			-I$(srcdir)/lib/scryptenc 		\
-			-I$(srcdir)/lib/util			\
 			-DCPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\" \
 			-D_POSIX_C_SOURCE=200809L		\
 			-D_XOPEN_SOURCE=700			\
@@ -137,8 +137,8 @@ tests_libscrypt_kdf_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
 EXTRA_DIST = \
 	COPYRIGHT						\
 	FORMAT							\
-	lib/README						\
 	README.md						\
+	lib/README						\
 	lib/crypto/crypto_scrypt-ref.c				\
 	libcperciva/POSIX/README				\
 	libcperciva/POSIX/posix-cflags.sh			\
@@ -155,15 +155,15 @@ EXTRA_DIST = \
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSSE3.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
-	tests/verify-strings/test_scrypt.good			\
-	tests/verify-strings/test_scrypt_good.enc		\
-	tests/shared_test_functions.sh				\
 	tests/01-known-values.sh				\
 	tests/02-decrypt-reference-file.sh			\
 	tests/03-encrypt-decrypt-file.sh			\
 	tests/04-force-resources.sh				\
 	tests/05-system-scrypt-encrypt-decrypt.sh		\
-	tests/test_scrypt.sh
+	tests/shared_test_functions.sh				\
+	tests/test_scrypt.sh					\
+	tests/verify-strings/test_scrypt.good			\
+	tests/verify-strings/test_scrypt_good.enc
 
 # Binary to test the crypto_scrypt() function.
 tests_verify_strings_test_scrypt_SOURCES =			\
