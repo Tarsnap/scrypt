@@ -14,6 +14,7 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			lib/crypto/crypto_scrypt_smix.h			\
 			lib/crypto/crypto_scrypt_smix_sse2.h		\
+			lib/platform.h					\
 			libcperciva/alg/sha256.c			\
 			libcperciva/alg/sha256.h			\
 			libcperciva/alg/sha256_shani.h			\
@@ -24,8 +25,7 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt.c			\
 			libcperciva/util/insecure_memzero.c		\
 			libcperciva/util/insecure_memzero.h		\
 			libcperciva/util/warnp.c			\
-			libcperciva/util/warnp.h			\
-			platform.h
+			libcperciva/util/warnp.h
 
 scrypt_SOURCES=		main.c					\
 			$(crypto_scrypt_files)			\
@@ -62,7 +62,8 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/readpass.h		\
 			libcperciva/util/sysendian.h
 
-AM_CPPFLAGS=		-I$(srcdir)/libcperciva/alg		\
+AM_CPPFLAGS=		-I$(srcdir)/lib				\
+			-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/libcperciva/cpusupport	\
 			-I$(srcdir)/libcperciva/crypto		\
 			-I$(srcdir)/libcperciva/util		\
