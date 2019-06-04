@@ -55,7 +55,7 @@ For experimental development from git, build with:
     ./configure
     make
 
-- You must have automake 1.11.2 or higher.
+- You must have automake 1.11.2 or higher, and libtool.
 - In order to support the `AX_CFLAGS_WARN_ALL` autoconf directive, you will
   need to install the autoconf archive.  On Debian systems, use the
   `autoconf-archive` package; on FreeBSD, use `devel/autoconf-archive`.
