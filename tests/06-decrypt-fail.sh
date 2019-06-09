@@ -15,25 +15,14 @@ scenario_cmd() {
 		    dec -P ${non_encoded_file}				\
 		    ${non_encoded_file_output}				\
 			2>> ${non_encoded_file_stderr}
-		cmd_exitcode=$?
-
-		if [ ${cmd_exitcode} -eq "1" ]; then
-			echo "0"
-		elif [ ${cmd_exitcode} -eq "${valgrind_exit_code}" ]; then
-			echo ${valgrind_exit_code}
-		else
-			echo "1"
-		fi > ${c_exitfile}
+		expected_exitcode 1 $? > ${c_exitfile}
 	)
 
 	# We should have received an error mssage.
 	setup_check_variables
-	if grep -q "scrypt: Input is not valid scrypt-encrypted block" \
-	    ${non_encoded_file_stderr}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	grep -q "scrypt: Input is not valid scrypt-encrypted block" \
+	    ${non_encoded_file_stderr}
+	echo "$?" > ${c_exitfile}
 
 	# We should not have created a file.
 	setup_check_variables

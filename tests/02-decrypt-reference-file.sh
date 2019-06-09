@@ -31,15 +31,7 @@ scenario_cmd() {
 		    dec -P ${encrypted_reference_file}			\
 		    ${decrypted_badpass_file}				\
 		    2> ${decrypted_badpass_log}
-		cmd_exitcode=$?
-
-		if [ ${cmd_exitcode} -eq "1" ]; then
-			echo "0"
-		elif [ ${cmd_exitcode} -eq "${valgrind_exit_code}" ]; then
-			echo ${valgrind_exit_code}
-		else
-			echo "1"
-		fi > ${c_exitfile}
+		expected_exitcode 1 $? > ${c_exitfile}
 	)
 
 	# We should have received an error message.
