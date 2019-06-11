@@ -21,21 +21,18 @@ scenario_cmd() {
 	# command to fail, so we negate the normal return code.
 	setup_check_variables
 	(
-		! echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
+		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
 			dec -P -t 1 ${longwait_encrypted_file}		\
 			${longwait_decrypted_file}			\
 			2> ${longwait_failed_log}
-		echo $? > ${c_exitfile}
+		expected_exitcode 1 $? > ${c_exitfile}
 	)
 
 	# We should have received an error message.
 	setup_check_variables
-	if grep -q "scrypt: Decrypting file would take too much CPU time" \
-	    ${longwait_failed_log}; then
-		echo "0"
-	else
-		echo "1"
-	fi > ${c_exitfile}
+	grep -q "scrypt: Decrypting file would take too much CPU time" \
+	    ${longwait_failed_log}
+	echo "$?" > ${c_exitfile}
 
 	# Attempt to decrypt it with limited time, but force success.
 	setup_check_variables

@@ -20,8 +20,8 @@ scenario_cmd() {
 	# encrypted files include random salt.  If successful, don't delete
 	# ${encrypted_file} yet; we need it for the next test.
 	setup_check_variables
-	! cmp -s ${encrypted_file} ${reference_file}
-	echo $? > ${c_exitfile}
+	cmp -s ${encrypted_file} ${reference_file}
+	expected_exitcode 1 $? > ${c_exitfile}
 
 	# Decrypt the file we just encrypted.
 	setup_check_variables
