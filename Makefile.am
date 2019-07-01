@@ -111,7 +111,7 @@ libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 # Install libscrypt-kdf?
 if LIBSCRYPT_KDF
 lib_LTLIBRARIES=		libscrypt-kdf.la
-libscrypt_kdf_la_LDFLAGS=	-version-info 0			\
+libscrypt_kdf_la_LDFLAGS=	-version-info 1			\
 	-export-symbols-regex 'crypto_scrypt$$'
 include_HEADERS=		libscrypt-kdf/scrypt-kdf.h
 noinst_PROGRAMS+=		tests/libscrypt-kdf/sample-libscrypt-kdf
