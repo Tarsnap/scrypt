@@ -294,7 +294,7 @@ memtouse(size_t maxmem, double maxmemfrac, size_t * memlimit)
 	fprintf(stderr, "Memory limits are:\n\tusermem:\t%zu\n"
 	    "\tmemsize:\t%zu\n\tsysinfo:\t%zu\n\trlimit:\t\t%zu\n"
 	    "\tsysconf:\t%zu\n", usermem_memlimit, memsize_memlimit,
-	    sysinfo_memlimit, rlimit_memlimit, sysconf_memlimit); 
+	    sysinfo_memlimit, rlimit_memlimit, sysconf_memlimit);
 #endif
 
 	/*
