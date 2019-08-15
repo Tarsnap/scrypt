@@ -162,6 +162,13 @@ main(int argc, char *argv[])
 		}
 	} else {
 		infile = stdin;
+
+		/* Error if given incompatible options. */
+		if (devtty == 0) {
+			warn0("Cannot read both passphrase and input file"
+			    " from standard input");
+			goto err0;
+		}
 	}
 
 	/* Prompt for a password. */
