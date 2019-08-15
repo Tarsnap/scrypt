@@ -89,7 +89,9 @@ Use at most
 seconds of CPU time to compute the derived encryption key.
 .It Fl P
 Always read passphrase from stdin, and do so only once even
-when encrypting.
+when encrypting.  This cannot be used if
+.Ar infile
+is also stdin (aka '-').
 .It Fl -version
 Print version of scrypt, and exit.
 .El
