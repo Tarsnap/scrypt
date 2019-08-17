@@ -44,7 +44,7 @@ usage(void)
 {
 
 	fprintf(stderr,
-	    "usage: scrypt {enc | dec} [-f] [-M maxmem]"
+	    "usage: scrypt {enc | dec | info} [-f] [-M maxmem]"
 	    " [-m maxmemfrac]\n"
 	    "              [-t maxtime] [-v] [-P] infile [outfile]\n"
 	    "       scrypt --version\n");
@@ -58,6 +58,7 @@ main(int argc, char *argv[])
 	FILE * outfile = stdout;
 	int devtty = 1;
 	int dec = 0;
+	int info = 0;
 	size_t maxmem = 0;
 	int force_resources = 0;
 	uint64_t maxmem64;
@@ -73,7 +74,7 @@ main(int argc, char *argv[])
 
 	WARNP_INIT;
 
-	/* We should have "enc" or "dec" first. */
+	/* We should have "enc", "dec", or "info" first. */
 	if (argc < 2)
 		usage();
 	if (strcmp(argv[1], "enc") == 0) {
@@ -82,11 +83,13 @@ main(int argc, char *argv[])
 		maxtime = 5.0;
 	} else if (strcmp(argv[1], "dec") == 0) {
 		dec = 1;
+	} else if (strcmp(argv[1], "info") == 0) {
+		info = 1;
 	} else if (strcmp(argv[1], "--version") == 0) {
 		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
 		exit(0);
 	} else {
-		warn0("First argument must be 'enc' or 'dec'.\n");
+		warn0("First argument must be 'enc', 'dec', or 'info'.\n");
 		usage();
 	}
 	argc--;
@@ -171,6 +174,19 @@ main(int argc, char *argv[])
 		}
 	}
 
+	/* User selected 'info' mode. */
+	if (info) {
+		/* Print the encryption parameters used for the file. */
+		rc = scryptdec_file_printparams(infile);
+
+		/* Clean up. */
+		if (infile != stdin)
+			fclose(infile);
+
+		/* Finished! */
+		goto done;
+	}
+
 	/* Prompt for a password. */
 	if (readpass(&passwd, "Please enter passphrase",
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
@@ -222,6 +238,7 @@ cleanup:
 	if (outfile != stdout)
 		fclose(outfile);
 
+done:
 	/* If we failed, print the right error message and exit. */
 	if (rc != 0) {
 		switch (rc) {
