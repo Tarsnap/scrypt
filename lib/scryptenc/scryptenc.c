@@ -68,17 +68,27 @@ display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
 {
 	uint64_t N = (uint64_t)(1) << logN;
 	uint64_t mem_minimum = 128 * r * N;
-	double expected_seconds = 4 * N * p / opps;
+	double expected_seconds = opps > 0 ? 4 * N * p / opps : 0;
 	char * human_memlimit = humansize(memlimit);
 	char * human_mem_minimum = humansize(mem_minimum);
 
+	/* Parameters */
 	fprintf(stderr, "Parameters used: N = %" PRIu64 "; r = %" PRIu32
 	    "; p = %" PRIu32 ";\n", N, r, p);
-	fprintf(stderr, "    This requires at least %s bytes of memory "
-	    "(%s available),\n", human_mem_minimum, human_memlimit);
-	fprintf(stderr, "    and will take approximately %.1f seconds "
-	    "(limit: %.1f seconds).\n", expected_seconds, maxtime);
 
+	/* Memory */
+	fprintf(stderr, "    This requires at least %s bytes of memory",
+	    human_mem_minimum);
+	if (memlimit > 0)
+		fprintf(stderr, " (%s available)", human_memlimit);
+
+	/* CPU time */
+	if (opps > 0)
+		fprintf(stderr, ",\n    and will take approximately %.1f "
+		    "seconds (limit: %.1f seconds)", expected_seconds, maxtime);
+	fprintf(stderr, ".\n");
+
+	/* Clean up */
 	free(human_memlimit);
 	free(human_mem_minimum);
 }
@@ -255,6 +265,39 @@ scryptenc_setup(uint8_t header[96], uint8_t dk[64],
 
 	/* Success! */
 	return (0);
+}
+
+/*
+ * scryptdec_file_printparams(infile):
+ * Print the encryption parameters (N, r, p) used for the encrypted ${infile}.
+ */
+int
+scryptdec_file_printparams(FILE * infile)
+{
+	uint8_t header[96];
+	int logN;
+	uint32_t r;
+	uint32_t p;
+	int rc;
+
+	/* Load the header. */
+	if ((rc = scryptdec_file_load_header(infile, header)) != 0)
+		goto err0;
+
+	/* Parse N, r, p. */
+	logN = header[7];
+	r = be32dec(&header[8]);
+	p = be32dec(&header[12]);
+
+	/* Print parameters. */
+	display_params(logN, r, p, 0, 0, 0);
+
+	/* Success! */
+	return (0);
+
+err0:
+	/* Failure! */
+	return (rc);
 }
 
 /*

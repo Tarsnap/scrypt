@@ -29,7 +29,7 @@
 .Nd encrypt and decrypt files.
 .Sh SYNOPSIS
 .Nm
-.Brq Cm enc | Cm dec
+.Brq Cm enc | Cm dec | Cm info
 .Op Fl f
 .Op Fl M Ar maxmem
 .Op Fl m Ar maxmemfrac
@@ -57,6 +57,10 @@ and writes the result to
 if specified, or the standard output otherwise.
 The user will be prompted to enter the passphrase used at
 encryption time to generate the derived encryption key.
+.Pp
+.Nm Cm info
+provides information about the encryption parameters used for
+.Ar infile .
 .Pp
 If
 .Fl P
