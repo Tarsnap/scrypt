@@ -1,5 +1,7 @@
-/*.a
 *.o
+.libs/
+*.lo
+*.la
 .deps/
 .dirstamp
 /aclocal.m4
@@ -9,6 +11,7 @@
 /config.log
 /config.status
 /configure
+/libtool
 /cpusupport-config.h
 /scrypt
 /stamp-h1
@@ -18,7 +21,9 @@
 # Test infrastructure
 /tests-output/
 /tests-valgrind/
+/tests/libscrypt-kdf/sample-libscrypt-kdf
 /tests/test_scrypt
 /tests/valgrind/potential-memleaks
+/tests/verify-strings/test_scrypt
 # Standard out-of-tree build directory
 /build/
