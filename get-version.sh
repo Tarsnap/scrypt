@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version=1.2.1-head
+version=1.3.0-head
 
 # This script outputs a version number for this project to stdout.
 # - if $SCRYPT_VERSION is given, it is used.
