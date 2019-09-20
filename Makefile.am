@@ -28,7 +28,6 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt.c			\
 			libcperciva/util/warnp.h
 
 scrypt_SOURCES=		main.c					\
-			$(crypto_scrypt_files)			\
 			lib/scryptenc/scryptenc.c		\
 			lib/scryptenc/scryptenc.h		\
 			lib/scryptenc/scryptenc_cpuperf.c	\
@@ -62,6 +61,25 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/readpass.h		\
 			libcperciva/util/sysendian.h
 
+if LIBSCRYPT_KDF
+scrypt_LDADD=		libscrypt-kdf.la
+# Although crypto_scrypt() will be provided by libscrypt-kdf, we need the
+# below functionality in other parts of scrypt.
+scrypt_SOURCES+=	libcperciva/alg/sha256.c			\
+			libcperciva/alg/sha256.h			\
+			libcperciva/alg/sha256_shani.h			\
+			libcperciva/cpusupport/cpusupport_x86_shani.c	\
+			libcperciva/cpusupport/cpusupport_x86_sse2.c	\
+			libcperciva/cpusupport/cpusupport_x86_ssse3.c	\
+			libcperciva/util/insecure_memzero.c		\
+			libcperciva/util/insecure_memzero.h		\
+			libcperciva/util/warnp.c			\
+			libcperciva/util/warnp.h
+else
+scrypt_SOURCES+=	$(crypto_scrypt_files)
+scrypt_LDADD=
+endif
+
 AM_CPPFLAGS=		-I$(srcdir)/lib				\
 			-I$(srcdir)/lib/crypto			\
 			-I$(srcdir)/lib/scryptenc		\
@@ -75,7 +93,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 			-D_XOPEN_SOURCE=700			\
 			${CFLAGS_POSIX}
 
-scrypt_LDADD=		libcperciva_aesni.la libcperciva_rdrand.la \
+scrypt_LDADD+=		libcperciva_aesni.la libcperciva_rdrand.la \
 			libcperciva_shani.la libscrypt_sse2.la	\
 			${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
