@@ -158,4 +158,3 @@ Mailing list
 
 The scrypt key derivation function and the scrypt encryption utility are
 discussed on the <scrypt@tarsnap.com> mailing list.
-
