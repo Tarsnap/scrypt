@@ -5,7 +5,7 @@
 
 #include "getopt.h"
 
-/*
+/**
  * Standard getopt global variables.  optreset starts as non-zero in order to
  * trigger initialization behaviour.
  */
@@ -14,13 +14,13 @@ int optind = 1;
 int opterr = 1;
 int optreset = 1;
 
-/*
+/**
  * Quasi-internal global variables -- these are used via GETOPT macros.
  */
 const char * getopt_dummy = "(dummy)";
 int getopt_initialized = 0;
 
-/*
+/**
  * Internal variables.
  */
 static const char * cmdname = NULL;
@@ -156,7 +156,7 @@ getopt(int argc, char * const argv[])
 	if (optind >= argc)
 		return (NULL);
 
-	/*
+	/**
 	 * If we're not already in the middle of a packed single-character
 	 * options, see if we should start.
 	 */
@@ -213,7 +213,7 @@ getopt(int argc, char * const argv[])
 
 	/* Does the option take an argument? */
 	if (opts[opt_found].hasarg) {
-		/*
+		/**
 		 * If we're processing packed single-character options, the
 		 * rest of the string is the argument to this option.
 		 */
@@ -223,14 +223,14 @@ getopt(int argc, char * const argv[])
 			optind++;
 		}
 
-		/*
+		/**
 		 * If the option string is <option>=<value>, extract that
 		 * value as the option argument.
 		 */
 		if (os[opts[opt_found].olen] == '=')
 			optarg = &os[opts[opt_found].olen + 1];
 
-		/*
+		/**
 		 * If we don't have an argument yet, take one from the
 		 * remaining command line.
 		 */
@@ -260,7 +260,7 @@ size_t
 getopt_lookup(const char * os)
 {
 
-	/*
+	/**
 	 * We only take this parameter so that we can assert that it's the
 	 * same option string as we returned from getopt(); as such, it is
 	 * unused in the absence of assertions.
@@ -277,7 +277,7 @@ getopt_lookup(const char * os)
 	/* GETOPT_DUMMY should never get passed back to us. */
 	assert(os != GETOPT_DUMMY);
 
-	/*
+	/**
 	 * Make sure the option passed back to us corresponds to the one we
 	 * found earlier.
 	 */

@@ -78,7 +78,7 @@ memlimit_sysctl_hw(size_t * memlimit, int mibleaf)
 	if (sysctl(mib, 2, sysctlbuf, &sysctlbuflen, NULL, 0))
 		return (1);
 
-	/*
+	/**
 	 * If we read 8 bytes out, assume this is a system-endian uint64_t.
 	 * If we only read 4 bytes out, the OS is trying to give us a
 	 * uint32_t answer -- but given how many systems now have 4GB+ of RAM,
@@ -219,7 +219,7 @@ memlimit_sysconf(size_t * memlimit)
 	/* Read the two limits. */
 	if (((pagesize = sysconf(_SC_PAGE_SIZE)) == -1) ||
 	    ((physpages = sysconf(_SC_PHYS_PAGES)) == -1)) {
-		/*
+		/**
 		 * Did an error occur?  OS X may return EINVAL due to not
 		 * supporting _SC_PHYS_PAGES in spite of defining it.
 		 */
@@ -299,7 +299,7 @@ memtouse(size_t maxmem, double maxmemfrac, size_t * memlimit)
 	    sysinfo_memlimit, rlimit_memlimit, sysconf_memlimit);
 #endif
 
-	/*
+	/**
 	 * Some systems return bogus values for hw.usermem due to ZFS making
 	 * use of wired pages.  Assume that at least 50% of physical pages
 	 * are available to userland on demand.

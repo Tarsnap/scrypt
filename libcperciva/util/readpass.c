@@ -76,7 +76,7 @@ readpass(char ** passwd, const char * prompt,
 	size_t i;
 	int usingtty;
 
-	/*
+	/**
 	 * If devtty != 0, try to open /dev/tty; if that fails, or if devtty
 	 * is zero, we'll read the password from stdin instead.
 	 */
@@ -87,7 +87,7 @@ readpass(char ** passwd, const char * prompt,
 	for (i = 0; i <= MAXBADSIG; i++)
 		gotsig[i] = 0;
 
-	/*
+	/**
 	 * If we receive a signal while we're reading the password, we might
 	 * end up with echo disabled; to prevent this, we catch the signals
 	 * here, and we'll re-send them to ourselves later after we re-enable
@@ -165,7 +165,7 @@ retry:
 		goto err1;
 	}
 
-	/*
+	/**
 	 * Zero any stored passwords.  This is not guaranteed to work, since a
 	 * "sufficiently intelligent" compiler can optimize these out due to
 	 * the values not being accessed again; and even if we outwitted the

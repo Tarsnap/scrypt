@@ -119,7 +119,7 @@ pickparams(size_t maxmem, double maxmemfrac, double maxtime,
 	/* Fix r = 8 for now. */
 	*r = 8;
 
-	/*
+	/**
 	 * The memory limit requires that 128Nr <= memlimit, while the CPU
 	 * limit requires that 4Nrp <= opslimit.  If opslimit < memlimit/32,
 	 * opslimit imposes the stronger limit on N.
@@ -206,7 +206,7 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 	return (0);
 }
 
-/*
+/**
  * NOTE: The caller is responsible for sanitizing ${dk}, including if this
  * function fails.
  */
@@ -300,7 +300,7 @@ err0:
 	return (rc);
 }
 
-/*
+/**
  * NOTE: The caller is responsible for sanitizing ${dk}, including if this
  * function fails.
  */
@@ -334,7 +334,7 @@ scryptdec_setup(const uint8_t header[96], uint8_t dk[64],
 	if (crypto_verify_bytes(&header[48], hbuf, 16))
 		return (7);
 
-	/*
+	/**
 	 * Check whether the provided parameters are valid and whether the
 	 * key derivation function can be computed within the allowed memory
 	 * and CPU time, unless the user chose to disable this test.
@@ -444,7 +444,7 @@ scryptdec_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 	struct crypto_aes_key * key_enc_exp;
 	struct crypto_aesctr * AES;
 
-	/*
+	/**
 	 * All versions of the scrypt format will start with "scrypt" and
 	 * have at least 7 bytes of header.
 	 */
@@ -543,7 +543,7 @@ scryptenc_file(FILE * infile, FILE * outfile,
 		goto err1;
 	}
 
-	/*
+	/**
 	 * Read blocks of data, encrypt them, and write them out; hash the
 	 * data as it is produced.
 	 */
@@ -623,7 +623,7 @@ scryptdec_file_load_header(FILE * infile, uint8_t header[static 96])
 {
 	int rc;
 
-	/*
+	/**
 	 * Read the first 7 bytes of the file; all future versions of scrypt
 	 * are guaranteed to have at least 7 bytes of header.
 	 */
@@ -647,7 +647,7 @@ scryptdec_file_load_header(FILE * infile, uint8_t header[static 96])
 		goto err0;
 	}
 
-	/*
+	/**
 	 * Read another 89 bytes of the file; version 0 of the scrypt file
 	 * format has a 96-byte header.
 	 */
@@ -743,7 +743,7 @@ scryptdec_file_copy(struct scryptdec_file_cookie * C, FILE * outfile)
 	HMAC_SHA256_Init(&hctx, key_hmac, 32);
 	HMAC_SHA256_Update(&hctx, C->header, 96);
 
-	/*
+	/**
 	 * We don't know how long the encrypted data block is (we can't know,
 	 * since data can be streamed into 'scrypt enc') so we need to read
 	 * data and decrypt all of it except the final 32 bytes, then check
@@ -767,7 +767,7 @@ scryptdec_file_copy(struct scryptdec_file_cookie * C, FILE * outfile)
 		if (buflen <= 32)
 			continue;
 
-		/*
+		/**
 		 * Decrypt, hash, and output everything except the last 32
 		 * bytes out of what we have in our buffer.
 		 */

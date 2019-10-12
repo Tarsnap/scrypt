@@ -51,7 +51,7 @@ crypto_aes_key_expand_128_aesni(const uint8_t key[16], __m128i rkeys[11])
 	 */
 	rkeys[0] = _mm_loadu_si128((const __m128i *)&key[0]);
 
-	/*
+	/**
 	 * Each of the remaining round keys are computed from the preceding
 	 * round key: rotword+subword+rcon (provided as aeskeygenassist) to
 	 * compute the 'temp' value, then xor with 1, 2, 3, or all 4 of the
@@ -106,7 +106,7 @@ crypto_aes_key_expand_256_aesni(const uint8_t key[32], __m128i rkeys[15])
 	rkeys[0] = _mm_loadu_si128((const __m128i *)&key[0]);
 	rkeys[1] = _mm_loadu_si128((const __m128i *)&key[16]);
 
-	/*
+	/**
 	 * Each of the remaining round keys are computed from the preceding
 	 * pair of keys.  Even rounds use rotword+subword+rcon, while odd
 	 * rounds just use subword; the aeskeygenassist instruction computes

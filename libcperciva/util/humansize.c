@@ -28,7 +28,7 @@ humansize(uint64_t size)
 		for (size /= 100, shiftcnt = 1; size >= 10000; shiftcnt++)
 			size /= 1000;
 
-		/*
+		/**
 		 * Figure out what prefix to use.  Since 1 EB = 10^18 B and
 		 * the maximum value of a uint64_t is 2^64 which is roughly
 		 * 18.4 * 10^18, this cannot reference beyond the end of the

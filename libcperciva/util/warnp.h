@@ -22,7 +22,7 @@ void warnp_setprogname(const char *);
 void warn(const char *, ...);
 void warnx(const char *, ...);
 
-/*
+/**
  * If compiled with DEBUG defined, print __FILE__ and __LINE__.
  */
 #ifdef DEBUG
@@ -33,7 +33,7 @@ void warnx(const char *, ...);
 #define warnline
 #endif
 
-/*
+/**
  * Call warn(3) or warnx(3) depending upon whether errno == 0; and clear
  * errno (so that the standard error message isn't repeated later).
  */
@@ -46,7 +46,7 @@ void warnx(const char *, ...);
 		warnx(__VA_ARGS__);		\
 } while (0)
 
-/*
+/**
  * Call warnx(3) and set errno == 0.  Unlike warnp, this should be used
  * in cases where we're reporting a problem which we discover ourselves
  * rather than one which is reported to us from a library or the kernel.

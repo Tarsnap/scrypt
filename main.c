@@ -192,7 +192,7 @@ main(int argc, char *argv[])
 	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
 		goto err1;
 
-	/*-
+	/**
 	 * If we're decrypting, open the input file and process its header;
 	 * doing this here allows us to abort without creating an output
 	 * file if the input file does not have a valid scrypt header or if

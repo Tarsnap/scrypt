@@ -172,7 +172,7 @@ extern int optind, opterr, optreset;
 		DO_LONGJMP;						\
 	getopt_skip_ ## ln
 
-/*
+/**
  * The back-end implementation.  These should be considered internal
  * interfaces and not used directly.
  */

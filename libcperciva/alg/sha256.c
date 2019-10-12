@@ -14,7 +14,7 @@ static void SHA256_Transform(uint32_t[static restrict 8],
     const uint8_t[static restrict 64], uint32_t[static restrict 64],
     uint32_t[static restrict 8]);
 
-/*
+/**
  * Encode a length len/4 vector of (uint32_t) into a length len vector of
  * (uint8_t) in big-endian form.  Assumes len is a multiple of 4.
  */
@@ -31,7 +31,7 @@ be32enc_vect(uint8_t * dst, const uint32_t * src, size_t len)
 		be32enc(dst + i * 4, src[i]);
 }
 
-/*
+/**
  * Decode a big-endian length len vector of (uint8_t) into a length
  * len/4 vector of (uint32_t).  Assumes len is a multiple of 4.
  */
@@ -75,7 +75,7 @@ static const uint32_t initial_state[8] = {
 };
 
 #if defined(CPUSUPPORT_X86_SHANI) && defined(CPUSUPPORT_X86_SSSE3)
-/*
+/**
  * Test whether software and SHANI transform code produce the same results.
  * Must be called with usesha() returning 0 (software).
  */
@@ -166,7 +166,7 @@ useshani(void)
 #define MSCH(W, ii, i)				\
 	W[i + ii + 16] = s1(W[i + ii + 14]) + W[i + ii + 9] + s0(W[i + ii + 1]) + W[i + ii]
 
-/*
+/**
  * SHA256 block compression function.  The 256-bit state is transformed via
  * the 512-bit input block to produce a new state.
  */

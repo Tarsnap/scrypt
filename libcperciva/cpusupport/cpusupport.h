@@ -1,7 +1,7 @@
 #ifndef _CPUSUPPORT_H_
 #define _CPUSUPPORT_H_
 
-/*
+/**
  * To enable support for non-portable CPU features at compile time, one or
  * more CPUSUPPORT_ARCH_FEATURE macros should be defined.  This can be done
  * directly on the compiler command line via -D CPUSUPPORT_ARCH_FEATURE or
@@ -77,7 +77,7 @@
 #define CPUSUPPORT_FEATURE(arch, feature, enabler)				\
 	CPUSUPPORT_FEATURE_(arch ## _ ## feature, enabler, CPUSUPPORT_ ## enabler)
 
-/*
+/**
  * CPUSUPPORT_FEATURE_DECL(arch, feature):
  * Macro which defines variables and provides a function declaration for
  * detecting the presence of "feature" on the "arch" architecture.  The
@@ -94,7 +94,7 @@
 	int								\
 	cpusupport_ ## arch ## _ ## feature ## _detect_1(void)
 
-/*
+/**
  * List of features.  If a feature here is not enabled by the appropriate
  * CPUSUPPORT_ARCH_FEATURE macro being defined, it has no effect; but if the
  * relevant macro may be defined (e.g., by Build/cpusupport.sh successfully
