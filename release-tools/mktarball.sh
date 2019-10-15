@@ -10,7 +10,7 @@ RELEASEDATE=`date "+%B %d, %Y"`
 
 # Copy bits in
 mkdir ${DESTDIR} ${DESTDIR}/autotools
-cp main.c FORMAT COPYRIGHT BUILDING ${DESTDIR}
+cp main.c FORMAT COPYRIGHT BUILDING STYLE ${DESTDIR}
 cp Makefile.am .autom4te.cfg ${DESTDIR}
 cp Makefile.am ${DESTDIR}/autotools
 mkdir ${DESTDIR}/m4
