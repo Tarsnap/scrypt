@@ -139,6 +139,7 @@ EXTRA_DIST = \
 	COPYRIGHT						\
 	FORMAT							\
 	README.md						\
+	STYLE							\
 	lib/README						\
 	lib/crypto/crypto_scrypt-ref.c				\
 	libcperciva/POSIX/README				\
