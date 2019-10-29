@@ -16,8 +16,8 @@ pl_freebsd_fgets()
 
 #define MEMLEAKTEST(x) { #x, x }
 static const struct memleaktest {
-	const char * name;
-	void (* func)(void);
+	const char * const name;
+	void (* const volatile func)(void);
 } tests[] = {
 	MEMLEAKTEST(pl_freebsd_fgets)
 };
