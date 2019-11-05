@@ -35,6 +35,7 @@
 .Op Fl m Ar maxmemfrac
 .Op Fl P
 .Op Fl t Ar maxtime
+.Op Fl v
 .Ar infile
 .Op Ar outfile
 .Nm
@@ -96,6 +97,8 @@ is also stdin (aka '-').
 Use at most
 .Ar maxtime
 seconds of CPU time to compute the derived encryption key.
+.It Fl -v
+Print encryption parameters (N, r, p) and memory/cpu limits.
 .It Fl -version
 Print version of scrypt, and exit.
 .El
