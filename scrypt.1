@@ -33,8 +33,9 @@
 .Op Fl f
 .Op Fl M Ar maxmem
 .Op Fl m Ar maxmemfrac
-.Op Fl t Ar maxtime
 .Op Fl P
+.Op Fl t Ar maxtime
+.Op Fl v
 .Ar infile
 .Op Ar outfile
 .Nm
@@ -87,15 +88,17 @@ bytes of RAM to compute the derived encryption key.
 Use at most the fraction
 .Ar maxmemfrac
 of the available RAM to compute the derived encryption key.
-.It Fl t Ar maxtime
-Use at most
-.Ar maxtime
-seconds of CPU time to compute the derived encryption key.
 .It Fl P
 Always read passphrase from stdin, and do so only once even
 when encrypting.  This cannot be used if
 .Ar infile
 is also stdin (aka '-').
+.It Fl t Ar maxtime
+Use at most
+.Ar maxtime
+seconds of CPU time to compute the derived encryption key.
+.It Fl -v
+Print encryption parameters (N, r, p) and memory/cpu limits.
 .It Fl -version
 Print version of scrypt, and exit.
 .El
