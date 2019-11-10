@@ -3,8 +3,8 @@
 ### Constants
 c_valgrind_min=1
 reference_file="${scriptdir}/verify-strings/test_scrypt.good"
-encrypted_file="${out}/attempt.enc"
-decrypted_file="${out}/attempt.txt"
+encrypted_file="${s_basename}-attempt.enc"
+decrypted_file="${s_basename}-attempt.txt"
 
 scenario_cmd() {
 	# Encrypt a file.

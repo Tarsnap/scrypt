@@ -3,9 +3,9 @@
 ### Constants
 c_valgrind_min=1
 reference_file="${scriptdir}/verify-strings/test_scrypt.good"
-longwait_encrypted_file="${out}/longwait.enc"
-longwait_decrypted_file="${out}/longwait.txt"
-longwait_failed_log="${out}/longwait-failed.log"
+longwait_encrypted_file="${s_basename}.enc"
+longwait_decrypted_file="${s_basename}.txt"
+longwait_failed_log="${s_basename}-failed.log"
 
 scenario_cmd() {
 	# Encrypt file which should take a long time to decrypt.

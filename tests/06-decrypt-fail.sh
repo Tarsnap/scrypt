@@ -4,7 +4,7 @@
 c_valgrind_min=1
 non_encoded_file="${scriptdir}/06-decrypt-fail.sh"
 non_encoded_file_stderr="${s_basename}-stderr.txt"
-non_encoded_file_output="${out}/nonfile.txt"
+non_encoded_file_output="${s_basename}-nonfile.txt"
 
 scenario_cmd() {
 	# Attempt to decrypt a non-scrypt-encoded file.
