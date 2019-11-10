@@ -3,10 +3,10 @@
 ### Constants
 c_valgrind_min=1
 reference_file="${scriptdir}/verify-strings/test_scrypt.good"
-encrypted_file_1="${out}/sys-scrypt.enc"
-decrypted_file_1="${out}/sys-scrypt.txt"
-encrypted_file_2="${out}/our-scrypt.enc"
-decrypted_file_2="${out}/our-scrypt.txt"
+encrypted_file_1="${s_basename}-sys.enc"
+decrypted_file_1="${s_basename}-sys.txt"
+encrypted_file_2="${s_basename}-our.enc"
+decrypted_file_2="${s_basename}-our.txt"
 
 scenario_cmd() {
 	if [ -z "${system_scrypt}" ]; then

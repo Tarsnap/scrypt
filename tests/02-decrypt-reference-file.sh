@@ -4,9 +4,9 @@
 c_valgrind_min=1
 reference_file="${scriptdir}/verify-strings/test_scrypt.good"
 encrypted_reference_file="${scriptdir}/verify-strings/test_scrypt_good.enc"
-decrypted_reference_file="${out}/attempt_reference.txt"
-decrypted_badpass_file="${out}/decrypt-badpass.txt"
-decrypted_badpass_log="${out}/decrypt-badpass.log"
+decrypted_reference_file="${s_basename}-attempt_reference.txt"
+decrypted_badpass_file="${s_basename}-decrypt-badpass.txt"
+decrypted_badpass_log="${s_basename}-decrypt-badpass.log"
 
 scenario_cmd() {
 	# Decrypt a reference file.
