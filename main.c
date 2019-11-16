@@ -89,7 +89,7 @@ main(int argc, char *argv[])
 		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
 		exit(0);
 	} else {
-		warn0("First argument must be 'enc', 'dec', or 'info'.\n");
+		warn0("First argument must be 'enc', 'dec', or 'info'.");
 		usage();
 	}
 	argc--;
@@ -131,10 +131,10 @@ main(int argc, char *argv[])
 			devtty = 0;
 			break;
 		GETOPT_MISSING_ARG:
-			warn0("Missing argument to %s\n", ch);
+			warn0("Missing argument to %s", ch);
 			usage();
 		GETOPT_DEFAULT:
-			warn0("illegal option -- %s\n", ch);
+			warn0("illegal option -- %s", ch);
 			usage();
 		}
 	}
