@@ -266,7 +266,7 @@ done:
 		case SCRYPT_EVERSION:
 			warn0("Unrecognized scrypt format version");
 			break;
-		case 9:
+		case SCRYPT_ETOOBIG:
 			warn0("Decrypting file would require too much memory");
 			break;
 		case 10:
