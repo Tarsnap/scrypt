@@ -240,47 +240,47 @@ cleanup:
 
 done:
 	/* If we failed, print the right error message and exit. */
-	if (rc != 0) {
+	if (rc != SCRYPT_OK) {
 		switch (rc) {
-		case 1:
+		case SCRYPT_ELIMIT:
 			warnp("Error determining amount of available memory");
 			break;
-		case 2:
+		case SCRYPT_ECLOCK:
 			warnp("Error reading clocks");
 			break;
-		case 3:
+		case SCRYPT_EKEY:
 			warnp("Error computing derived key");
 			break;
-		case 4:
+		case SCRYPT_ESALT:
 			warnp("Error reading salt");
 			break;
-		case 5:
+		case SCRYPT_EOPENSSL:
 			warnp("OpenSSL error");
 			break;
-		case 6:
+		case SCRYPT_ENOMEM:
 			warnp("Error allocating memory");
 			break;
-		case 7:
+		case SCRYPT_EINVAL:
 			warn0("Input is not valid scrypt-encrypted block");
 			break;
-		case 8:
+		case SCRYPT_EVERSION:
 			warn0("Unrecognized scrypt format version");
 			break;
-		case 9:
+		case SCRYPT_ETOOBIG:
 			warn0("Decrypting file would require too much memory");
 			break;
-		case 10:
+		case SCRYPT_ETOOSLOW:
 			warn0("Decrypting file would take too much CPU time");
 			break;
-		case 11:
+		case SCRYPT_EPASS:
 			warn0("Passphrase is incorrect");
 			break;
-		case 12:
+		case SCRYPT_EWRFILE:
 			warnp("Error writing file: %s",
 			    (outfilename != NULL) ? outfilename
 			    : "standard output");
 			break;
-		case 13:
+		case SCRYPT_ERDFILE:
 			warnp("Error reading file: %s",
 			    (infilename != NULL) ? infilename
 			    : "standard input");
