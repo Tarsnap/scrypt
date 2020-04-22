@@ -248,7 +248,7 @@ done:
 		case SCRYPT_ECLOCK:
 			warnp("Error reading clocks");
 			break;
-		case 3:
+		case SCRYPT_EKEY:
 			warnp("Error computing derived key");
 			break;
 		case 4:
