@@ -280,7 +280,7 @@ done:
 			    (outfilename != NULL) ? outfilename
 			    : "standard output");
 			break;
-		case 13:
+		case SCRYPT_ERDFILE:
 			warnp("Error reading file: %s",
 			    (infilename != NULL) ? infilename
 			    : "standard input");
