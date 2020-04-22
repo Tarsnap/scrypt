@@ -275,7 +275,7 @@ done:
 		case SCRYPT_EPASS:
 			warn0("Passphrase is incorrect");
 			break;
-		case 12:
+		case SCRYPT_EWRFILE:
 			warnp("Error writing file: %s",
 			    (outfilename != NULL) ? outfilename
 			    : "standard output");
