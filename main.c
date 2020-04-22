@@ -254,7 +254,7 @@ done:
 		case SCRYPT_ESALT:
 			warnp("Error reading salt");
 			break;
-		case 5:
+		case SCRYPT_EOPENSSL:
 			warnp("OpenSSL error");
 			break;
 		case 6:
