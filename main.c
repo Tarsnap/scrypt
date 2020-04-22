@@ -269,7 +269,7 @@ done:
 		case SCRYPT_ETOOBIG:
 			warn0("Decrypting file would require too much memory");
 			break;
-		case 10:
+		case SCRYPT_ETOOSLOW:
 			warn0("Decrypting file would take too much CPU time");
 			break;
 		case 11:
