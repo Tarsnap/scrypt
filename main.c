@@ -257,7 +257,7 @@ done:
 		case SCRYPT_EOPENSSL:
 			warnp("OpenSSL error");
 			break;
-		case 6:
+		case SCRYPT_ENOMEM:
 			warnp("Error allocating memory");
 			break;
 		case 7:
