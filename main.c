@@ -43,6 +43,7 @@
 enum passphrase_entry {
 	PASSPHRASE_UNSET,
 	PASSPHRASE_TTY_STDIN,
+	PASSPHRASE_STDIN_ONCE,
 };
 
 static void
@@ -62,7 +63,6 @@ main(int argc, char *argv[])
 {
 	FILE * infile;
 	FILE * outfile = stdout;
-	int devtty = 1;
 	int dec = 0;
 	int info = 0;
 	size_t maxmem = 0;
@@ -135,7 +135,7 @@ main(int argc, char *argv[])
 			verbose = 1;
 			break;
 		GETOPT_OPT("-P"):
-			devtty = 0;
+			passphrase_entry = PASSPHRASE_STDIN_ONCE;
 			break;
 		GETOPT_MISSING_ARG:
 			warn0("Missing argument to %s", ch);
@@ -178,7 +178,7 @@ main(int argc, char *argv[])
 		infile = stdin;
 
 		/* Error if given incompatible options. */
-		if (devtty == 0) {
+		if (passphrase_entry == PASSPHRASE_STDIN_ONCE) {
 			warn0("Cannot read both passphrase and input file"
 			    " from standard input");
 			goto err0;
@@ -201,9 +201,14 @@ main(int argc, char *argv[])
 	/* Get the password. */
 	switch (passphrase_entry) {
 	case PASSPHRASE_TTY_STDIN:
+		/* Read passphrase, prompting only once if decrypting. */
 		if (readpass(&passwd, "Please enter passphrase",
-		    (dec || !devtty) ? NULL : "Please confirm passphrase",
-		    devtty))
+		    (dec) ? NULL : "Please confirm passphrase", 1))
+			goto err1;
+		break;
+	case PASSPHRASE_STDIN_ONCE:
+		/* Read passphrase, prompting only once, from stdin only. */
+		if (readpass(&passwd, "Please enter passphrase", NULL, 0))
 			goto err1;
 		break;
 	case PASSPHRASE_UNSET:
