@@ -251,7 +251,7 @@ done:
 		case SCRYPT_EKEY:
 			warnp("Error computing derived key");
 			break;
-		case 4:
+		case SCRYPT_ESALT:
 			warnp("Error reading salt");
 			break;
 		case 5:
