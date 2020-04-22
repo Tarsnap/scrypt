@@ -260,7 +260,7 @@ done:
 		case SCRYPT_ENOMEM:
 			warnp("Error allocating memory");
 			break;
-		case 7:
+		case SCRYPT_EINVAL:
 			warn0("Input is not valid scrypt-encrypted block");
 			break;
 		case 8:
