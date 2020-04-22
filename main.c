@@ -272,7 +272,7 @@ done:
 		case SCRYPT_ETOOSLOW:
 			warn0("Decrypting file would take too much CPU time");
 			break;
-		case 11:
+		case SCRYPT_EPASS:
 			warn0("Passphrase is incorrect");
 			break;
 		case 12:
