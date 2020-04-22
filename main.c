@@ -39,6 +39,12 @@
 #include "scryptenc.h"
 #include "warnp.h"
 
+/* How should we get the passphrase? */
+enum passphrase_entry {
+	PASSPHRASE_UNSET,
+	PASSPHRASE_TTY_STDIN,
+};
+
 static void
 usage(void)
 {
@@ -71,6 +77,7 @@ main(int argc, char *argv[])
 	int rc;
 	int verbose = 0;
 	struct scryptdec_file_cookie * C = NULL;
+	enum passphrase_entry passphrase_entry = PASSPHRASE_UNSET;
 
 	WARNP_INIT;
 
@@ -157,6 +164,10 @@ main(int argc, char *argv[])
 	else
 		outfilename = NULL;
 
+	/* Set the default passphrase entry method. */
+	if (passphrase_entry == PASSPHRASE_UNSET)
+		passphrase_entry = PASSPHRASE_TTY_STDIN;
+
 	/* If the input isn't stdin, open the file. */
 	if (infilename != NULL) {
 		if ((infile = fopen(infilename, "rb")) == NULL) {
@@ -187,10 +198,18 @@ main(int argc, char *argv[])
 		goto done;
 	}
 
-	/* Prompt for a password. */
-	if (readpass(&passwd, "Please enter passphrase",
-	    (dec || !devtty) ? NULL : "Please confirm passphrase", devtty))
+	/* Get the password. */
+	switch (passphrase_entry) {
+	case PASSPHRASE_TTY_STDIN:
+		if (readpass(&passwd, "Please enter passphrase",
+		    (dec || !devtty) ? NULL : "Please confirm passphrase",
+		    devtty))
+			goto err1;
+		break;
+	case PASSPHRASE_UNSET:
+		warn0("Programming error: passphrase_entry is not set");
 		goto err1;
+	}
 
 	/*-
 	 * If we're decrypting, open the input file and process its header;
