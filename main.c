@@ -245,7 +245,7 @@ done:
 		case SCRYPT_ELIMIT:
 			warnp("Error determining amount of available memory");
 			break;
-		case 2:
+		case SCRYPT_ECLOCK:
 			warnp("Error reading clocks");
 			break;
 		case 3:
