@@ -242,7 +242,7 @@ done:
 	/* If we failed, print the right error message and exit. */
 	if (rc != SCRYPT_OK) {
 		switch (rc) {
-		case 1:
+		case SCRYPT_ELIMIT:
 			warnp("Error determining amount of available memory");
 			break;
 		case 2:
