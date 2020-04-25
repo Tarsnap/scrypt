@@ -52,10 +52,47 @@ usage(void)
 
 	fprintf(stderr,
 	    "usage: scrypt {enc | dec | info} [-f] [-M maxmem]"
-	    " [-m maxmemfrac]\n"
-	    "              [-P] [-t maxtime] [-v] infile [outfile]\n"
+	    " [-m maxmemfrac] [-P]\n"
+	    "              [-t maxtime] [-v] [--passphrase method:arg]"
+	    " infile [outfile]\n"
 	    "       scrypt --version\n");
 	exit(1);
+}
+
+static int
+parse_passphrase_arg(const char * arg,
+    enum passphrase_entry * passphrase_entry_p, const char ** passphrase_arg_p)
+{
+	const char * p;
+
+	/* Find the separator in "method:arg", or fail if there isn't one. */
+	if ((p = strchr(arg, ':')) == NULL)
+		goto err1;
+
+	/* Extract the "arg" part. */
+	*passphrase_arg_p = &p[1];
+
+	/* Parse the "method". */
+	if (strncmp(arg, "dev:", 4) == 0) {
+		if (strcmp(*passphrase_arg_p, "tty-stdin") == 0) {
+			*passphrase_entry_p = PASSPHRASE_TTY_STDIN;
+			goto success;
+		}
+		else if (strcmp(*passphrase_arg_p, "stdin-once") == 0) {
+			*passphrase_entry_p = PASSPHRASE_STDIN_ONCE;
+			goto success;
+		}
+	}
+
+err1:
+	warn0("Invalid option: --passphrase %s", arg);
+
+	/* Failure! */
+	return (-1);
+
+success:
+	/* Success! */
+	return (0);
 }
 
 int
@@ -78,6 +115,7 @@ main(int argc, char *argv[])
 	int verbose = 0;
 	struct scryptdec_file_cookie * C = NULL;
 	enum passphrase_entry passphrase_entry = PASSPHRASE_UNSET;
+	const char * passphrase_arg;
 
 	WARNP_INIT;
 
@@ -125,6 +163,18 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 			break;
+		GETOPT_OPTARG("--passphrase"):
+			if (passphrase_entry != PASSPHRASE_UNSET) {
+				warn0("You can only enter one --passphrase or"
+				    " -P argument");
+				exit(1);
+			}
+
+			/* Parse "method:arg" optarg. */
+			if (parse_passphrase_arg(optarg, &passphrase_entry,
+			    &passphrase_arg))
+				exit(1);
+			break;
 		GETOPT_OPTARG("-t"):
 			if (PARSENUM(&maxtime, optarg, 0, INFINITY)) {
 				warnp("Invalid option: -t %s", optarg);
@@ -136,7 +186,8 @@ main(int argc, char *argv[])
 			break;
 		GETOPT_OPT("-P"):
 			if (passphrase_entry != PASSPHRASE_UNSET) {
-				warn0("You can only enter one -P argument");
+				warn0("You can only enter one --passphrase or"
+				    " -P argument");
 				exit(1);
 			}
 			passphrase_entry = PASSPHRASE_STDIN_ONCE;
