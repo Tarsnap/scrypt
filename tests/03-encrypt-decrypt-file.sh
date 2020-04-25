@@ -7,11 +7,12 @@ encrypted_file="${s_basename}-attempt.enc"
 decrypted_file="${s_basename}-attempt.txt"
 
 scenario_cmd() {
-	# Encrypt a file.
+	# Encrypt a file.  Use --passphrase dev:stdin-once instead of -P.
 	setup_check_variables
 	(
 		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
-		    enc -P -t 1 ${reference_file} ${encrypted_file}
+		    enc --passphrase dev:stdin-once -t 1		\
+		    ${reference_file} ${encrypted_file}
 		echo $? > ${c_exitfile}
 	)
 
