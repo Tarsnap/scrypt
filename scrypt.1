@@ -34,6 +34,7 @@
 .Op Fl M Ar maxmem
 .Op Fl m Ar maxmemfrac
 .Op Fl P
+.Op Fl -passphrase Ar method:arg
 .Op Fl t Ar maxtime
 .Op Fl v
 .Ar infile
@@ -93,6 +94,18 @@ Always read passphrase from stdin, and do so only once even
 when encrypting.  This cannot be used if
 .Ar infile
 is also stdin (aka '-').
+.It Fl -passphrase Ar method:arg
+Read the passphrase using the specified method.
+.Bl -tag -width aa
+.It Ar dev:tty-stdin
+Attempt to read the passphrase from /dev/tty; if that fails, read
+it from stdin.  This is the default behaviour.
+.It Ar dev:stdin-once
+Attempt to read the passphrase from stdin, and do so only once
+even when encrypting.  This cannot be used if
+.Ar infile
+is also stdin (aka '-').
+.El
 .It Fl t Ar maxtime
 Use at most
 .Ar maxtime
