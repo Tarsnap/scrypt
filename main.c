@@ -135,6 +135,10 @@ main(int argc, char *argv[])
 			verbose = 1;
 			break;
 		GETOPT_OPT("-P"):
+			if (passphrase_entry != PASSPHRASE_UNSET) {
+				warn0("You can only enter one -P argument");
+				exit(1);
+			}
 			passphrase_entry = PASSPHRASE_STDIN_ONCE;
 			break;
 		GETOPT_MISSING_ARG:
