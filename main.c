@@ -44,6 +44,7 @@ enum passphrase_entry {
 	PASSPHRASE_UNSET,
 	PASSPHRASE_TTY_STDIN,
 	PASSPHRASE_STDIN_ONCE,
+	PASSPHRASE_ENV,
 };
 
 static void
@@ -83,6 +84,10 @@ parse_passphrase_arg(const char * arg,
 			goto success;
 		}
 	}
+	if (strncmp(optarg, "env:", 4) == 0) {
+		*passphrase_entry_p = PASSPHRASE_ENV;
+		goto success;
+	}
 
 err1:
 	warn0("Invalid option: --passphrase %s", arg);
@@ -116,6 +121,7 @@ main(int argc, char *argv[])
 	struct scryptdec_file_cookie * C = NULL;
 	enum passphrase_entry passphrase_entry = PASSPHRASE_UNSET;
 	const char * passphrase_arg;
+	const char * passwd_env;
 
 	WARNP_INIT;
 
@@ -265,6 +271,19 @@ main(int argc, char *argv[])
 		/* Read passphrase, prompting only once, from stdin only. */
 		if (readpass(&passwd, "Please enter passphrase", NULL, 0))
 			goto err1;
+		break;
+	case PASSPHRASE_ENV:
+		/* We're not allowed to modify the output of getenv(). */
+		if ((passwd_env = getenv(passphrase_arg)) == NULL) {
+			warn0("Failed to read from ${%s}", passphrase_arg);
+			goto err1;
+		}
+
+		/* This allows us to use the same insecure_zero() logic. */
+		if ((passwd = strdup(passwd_env)) == NULL) {
+			warnp("Out of memory");
+			goto err1;
+		}
 		break;
 	case PASSPHRASE_UNSET:
 		warn0("Programming error: passphrase_entry is not set");
