@@ -5,6 +5,7 @@ c_valgrind_min=1
 reference_file="${scriptdir}/verify-strings/test_scrypt.good"
 encrypted_reference_file="${scriptdir}/verify-strings/test_scrypt_good.enc"
 decrypted_reference_file="${s_basename}-attempt_reference.txt"
+decrypted_reference_file_stderr="${s_basename}-attempt_reference.stderr"
 decrypted_badpass_file="${s_basename}-decrypt-badpass.txt"
 decrypted_badpass_log="${s_basename}-decrypt-badpass.log"
 
@@ -14,7 +15,8 @@ scenario_cmd() {
 	(
 		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
 		    dec -P ${encrypted_reference_file}			\
-		    ${decrypted_reference_file}
+		    ${decrypted_reference_file}				\
+		    2> ${decrypted_reference_file_stderr}
 		echo $? > ${c_exitfile}
 	)
 
@@ -22,6 +24,11 @@ scenario_cmd() {
 	setup_check_variables
 	cmp -s ${decrypted_reference_file} ${reference_file}
 	echo $? > ${c_exitfile}
+
+	# We should not have any output on stderr.
+	setup_check_variables
+	test -s ${decrypted_reference_file_stderr}
+	expected_exitcode 1 $? > ${c_exitfile}
 
 	# Attempt to decrypt the reference file with an incorrect passphrase.
 	# We want this command to fail with 1.
