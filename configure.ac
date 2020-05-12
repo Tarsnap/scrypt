@@ -63,8 +63,13 @@ AS_IF([test x${ac_compiler_warnings} = xyes],
 # Check libcperciva POSIX compatibility
 AC_MSG_NOTICE([checking POSIX compatibility...])
 LIBCPERCIVA_DIR=${srcdir}/libcperciva
-LDADD_POSIX=`export CC="${CC}"; command -p sh ${LIBCPERCIVA_DIR}/POSIX/posix-l.sh "$PATH"`
-CFLAGS_POSIX=`export CC="${CC}"; command -p sh ${LIBCPERCIVA_DIR}/POSIX/posix-cflags.sh "$PATH"`
+case $host_os in
+*)
+	# Usual method of checking POSIX compatibility
+	LDADD_POSIX=`export CC="${CC}"; command -p sh ${LIBCPERCIVA_DIR}/POSIX/posix-l.sh "$PATH"`
+	CFLAGS_POSIX=`export CC="${CC}"; command -p sh ${LIBCPERCIVA_DIR}/POSIX/posix-cflags.sh "$PATH"`
+	;;
+esac
 AC_SUBST([LDADD_POSIX])
 AC_SUBST([CFLAGS_POSIX])
 AC_MSG_RESULT([... done checking POSIX compatibility])
