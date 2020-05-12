@@ -64,6 +64,12 @@ AS_IF([test x${ac_compiler_warnings} = xyes],
 AC_MSG_NOTICE([checking POSIX compatibility...])
 LIBCPERCIVA_DIR=${srcdir}/libcperciva
 case $host_os in
+*solaris*)
+	# Hack for Solaris, which reports "sh not found" if we try
+	# the usual `command -p sh`.
+	LDADD_POSIX=`export CC="${CC}"; command -p ${SHELL} ${LIBCPERCIVA_DIR}/POSIX/posix-l.sh "$PATH"`
+	CFLAGS_POSIX=`export CC="${CC}"; command -p ${SHELL} ${LIBCPERCIVA_DIR}/POSIX/posix-cflags.sh "$PATH"`
+	;;
 *)
 	# Usual method of checking POSIX compatibility
 	LDADD_POSIX=`export CC="${CC}"; command -p sh ${LIBCPERCIVA_DIR}/POSIX/posix-l.sh "$PATH"`
