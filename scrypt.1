@@ -105,6 +105,9 @@ Attempt to read the passphrase from stdin, and do so only once
 even when encrypting.  This cannot be used if
 .Ar infile
 is also stdin (aka '-').
+.It Ar dev:tty-once
+Attempt to read the passphrase from /dev/tty, and do so only once
+even when encrypting.
 .It Ar env:VAR
 Read the passphrase from the environment variable specified by
 .Ar VAR .

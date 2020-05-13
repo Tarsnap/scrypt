@@ -44,6 +44,7 @@ enum passphrase_entry {
 	PASSPHRASE_UNSET,
 	PASSPHRASE_TTY_STDIN,
 	PASSPHRASE_STDIN_ONCE,
+	PASSPHRASE_TTY_ONCE,
 	PASSPHRASE_ENV,
 };
 
@@ -81,6 +82,10 @@ parse_passphrase_arg(const char * arg,
 		}
 		else if (strcmp(*passphrase_arg_p, "stdin-once") == 0) {
 			*passphrase_entry_p = PASSPHRASE_STDIN_ONCE;
+			goto success;
+		}
+		else if (strcmp(*passphrase_arg_p, "tty-once") == 0) {
+			*passphrase_entry_p = PASSPHRASE_TTY_ONCE;
 			goto success;
 		}
 	}
@@ -270,6 +275,11 @@ main(int argc, char *argv[])
 	case PASSPHRASE_STDIN_ONCE:
 		/* Read passphrase, prompting only once, from stdin only. */
 		if (readpass(&passwd, "Please enter passphrase", NULL, 0))
+			goto err1;
+		break;
+	case PASSPHRASE_TTY_ONCE:
+		/* Read passphrase, prompting only once, from tty only. */
+		if (readpass(&passwd, "Please enter passphrase", NULL, 2))
 			goto err1;
 		break;
 	case PASSPHRASE_ENV:
