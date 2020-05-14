@@ -46,6 +46,7 @@ enum passphrase_entry {
 	PASSPHRASE_STDIN_ONCE,
 	PASSPHRASE_TTY_ONCE,
 	PASSPHRASE_ENV,
+	PASSPHRASE_FILE,
 };
 
 static void
@@ -91,6 +92,10 @@ parse_passphrase_arg(const char * arg,
 	}
 	if (strncmp(optarg, "env:", 4) == 0) {
 		*passphrase_entry_p = PASSPHRASE_ENV;
+		goto success;
+	}
+	if (strncmp(optarg, "file:", 5) == 0) {
+		*passphrase_entry_p = PASSPHRASE_FILE;
 		goto success;
 	}
 
@@ -294,6 +299,10 @@ main(int argc, char *argv[])
 			warnp("Out of memory");
 			goto err1;
 		}
+		break;
+	case PASSPHRASE_FILE:
+		if (readpass_file(&passwd, passphrase_arg))
+			goto err1;
 		break;
 	case PASSPHRASE_UNSET:
 		warn0("Programming error: passphrase_entry is not set");
