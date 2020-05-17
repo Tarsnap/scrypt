@@ -9,6 +9,9 @@ AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 # Scrypt has some of its own configure functions.
 m4_include([acscrypt.m4])
 
+# Cache this result as soon as possible to avoid a problem with Solaris sh.
+CHECK_POSIX_SH
+
 # Checks for programs.
 AC_PROG_CC_C99
 AM_PROG_AR
@@ -64,7 +67,6 @@ AS_IF([test x${ac_compiler_warnings} = xyes],
    [AX_CFLAGS_WARN_ALL])
 
 # Check libcperciva POSIX compatibility
-CHECK_POSIX_SH
 AC_MSG_NOTICE([checking POSIX compatibility...])
 LIBCPERCIVA_DIR=${srcdir}/libcperciva
 LDADD_POSIX=`export CC="${CC}"; ${POSIX_SH} ${LIBCPERCIVA_DIR}/POSIX/posix-l.sh "$PATH"`
