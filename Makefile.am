@@ -14,7 +14,7 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt.c			\
 			lib/crypto/crypto_scrypt_smix.c			\
 			lib/crypto/crypto_scrypt_smix.h			\
 			lib/crypto/crypto_scrypt_smix_sse2.h		\
-			lib/platform.h					\
+			lib-platform/platform.h				\
 			libcperciva/alg/sha256.c			\
 			libcperciva/alg/sha256.h			\
 			libcperciva/alg/sha256_shani.h			\
@@ -68,6 +68,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 			-I$(srcdir)/lib/crypto			\
 			-I$(srcdir)/lib/scryptenc		\
 			-I$(srcdir)/lib/util			\
+			-I$(srcdir)/lib-platform		\
 			-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/libcperciva/cpusupport	\
 			-I$(srcdir)/libcperciva/crypto		\
