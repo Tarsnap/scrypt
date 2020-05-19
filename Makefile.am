@@ -33,8 +33,8 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc.h		\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/scryptenc/scryptenc_cpuperf.h	\
-			lib/util/memlimit.c			\
-			lib/util/memlimit.h			\
+			lib-platform/util/memlimit.c		\
+			lib-platform/util/memlimit.h		\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c \
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c \
 			libcperciva/crypto/crypto_aes.c		\
@@ -69,6 +69,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 			-I$(srcdir)/lib/scryptenc		\
 			-I$(srcdir)/lib/util			\
 			-I$(srcdir)/lib-platform		\
+			-I$(srcdir)/lib-platform/util		\
 			-I$(srcdir)/libcperciva/alg		\
 			-I$(srcdir)/libcperciva/cpusupport	\
 			-I$(srcdir)/libcperciva/crypto		\
