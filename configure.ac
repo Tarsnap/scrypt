@@ -65,13 +65,7 @@ AS_IF([test x${ac_compiler_warnings} = xyes],
 
 # Check libcperciva POSIX compatibility
 CHECK_POSIX_SH
-AC_MSG_NOTICE([checking POSIX compatibility...])
-LIBCPERCIVA_DIR=${srcdir}/libcperciva
-LDADD_POSIX=`export CC="${CC}"; ${POSIX_SH} ${LIBCPERCIVA_DIR}/POSIX/posix-l.sh "$PATH"`
-CFLAGS_POSIX=`export CC="${CC}"; ${POSIX_SH} ${LIBCPERCIVA_DIR}/POSIX/posix-cflags.sh "$PATH"`
-AC_SUBST([LDADD_POSIX])
-AC_SUBST([CFLAGS_POSIX])
-AC_MSG_RESULT([... done checking POSIX compatibility])
+CHECK_LIBCPERCIVA_POSIX([${srcdir}/libcperciva])
 
 # Check whether the user wants to install libscrypt-kdf
 AC_ARG_ENABLE(libscrypt-kdf, AS_HELP_STRING([--enable-libscrypt-kdf],
