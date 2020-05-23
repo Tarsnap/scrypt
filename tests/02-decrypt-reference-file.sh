@@ -50,8 +50,8 @@ scenario_cmd() {
 		echo "1"
 	fi > ${c_exitfile}
 
-	setup_check_variables
 	# We should not have created a file.
+	setup_check_variables
 	if [ -e ${decrypted_badpass_file}} ]; then
 		echo "1"
 	else
