@@ -10,7 +10,7 @@ decrypted_badpass_log="${s_basename}-decrypt-badpass.log"
 decrypted_no_envvar_log="${s_basename}-decrypt-no-envvar.log"
 
 scenario_cmd() {
-	# Decrypt a reference file using --passphrase-env.
+	# Decrypt a reference file using --passphrase env:VAR.
 	setup_check_variables
 	PASSPHRASE="${password}"					\
 	${c_valgrind_cmd} ${bindir}/scrypt				\
