@@ -318,8 +318,8 @@ main(int argc, char *argv[])
 	 */
 	if (dec) {
 		if ((rc = scryptdec_file_prep(infile, (uint8_t *)passwd,
-		    strlen(passwd), params.maxmem, params.maxmemfrac,
-		    params.maxtime, verbose, force_resources, &C)) != 0) {
+		    strlen(passwd), &params, verbose, force_resources,
+		    &C)) != 0) {
 			goto cleanup;
 		}
 	}
@@ -337,8 +337,7 @@ main(int argc, char *argv[])
 		rc = scryptdec_file_copy(C, outfile);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), params.maxmem, params.maxmemfrac,
-		    params.maxtime, verbose);
+		    strlen(passwd), &params, verbose);
 
 cleanup:
 	/* Free the decryption cookie, if any. */
