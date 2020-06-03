@@ -10,7 +10,7 @@ reference="${scriptdir}/verify-strings/test_scrypt.good"
 ### Actual command
 scenario_cmd() {
 	# Run the binary which tests known input/output strings.
-	setup_check_variables
+	setup_check_variables "test_scrypt"
 	(
 		${c_valgrind_cmd} ${bindir}/tests/verify-strings/test_scrypt \
 			1> ${test_output}
@@ -18,7 +18,7 @@ scenario_cmd() {
 	)
 
 	# The generated values should match the known good values.
-	setup_check_variables
+	setup_check_variables "test_scrypt output against reference"
 	cmp -s ${test_output} ${reference}
 	echo $? > ${c_exitfile}
 }

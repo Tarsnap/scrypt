@@ -11,7 +11,7 @@ decrypted_badpass_log="${s_basename}-decrypt-badpass.log"
 
 scenario_cmd() {
 	# Decrypt a reference file.
-	setup_check_variables
+	setup_check_variables "scrypt dec"
 	(
 		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
 		    dec -P ${encrypted_reference_file}			\
@@ -21,18 +21,18 @@ scenario_cmd() {
 	)
 
 	# The decrypted reference file should match the reference.
-	setup_check_variables
+	setup_check_variables "scrypt dec output against reference"
 	cmp -s ${decrypted_reference_file} ${reference_file}
 	echo $? > ${c_exitfile}
 
 	# We should not have any output on stderr.
-	setup_check_variables
+	setup_check_variables "scrypt dec no stderr"
 	test -s ${decrypted_reference_file_stderr}
 	expected_exitcode 1 $? > ${c_exitfile}
 
 	# Attempt to decrypt the reference file with an incorrect passphrase.
 	# We want this command to fail with 1.
-	setup_check_variables
+	setup_check_variables "scrypt dec bad passphrase"
 	(
 		echo "bad-pass" | ${c_valgrind_cmd} ${bindir}/scrypt	\
 		    dec -P ${encrypted_reference_file}			\
@@ -42,7 +42,7 @@ scenario_cmd() {
 	)
 
 	# We should have received an error message.
-	setup_check_variables
+	setup_check_variables "scrypt dec bad passphrase error"
 	if grep -q "scrypt: Passphrase is incorrect" \
 	    ${decrypted_badpass_log}; then
 		echo "0"
@@ -50,8 +50,8 @@ scenario_cmd() {
 		echo "1"
 	fi > ${c_exitfile}
 
-	# We should not have created a file.
-	setup_check_variables
+ 	# We should not have created a file.
+	setup_check_variables "scrypt dec bad passphrase no file"
 	if [ -e ${decrypted_badpass_file}} ]; then
 		echo "1"
 	else
