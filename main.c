@@ -117,11 +117,9 @@ main(int argc, char *argv[])
 	FILE * outfile = stdout;
 	int dec = 0;
 	int info = 0;
-	size_t maxmem = 0;
 	int force_resources = 0;
 	uint64_t maxmem64;
-	double maxmemfrac = 0.5;
-	double maxtime = 300.0;
+	struct scryptenc_params params = {0, 0.5, 300.0};
 	const char * ch;
 	const char * infilename;
 	const char * outfilename;
@@ -139,9 +137,9 @@ main(int argc, char *argv[])
 	if (argc < 2)
 		usage();
 	if (strcmp(argv[1], "enc") == 0) {
-		maxmem = 0;
-		maxmemfrac = 0.125;
-		maxtime = 5.0;
+		params.maxmem = 0;
+		params.maxmemfrac = 0.125;
+		params.maxtime = 5.0;
 	} else if (strcmp(argv[1], "dec") == 0) {
 		dec = 1;
 	} else if (strcmp(argv[1], "info") == 0) {
@@ -171,10 +169,10 @@ main(int argc, char *argv[])
 				warn0("The parameter to -M is too large.");
 				exit(1);
 			}
-			maxmem = (size_t)maxmem64;
+			params.maxmem = (size_t)maxmem64;
 			break;
 		GETOPT_OPTARG("-m"):
-			if (PARSENUM(&maxmemfrac, optarg, 0, 1)) {
+			if (PARSENUM(&params.maxmemfrac, optarg, 0, 1)) {
 				warnp("Invalid option: -m %s", optarg);
 				exit(1);
 			}
@@ -192,7 +190,7 @@ main(int argc, char *argv[])
 				exit(1);
 			break;
 		GETOPT_OPTARG("-t"):
-			if (PARSENUM(&maxtime, optarg, 0, INFINITY)) {
+			if (PARSENUM(&params.maxtime, optarg, 0, INFINITY)) {
 				warnp("Invalid option: -t %s", optarg);
 				exit(1);
 			}
@@ -320,8 +318,8 @@ main(int argc, char *argv[])
 	 */
 	if (dec) {
 		if ((rc = scryptdec_file_prep(infile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose,
-		    force_resources, &C)) != 0) {
+		    strlen(passwd), &params, verbose, force_resources,
+		    &C)) != 0) {
 			goto cleanup;
 		}
 	}
@@ -339,7 +337,7 @@ main(int argc, char *argv[])
 		rc = scryptdec_file_copy(C, outfile);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), maxmem, maxmemfrac, maxtime, verbose);
+		    strlen(passwd), &params, verbose);
 
 cleanup:
 	/* Free the decryption cookie, if any. */
