@@ -6,7 +6,7 @@
 
 /* Problem with FreeBSD 10.3 fgets() with stdin. */
 static void
-pl_freebsd_fgets()
+pl_freebsd_fgets(void)
 {
 	char buf[FGETS_BUFSIZE];
 
