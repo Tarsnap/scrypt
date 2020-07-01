@@ -70,7 +70,6 @@ scrypt_SOURCES=		main.c					\
 AM_CPPFLAGS=		-I$(srcdir)/lib				\
 			-I$(srcdir)/lib/crypto			\
 			-I$(srcdir)/lib/scryptenc		\
-			-I$(srcdir)/lib/util			\
 			-I$(srcdir)/lib-platform		\
 			-I$(srcdir)/lib-platform/crypto		\
 			-I$(srcdir)/lib-platform/util		\
