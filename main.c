@@ -119,7 +119,7 @@ main(int argc, char *argv[])
 	int info = 0;
 	int force_resources = 0;
 	uint64_t maxmem64;
-	struct scryptenc_params params = {0, 0.5, 300.0};
+	struct scryptenc_params params = {0, 0.5, 300.0, 0, 0, 0};
 	const char * ch;
 	const char * infilename;
 	const char * outfilename;
