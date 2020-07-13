@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### Find script directory and load helper functions.
-scriptdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+scriptdir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 . ${scriptdir}/shared_test_functions.sh
 
 
@@ -14,7 +14,7 @@ out_valgrind="${bindir}/tests-valgrind"
 password="hunter2"
 
 # Find system scrypt, and ensure it supports -P.
-system_scrypt=$( find_system scrypt enc -P )
+system_scrypt=$( find_system scrypt "enc -P" )
 
 
 ### Run tests using project-specific constants
