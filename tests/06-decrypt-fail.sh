@@ -26,7 +26,7 @@ scenario_cmd() {
 
 	# We should not have created a file.
 	setup_check_variables "scrypt dec non-scrypt no file"
-	if [ -e ${non_encoded_file_output}} ]; then
+	if [ -e ${non_encoded_file_output} ]; then
 		echo "1"
 	else
 		echo "0"

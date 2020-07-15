@@ -52,7 +52,7 @@ scenario_cmd() {
 
  	# We should not have created a file.
 	setup_check_variables "scrypt dec bad passphrase no file"
-	if [ -e ${decrypted_badpass_file}} ]; then
+	if [ -e ${decrypted_badpass_file} ]; then
 		echo "1"
 	else
 		echo "0"
