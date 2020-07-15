@@ -400,6 +400,9 @@ done:
 			    (infilename != NULL) ? infilename
 			    : "standard input");
 			break;
+		case SCRYPT_EPARAM:
+			warn0("Error in explicit parameters");
+			break;
 		}
 		goto err0;
 	}
