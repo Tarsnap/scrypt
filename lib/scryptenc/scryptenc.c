@@ -407,7 +407,7 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 
 	/* Generate the header and derived key. */
 	if ((rc = scryptenc_setup(header, dk, passwd, passwdlen,
-	    P, verbose)) != 0) 
+	    P, verbose)) != 0)
 		goto err1;
 
 	/* Copy header into output buffer. */
