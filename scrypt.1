@@ -159,12 +159,29 @@ users should direct the output to a safe location and
 check the exit status of
 .Nm
 before using the decrypted data.
+.Sh ALGORITHM PARAMETERS
+The scrypt algorithm has three tuneable work parameters: N, r, p.
+When decrypting, scrypt will always use the values specified by
+the encryption header.  When encrypting, scrypt will choose
+appropriate values based on your system's speed and memory
+(influenced by
+.Fl M ,
+.Fl m ,
+and/or
+.Fl t ) .
 .Sh SEE ALSO
 .Rs
 .%A "Colin Percival"
 .%T "Stronger Key Derivation via Sequential Memory-Hard Functions"
-.%O "Presented at BSDCan'09"
+.%R "BSDCan'09"
 .%D "May 2009"
+.Re
+.Rs
+.%A "Colin Percival"
+.%A "Simon Josefsson"
+.%T "The scrypt Password-Based Key Derivation Function"
+.%R "IETF RFC 7914"
+.%D "August 2016"
 .Re
 .Sh HISTORY
 The
