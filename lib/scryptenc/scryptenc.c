@@ -41,6 +41,7 @@
 #include "insecure_memzero.h"
 #include "sha256.h"
 #include "sysendian.h"
+#include "warnp.h"
 
 #include "crypto_scrypt.h"
 #include "memlimit.h"
@@ -226,7 +227,7 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 static int
 scryptenc_setup(uint8_t header[96], uint8_t dk[64],
     const uint8_t * passwd, size_t passwdlen,
-    struct scryptenc_params * P, int verbose)
+    struct scryptenc_params * P, int verbose, int force)
 {
 	uint8_t salt[32];
 	uint8_t hbuf[32];
@@ -238,13 +239,28 @@ scryptenc_setup(uint8_t header[96], uint8_t dk[64],
 
 	/* Determine parameters. */
 	if (P->logN != 0) {
-		/* Check logN, r, p, without any resource limits. */
-		if ((rc = checkparams(0, 0, 0, P->logN, P->r, P->p,
-		    verbose, 1)) != 0) {
+		/* Check logN, r, p. */
+		if ((rc = checkparams(P->maxmem, P->maxmemfrac, P->maxtime,
+		    P->logN, P->r, P->p, verbose, force)) != 0) {
+			/* Warn about resource limit, but suppress the error. */
+			if (rc == SCRYPT_ETOOBIG) {
+				warn0("Warning: Explicit parameters"
+				    " might exceed memory limit");
+				rc = 0;
+			}
+			if (rc == SCRYPT_ETOOSLOW) {
+				warn0("Warning: Explicit parameters"
+				    " might exceed time limit");
+				rc = 0;
+			}
+
 			/* Provide a more meaningful error message. */
 			if (rc == SCRYPT_EINVAL)
 				rc = SCRYPT_EPARAM;
-			return (rc);
+
+			/* Bail if we haven't suppressed the error. */
+			if (rc != 0)
+				return (rc);
 		}
 	} else {
 		/* Pick values for N, r, p. */
@@ -380,7 +396,7 @@ scryptdec_setup(const uint8_t header[96], uint8_t dk[64],
 
 /**
  * scryptenc_buf(inbuf, inbuflen, outbuf, passwd, passwdlen,
- *     params, verbose):
+ *     params, verbose, force):
  * Encrypt ${inbuflen} bytes from ${inbuf}, writing the resulting
  * ${inbuflen} + 128 bytes to ${outbuf}.  The explicit parameters
  * within ${params} must be zero or must all be non-zero.  Return
@@ -389,7 +405,7 @@ scryptdec_setup(const uint8_t header[96], uint8_t dk[64],
 int
 scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
     const uint8_t * passwd, size_t passwdlen,
-    struct scryptenc_params * P, int verbose)
+    struct scryptenc_params * P, int verbose, int force)
 {
 	uint8_t dk[64];
 	uint8_t hbuf[32];
@@ -407,7 +423,7 @@ scryptenc_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 
 	/* Generate the header and derived key. */
 	if ((rc = scryptenc_setup(header, dk, passwd, passwdlen,
-	    P, verbose)) != 0)
+	    P, verbose, force)) != 0)
 		goto err1;
 
 	/* Copy header into output buffer. */
@@ -538,7 +554,7 @@ err0:
 }
 
 /**
- * scryptenc_file(infile, outfile, passwd, passwdlen, params, verbose):
+ * scryptenc_file(infile, outfile, passwd, passwdlen, params, verbose, force):
  * Read a stream from ${infile} and encrypt it, writing the resulting stream
  * to ${outfile}.  The explicit parameters within ${params} must be zero
  * or must all be non-zero.  Return the explicit parameters used via ${params}.
@@ -546,7 +562,7 @@ err0:
 int
 scryptenc_file(FILE * infile, FILE * outfile,
     const uint8_t * passwd, size_t passwdlen,
-    struct scryptenc_params * P, int verbose)
+    struct scryptenc_params * P, int verbose, int force)
 {
 	uint8_t buf[ENCBLOCK];
 	uint8_t dk[64];
@@ -566,7 +582,7 @@ scryptenc_file(FILE * infile, FILE * outfile,
 
 	/* Generate the header and derived key. */
 	if ((rc = scryptenc_setup(header, dk, passwd, passwdlen,
-	    P, verbose)) != 0)
+	    P, verbose, force)) != 0)
 		goto err1;
 
 	/* Hash and write the header. */

@@ -337,7 +337,7 @@ main(int argc, char *argv[])
 		rc = scryptdec_file_copy(C, outfile);
 	else
 		rc = scryptenc_file(infile, outfile, (uint8_t *)passwd,
-		    strlen(passwd), &params, verbose);
+		    strlen(passwd), &params, verbose, force_resources);
 
 cleanup:
 	/* Free the decryption cookie, if any. */
