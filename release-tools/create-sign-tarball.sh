@@ -11,7 +11,7 @@ if [ -z "$SCRYPTVERSION" ] || [ -z "$GNUPG_SIGNING_HOME" ]; then
 fi
 
 # Check for correct OS
-if [ `uname` != "FreeBSD" ]; then
+if [ "$(uname)" != "FreeBSD" ]; then
 	echo "Error: This script only works on FreeBSD due to the"
 	echo "    sha256 \${PKGNAME}.tgz"
 	echo "command, which has a different meaning on other OSes."
@@ -23,7 +23,7 @@ PKGNAME=scrypt-${SCRYPTVERSION}
 PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 
 # Get directory of script
-dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 
 # Create tarball
 sh ${dir}/mktarball.sh $SCRYPTVERSION

@@ -22,7 +22,7 @@ sed -e "s/\[m4_esyscmd(\[sh get-version\.sh\])]/${VERSION}/" \
 cp ${DESTDIR}/configure.ac ${DESTDIR}/autotools
 
 # Generate autotools files
-( cd ${DESTDIR}
+( cd ${DESTDIR} || exit
 autoreconf -i
 rm .autom4te.cfg Makefile.am aclocal.m4 configure.ac )
 
