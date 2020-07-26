@@ -62,6 +62,19 @@ usage(void)
 	exit(1);
 }
 
+/* Parse a numeric optarg within a GETOPT context.  (Requires ch and optarg.) */
+#define GETOPT_PARSENUM_WITHIN_UNSIGNED(var, min, max) do {		\
+	if (PARSENUM((var), optarg, (min), (max))) {			\
+		if (errno == ERANGE) {					\
+			warn0("%s must be between %ju and %ju"		\
+			    " (inclusive)", ch, (uintmax_t)(min),	\
+			    (uintmax_t)(max));				\
+		} else							\
+			warnp("Invalid option: %s %s", ch, optarg);	\
+		exit(1);						\
+	}								\
+} while(0)
+
 static int
 parse_passphrase_arg(const char * arg,
     enum passphrase_entry * passphrase_entry_p, const char ** passphrase_arg_p)
@@ -160,6 +173,9 @@ main(int argc, char *argv[])
 		GETOPT_OPT("-f"):
 			force_resources = 1;
 			break;
+		GETOPT_OPTARG("--logN"):
+			GETOPT_PARSENUM_WITHIN_UNSIGNED(&params.logN, 10, 40);
+			break;
 		GETOPT_OPTARG("-M"):
 			if (humansize_parse(optarg, &maxmem64)) {
 				warn0("Could not parse the parameter to -M.");
@@ -177,6 +193,9 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 			break;
+		GETOPT_OPTARG("-p"):
+			GETOPT_PARSENUM_WITHIN_UNSIGNED(&params.p, 1, 32);
+			break;
 		GETOPT_OPTARG("--passphrase"):
 			if (passphrase_entry != PASSPHRASE_UNSET) {
 				warn0("You can only enter one --passphrase or"
@@ -188,6 +207,9 @@ main(int argc, char *argv[])
 			if (parse_passphrase_arg(optarg, &passphrase_entry,
 			    &passphrase_arg))
 				exit(1);
+			break;
+		GETOPT_OPTARG("-r"):
+			GETOPT_PARSENUM_WITHIN_UNSIGNED(&params.r, 1, 32);
 			break;
 		GETOPT_OPTARG("-t"):
 			if (PARSENUM(&params.maxtime, optarg, 0, INFINITY)) {
@@ -220,6 +242,20 @@ main(int argc, char *argv[])
 	/* We must have one or two parameters left. */
 	if ((argc < 1) || (argc > 2))
 		usage();
+
+	/* The explicit parameters must be zero, or all non-zero. */
+	if ((params.logN != 0) && ((params.r == 0) || (params.p == 0))) {
+		warn0("If --logN is set, -r and -p must also be set");
+		goto err0;
+	}
+	if ((params.r != 0) && ((params.logN == 0) || (params.p == 0))) {
+		warn0("If -r is set, --logN and -p must also be set");
+		goto err0;
+	}
+	if ((params.p != 0) && ((params.logN == 0) || (params.r == 0))) {
+		warn0("If -p is set, --logN and -r must also be set");
+		goto err0;
+	}
 
 	/* Set the input filename. */
 	if (strcmp(argv[0], "-"))
