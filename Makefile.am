@@ -64,7 +64,6 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/util/readpass.c		\
 			libcperciva/util/readpass.h		\
 			libcperciva/util/readpass_file.c	\
-			libcperciva/util/readpass_file.h	\
 			libcperciva/util/sysendian.h
 
 AM_CPPFLAGS=		-I$(srcdir)/lib				\
