@@ -54,10 +54,10 @@ usage(void)
 {
 
 	fprintf(stderr,
-	    "usage: scrypt {enc | dec | info} [-f] [-M maxmem]"
-	    " [-m maxmemfrac] [-P]\n"
-	    "              [-t maxtime] [-v] [--passphrase method:arg]"
-	    " infile [outfile]\n"
+	    "usage: scrypt {enc | dec | info} [-f] [--logN value] [-M maxmem]\n"
+	    "              [-m maxmemfrac] [-P] [-p value] [-r value]"
+	    " [-t maxtime] [-v]\n"
+	    "              [--passphrase method:arg] infile [outfile]\n"
 	    "       scrypt --version\n");
 	exit(1);
 }

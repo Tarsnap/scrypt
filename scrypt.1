@@ -31,10 +31,13 @@
 .Nm
 .Brq Cm enc | Cm dec | Cm info
 .Op Fl f
+.Op Fl -logN Ar value
 .Op Fl M Ar maxmem
 .Op Fl m Ar maxmemfrac
 .Op Fl P
+.Op Fl p Ar value
 .Op Fl -passphrase Ar method:arg
+.Op Fl r Ar value
 .Op Fl t Ar maxtime
 .Op Fl v
 .Ar infile
@@ -81,6 +84,22 @@ does not print any prompts, and reads a passphrase from stdin.
 .It Fl f
 Force the decryption to proceed even if it is anticipated to
 require an excessive amount of memory or CPU time.
+.It Fl -logN Ar value
+Set the work parameter N to
+.Pf 2^ Ar value .
+If
+.Fl -logN
+is set,
+.Fl r
+and
+.Fl p
+must also be set.  If such explicit parameters are given, the
+resource limits set by
+.Fl M ,
+.Fl m ,
+and
+.Fl t
+are not enforced.
 .It Fl M Ar maxmem
 Use at most
 .Ar maxmem
@@ -94,6 +113,22 @@ Always read passphrase from stdin, and do so only once even
 when encrypting.  This cannot be used if
 .Ar infile
 is also stdin (aka '-').
+.It Fl p Ar value
+Set the work parameter p to
+.Ar value .
+If
+.Fl p
+is set,
+.Fl -logN
+and
+.Fl r
+must also be set.  If such explicit parameters are given, the
+resource limits set by
+.Fl M ,
+.Fl m ,
+and
+.Fl t
+are not enforced.
 .It Fl -passphrase Ar method:arg
 Read the passphrase using the specified method.
 .Bl -tag -width aa
@@ -125,6 +160,22 @@ Storing a passphrase in a file may be a security risk.
 .Ef
 Only use this option if you are certain that you know what you are doing.
 .El
+.It Fl r Ar value
+Set the work parameter r to
+.Ar value .
+If
+.Fl r
+is set,
+.Fl -logN
+and
+.Fl p
+must also be set.  If such explicit parameters are given, the
+resource limits set by
+.Fl M ,
+.Fl m ,
+and
+.Fl t
+are not enforced.
 .It Fl t Ar maxtime
 Use at most
 .Ar maxtime
@@ -168,7 +219,11 @@ appropriate values based on your system's speed and memory
 .Fl M ,
 .Fl m ,
 and/or
-.Fl t ) .
+.Fl t ) ,
+unless you specify explicit parameters via
+.Fl -logN ,
+.Fl p ,
+.Fl r .
 .Sh SEE ALSO
 .Rs
 .%A "Colin Percival"
