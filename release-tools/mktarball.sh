@@ -6,7 +6,7 @@ if [ -z $VERSION ]; then
 	exit 1
 fi
 DESTDIR=scrypt-${VERSION}
-RELEASEDATE=`date "+%B %d, %Y"`
+RELEASEDATE=$(date "+%B %d, %Y")
 
 # Copy bits in
 mkdir ${DESTDIR} ${DESTDIR}/autotools
