@@ -15,7 +15,9 @@
 /cpusupport-config.h
 /scrypt
 /stamp-h1
-/m4
+/m4/*
+!/m4/check_libcperciva_posix.m4
+!/m4/check_posix_sh.m4
 /Makefile
 /Makefile.in
 # Test infrastructure
