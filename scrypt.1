@@ -26,7 +26,7 @@
 .Os
 .Sh NAME
 .Nm scrypt
-.Nd encrypt and decrypt files.
+.Nd encrypt and decrypt files
 .Sh SYNOPSIS
 .Nm
 .Brq Cm enc | Cm dec | Cm info
@@ -71,10 +71,11 @@ If
 .Fl P
 is not given,
 .Nm
-reads passphrases from its controlling terminal, or failing that,
-from stdin.  Prompts are only printed when
+reads passphrases from its controlling terminal, or failing that, from stdin.
+Prompts are only printed when
 .Nm
-is reading passphrases from some terminal.  If
+is reading passphrases from some terminal.
+If
 .Fl P
 is given, then
 .Nm
@@ -93,8 +94,8 @@ is set,
 .Fl r
 and
 .Fl p
-must also be set.  If such explicit parameters are given, the
-resource limits set by
+must also be set.
+If such explicit parameters are given, the resource limits set by
 .Fl M ,
 .Fl m ,
 and
@@ -110,7 +111,8 @@ Use at most the fraction
 of the available RAM to compute the derived encryption key.
 .It Fl P
 Always read passphrase from stdin, and do so only once even
-when encrypting.  This cannot be used if
+when encrypting.
+This cannot be used if
 .Ar infile
 is also stdin (aka '-').
 .It Fl p Ar value
@@ -122,8 +124,8 @@ is set,
 .Fl -logN
 and
 .Fl r
-must also be set.  If such explicit parameters are given, the
-resource limits set by
+must also be set.
+If such explicit parameters are given, the resource limits set by
 .Fl M ,
 .Fl m ,
 and
@@ -133,11 +135,12 @@ are not enforced.
 Read the passphrase using the specified method.
 .Bl -tag -width aa
 .It Ar dev:tty-stdin
-Attempt to read the passphrase from /dev/tty; if that fails, read
-it from stdin.  This is the default behaviour.
+Attempt to read the passphrase from /dev/tty; if that fails, read it from stdin.
+This is the default behaviour.
 .It Ar dev:stdin-once
-Attempt to read the passphrase from stdin, and do so only once
-even when encrypting.  This cannot be used if
+Attempt to read the passphrase from stdin, and do so only once even when
+encrypting.
+This cannot be used if
 .Ar infile
 is also stdin (aka '-').
 .It Ar dev:tty-once
@@ -169,8 +172,8 @@ is set,
 .Fl -logN
 and
 .Fl p
-must also be set.  If such explicit parameters are given, the
-resource limits set by
+must also be set.
+If such explicit parameters are given, the resource limits set by
 .Fl M ,
 .Fl m ,
 and
@@ -213,9 +216,9 @@ before using the decrypted data.
 .Sh ALGORITHM PARAMETERS
 The scrypt algorithm has three tuneable work parameters: N, r, p.
 When decrypting, scrypt will always use the values specified by
-the encryption header.  When encrypting, scrypt will choose
-appropriate values based on your system's speed and memory
-(influenced by
+the encryption header.
+When encrypting, scrypt will choose appropriate values based on your system's
+speed and memory (influenced by
 .Fl M ,
 .Fl m ,
 and/or
