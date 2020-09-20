@@ -96,12 +96,12 @@ Using scrypt as a KDF
 ---------------------
 
 To use scrypt as a [key derivation function](
-https://en.wikipedia.org/wiki/Key_derivation_function) (KDF), take a look at
-the `lib/crypto/crypto_scrypt.h` header, which provides:
+https://en.wikipedia.org/wiki/Key_derivation_function) (KDF) with
+`libscrypt-kdf`, include `scrypt-kdf.h` and use:
 
 ```
 /**
- * crypto_scrypt(passwd, passwdlen, salt, saltlen, N, r, p, buf, buflen):
+ * scrypt_kdf(passwd, passwdlen, salt, saltlen, N, r, p, buf, buflen):
  * Compute scrypt(passwd[0 .. passwdlen - 1], salt[0 .. saltlen - 1], N, r,
  * p, buflen) and write the result into buf.  The parameters r, p, and buflen
  * must satisfy r * p < 2^30 and buflen <= (2^32 - 1) * 32.  The parameter N
@@ -109,13 +109,13 @@ the `lib/crypto/crypto_scrypt.h` header, which provides:
  *
  * Return 0 on success; or -1 on error.
  */
-int crypto_scrypt(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
+int scrypt_kdf(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
     uint32_t, uint32_t, uint8_t *, size_t);
 ```
 
-The same function is provided in the optional `libscrypt-kdf` library; there
-is a sample of using it in `tests/libscrypt-kdf`.  If you installed the
-library, you can compile that file and run the binary:
+There is a sample of using this function in `tests/libscrypt-kdf`.
+If you installed the library, you can compile that file and run
+the binary:
 
 ```
 $ cd tests/libscrypt-kdf/
@@ -123,6 +123,10 @@ $ c99 sample-libscrypt-kdf.c -lscrypt-kdf
 $ ./a.out
 crypto_scrypt(): success
 ```
+
+If you would rather copy our source files directly into your
+project, then take a look at the `lib/crypto/crypto_scrypt.h`
+header, which provides `crypto_scrypt()`.
 
 
 Building
@@ -132,7 +136,7 @@ Building
 official release tarball on https://www.tarsnap.com/scrypt.html
 
 To build scrypt, extract the tarball and run `./configure` && `make`.  See the
-`BUILDING` file for more details (e.g., dealing with OpenSSL on OSX).
+[BUILDING](BUILDING) file for more details (e.g., dealing with OpenSSL on OSX).
 
 
 Testing
