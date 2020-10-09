@@ -104,11 +104,11 @@ parse_passphrase_arg(const char * arg,
 			goto success;
 		}
 	}
-	if (strncmp(optarg, "env:", 4) == 0) {
+	if (strncmp(arg, "env:", 4) == 0) {
 		*passphrase_entry_p = PASSPHRASE_ENV;
 		goto success;
 	}
-	if (strncmp(optarg, "file:", 5) == 0) {
+	if (strncmp(arg, "file:", 5) == 0) {
 		*passphrase_entry_p = PASSPHRASE_FILE;
 		goto success;
 	}
