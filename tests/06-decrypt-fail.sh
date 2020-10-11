@@ -18,7 +18,7 @@ scenario_cmd() {
 		expected_exitcode 1 $? > ${c_exitfile}
 	)
 
-	# We should have received an error mssage.
+	# We should have received an error message.
 	setup_check_variables "scrypt dec non-scrypt error"
 	grep -q "scrypt: Input is not valid scrypt-encrypted block" \
 	    ${non_encoded_file_stderr}

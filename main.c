@@ -104,11 +104,11 @@ parse_passphrase_arg(const char * arg,
 			goto success;
 		}
 	}
-	if (strncmp(optarg, "env:", 4) == 0) {
+	if (strncmp(arg, "env:", 4) == 0) {
 		*passphrase_entry_p = PASSPHRASE_ENV;
 		goto success;
 	}
-	if (strncmp(optarg, "file:", 5) == 0) {
+	if (strncmp(arg, "file:", 5) == 0) {
 		*passphrase_entry_p = PASSPHRASE_FILE;
 		goto success;
 	}
@@ -228,6 +228,7 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 			passphrase_entry = PASSPHRASE_STDIN_ONCE;
+			passphrase_arg = "";
 			break;
 		GETOPT_MISSING_ARG:
 			warn0("Missing argument to %s", ch);
@@ -271,8 +272,10 @@ main(int argc, char *argv[])
 		outfilename = NULL;
 
 	/* Set the default passphrase entry method. */
-	if (passphrase_entry == PASSPHRASE_UNSET)
+	if (passphrase_entry == PASSPHRASE_UNSET) {
 		passphrase_entry = PASSPHRASE_TTY_STDIN;
+		passphrase_arg = "";
+	}
 
 	/* If the input isn't stdin, open the file. */
 	if (infilename != NULL) {
