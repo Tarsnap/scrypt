@@ -36,19 +36,9 @@
 #include "humansize.h"
 #include "insecure_memzero.h"
 #include "parsenum.h"
-#include "readpass.h"
+#include "passphrase_entry.h"
 #include "scryptenc.h"
 #include "warnp.h"
-
-/* How should we get the passphrase? */
-enum passphrase_entry {
-	PASSPHRASE_UNSET,
-	PASSPHRASE_TTY_STDIN,
-	PASSPHRASE_STDIN_ONCE,
-	PASSPHRASE_TTY_ONCE,
-	PASSPHRASE_ENV,
-	PASSPHRASE_FILE,
-};
 
 static void
 usage(void)
@@ -76,54 +66,6 @@ usage(void)
 	}								\
 } while(0)
 
-static int
-parse_passphrase_arg(const char * arg,
-    enum passphrase_entry * passphrase_entry_p, const char ** passphrase_arg_p)
-{
-	const char * p;
-
-	/* Find the separator in "method:arg", or fail if there isn't one. */
-	if ((p = strchr(arg, ':')) == NULL)
-		goto err1;
-
-	/* Extract the "arg" part. */
-	*passphrase_arg_p = &p[1];
-
-	/* Parse the "method". */
-	if (strncmp(arg, "dev:", 4) == 0) {
-		if (strcmp(*passphrase_arg_p, "tty-stdin") == 0) {
-			*passphrase_entry_p = PASSPHRASE_TTY_STDIN;
-			goto success;
-		}
-		else if (strcmp(*passphrase_arg_p, "stdin-once") == 0) {
-			*passphrase_entry_p = PASSPHRASE_STDIN_ONCE;
-			goto success;
-		}
-		else if (strcmp(*passphrase_arg_p, "tty-once") == 0) {
-			*passphrase_entry_p = PASSPHRASE_TTY_ONCE;
-			goto success;
-		}
-	}
-	if (strncmp(arg, "env:", 4) == 0) {
-		*passphrase_entry_p = PASSPHRASE_ENV;
-		goto success;
-	}
-	if (strncmp(arg, "file:", 5) == 0) {
-		*passphrase_entry_p = PASSPHRASE_FILE;
-		goto success;
-	}
-
-err1:
-	warn0("Invalid option: --passphrase %s", arg);
-
-	/* Failure! */
-	return (-1);
-
-success:
-	/* Success! */
-	return (0);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -143,7 +85,6 @@ main(int argc, char *argv[])
 	struct scryptdec_file_cookie * C = NULL;
 	enum passphrase_entry passphrase_entry = PASSPHRASE_UNSET;
 	const char * passphrase_arg;
-	const char * passwd_env;
 
 	WARNP_INIT;
 
@@ -205,7 +146,7 @@ main(int argc, char *argv[])
 			}
 
 			/* Parse "method:arg" optarg. */
-			if (parse_passphrase_arg(optarg, &passphrase_entry,
+			if (passphrase_entry_parse(optarg, &passphrase_entry,
 			    &passphrase_arg))
 				exit(1);
 			break;
@@ -308,42 +249,9 @@ main(int argc, char *argv[])
 	}
 
 	/* Get the password. */
-	switch (passphrase_entry) {
-	case PASSPHRASE_TTY_STDIN:
-		/* Read passphrase, prompting only once if decrypting. */
-		if (readpass(&passwd, "Please enter passphrase",
-		    (dec) ? NULL : "Please confirm passphrase", 1))
-			goto err1;
-		break;
-	case PASSPHRASE_STDIN_ONCE:
-		/* Read passphrase, prompting only once, from stdin only. */
-		if (readpass(&passwd, "Please enter passphrase", NULL, 0))
-			goto err1;
-		break;
-	case PASSPHRASE_TTY_ONCE:
-		/* Read passphrase, prompting only once, from tty only. */
-		if (readpass(&passwd, "Please enter passphrase", NULL, 2))
-			goto err1;
-		break;
-	case PASSPHRASE_ENV:
-		/* We're not allowed to modify the output of getenv(). */
-		if ((passwd_env = getenv(passphrase_arg)) == NULL) {
-			warn0("Failed to read from ${%s}", passphrase_arg);
-			goto err1;
-		}
-
-		/* This allows us to use the same insecure_zero() logic. */
-		if ((passwd = strdup(passwd_env)) == NULL) {
-			warnp("Out of memory");
-			goto err1;
-		}
-		break;
-	case PASSPHRASE_FILE:
-		if (readpass_file(&passwd, passphrase_arg))
-			goto err1;
-		break;
-	case PASSPHRASE_UNSET:
-		warn0("Programming error: passphrase_entry is not set");
+	if (passphrase_entry_readpass(&passwd, passphrase_entry,
+	    passphrase_arg, dec)) {
+		warnp("passphrase_entry_readpass");
 		goto err1;
 	}
 
