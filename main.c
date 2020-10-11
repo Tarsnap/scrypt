@@ -76,8 +76,12 @@ usage(void)
 	}								\
 } while(0)
 
+/**
+ * passphrase_entry_parse(arg, entry_method_p, entry_arg_p):
+ * Parse "METHOD:ARG" from ${arg} into an ${*entry_method_p}:${*entry_arg_p}.
+ */
 static int
-parse_passphrase_arg(const char * arg,
+passphrase_entry_parse(const char * arg,
     enum passphrase_entry * passphrase_entry_p, const char ** passphrase_arg_p)
 {
 	const char * p;
@@ -124,6 +128,67 @@ success:
 	return (0);
 }
 
+/**
+ * passphrase_entry_readpass(passwd, entry_method, entry_arg, once):
+ * Use the ${entry_method} to read a passphrase and return it as a malloced
+ * NUL-terminated string via ${passwd}.  If ${entry_method} is
+ * PASSPHRASE_TTY_STDIN and ${once} is zero, ask for the passphrase twice;
+ * otherwise ask for it once.
+ */
+static int
+passphrase_entry_readpass(char ** passwd,
+    enum passphrase_entry passphrase_entry, const char * passphrase_arg,
+    int once)
+{
+	const char * passwd_env;
+
+	switch (passphrase_entry) {
+	case PASSPHRASE_TTY_STDIN:
+		/* Read passphrase, prompting only once if decrypting. */
+		if (readpass(passwd, "Please enter passphrase",
+		    (once) ? NULL : "Please confirm passphrase", 1))
+			goto err0;
+		break;
+	case PASSPHRASE_STDIN_ONCE:
+		/* Read passphrase, prompting only once, from stdin only. */
+		if (readpass(passwd, "Please enter passphrase", NULL, 0))
+			goto err0;
+		break;
+	case PASSPHRASE_TTY_ONCE:
+		/* Read passphrase, prompting only once, from tty only. */
+		if (readpass(passwd, "Please enter passphrase", NULL, 2))
+			goto err0;
+		break;
+	case PASSPHRASE_ENV:
+		/* We're not allowed to modify the output of getenv(). */
+		if ((passwd_env = getenv(passphrase_arg)) == NULL) {
+			warn0("Failed to read from ${%s}", passphrase_arg);
+			goto err0;
+		}
+
+		/* This allows us to use the same insecure_zero() logic. */
+		if ((*passwd = strdup(passwd_env)) == NULL) {
+			warnp("Out of memory");
+			goto err0;
+		}
+		break;
+	case PASSPHRASE_FILE:
+		if (readpass_file(passwd, passphrase_arg))
+			goto err0;
+		break;
+	case PASSPHRASE_UNSET:
+		warn0("Programming error: passphrase_entry is not set");
+		goto err0;
+	}
+
+	/* Success! */
+	return (0);
+
+err0:
+	/* Failure! */
+	return (-1);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -143,7 +208,6 @@ main(int argc, char *argv[])
 	struct scryptdec_file_cookie * C = NULL;
 	enum passphrase_entry passphrase_entry = PASSPHRASE_UNSET;
 	const char * passphrase_arg;
-	const char * passwd_env;
 
 	WARNP_INIT;
 
@@ -205,7 +269,7 @@ main(int argc, char *argv[])
 			}
 
 			/* Parse "method:arg" optarg. */
-			if (parse_passphrase_arg(optarg, &passphrase_entry,
+			if (passphrase_entry_parse(optarg, &passphrase_entry,
 			    &passphrase_arg))
 				exit(1);
 			break;
@@ -308,42 +372,9 @@ main(int argc, char *argv[])
 	}
 
 	/* Get the password. */
-	switch (passphrase_entry) {
-	case PASSPHRASE_TTY_STDIN:
-		/* Read passphrase, prompting only once if decrypting. */
-		if (readpass(&passwd, "Please enter passphrase",
-		    (dec) ? NULL : "Please confirm passphrase", 1))
-			goto err1;
-		break;
-	case PASSPHRASE_STDIN_ONCE:
-		/* Read passphrase, prompting only once, from stdin only. */
-		if (readpass(&passwd, "Please enter passphrase", NULL, 0))
-			goto err1;
-		break;
-	case PASSPHRASE_TTY_ONCE:
-		/* Read passphrase, prompting only once, from tty only. */
-		if (readpass(&passwd, "Please enter passphrase", NULL, 2))
-			goto err1;
-		break;
-	case PASSPHRASE_ENV:
-		/* We're not allowed to modify the output of getenv(). */
-		if ((passwd_env = getenv(passphrase_arg)) == NULL) {
-			warn0("Failed to read from ${%s}", passphrase_arg);
-			goto err1;
-		}
-
-		/* This allows us to use the same insecure_zero() logic. */
-		if ((passwd = strdup(passwd_env)) == NULL) {
-			warnp("Out of memory");
-			goto err1;
-		}
-		break;
-	case PASSPHRASE_FILE:
-		if (readpass_file(&passwd, passphrase_arg))
-			goto err1;
-		break;
-	case PASSPHRASE_UNSET:
-		warn0("Programming error: passphrase_entry is not set");
+	if (passphrase_entry_readpass(&passwd, passphrase_entry,
+	    passphrase_arg, dec)) {
+		warnp("passphrase_entry_readpass");
 		goto err1;
 	}
 
