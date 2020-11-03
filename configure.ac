@@ -4,6 +4,7 @@ AC_INIT([scrypt],[m4_esyscmd([sh get-version.sh])],
 AC_CONFIG_SRCDIR([lib/scryptenc/scryptenc.c])
 AC_CONFIG_AUX_DIR([config.aux])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 
 # Checks for programs.
@@ -13,6 +14,9 @@ LT_INIT
 
 # Don't rebuild the configure script.  I'm distributing a perfectly good one.
 AM_MAINTAINER_MODE
+
+# Check if we need -std=c99 in LDFLAGS (for gcc on Solaris).
+CHECK_SOLARIS_C99
 
 # Checks for libraries.
 
