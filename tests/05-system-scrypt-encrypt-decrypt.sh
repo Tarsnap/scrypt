@@ -10,7 +10,7 @@ decrypted_file_2="${s_basename}-our.txt"
 
 scenario_cmd() {
 	if [ -z "${system_scrypt}" ]; then
-		printf "no suitable system scrypt: "
+		printf "no suitable system scrypt: " 1>&2
 		# Inform test suite that we are skipping.
 		setup_check_variables "system scrypt skip"
 		echo "-1" > ${c_exitfile}
