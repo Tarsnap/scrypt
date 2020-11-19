@@ -159,6 +159,7 @@ EXTRA_DIST = \
 	libcperciva/POSIX/posix-l.sh				\
 	libcperciva/POSIX/posix-msg_nosignal.c			\
 	libcperciva/POSIX/posix-restrict.c			\
+	libcperciva/POSIX/posix-stat-st_mtim.c			\
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
