@@ -14,12 +14,40 @@ pl_freebsd_fgets(void)
 		exit(1);
 }
 
+/* Problem with FreeBSD 12.0 and printf(). */
+static void
+pl_freebsd_printf_space(void)
+{
+
+	printf(" ");
+}
+
+/* Problem with FreeBSD 12.0 and printf(). */
+static void
+pl_freebsd_printf_space_newline(void)
+{
+
+	printf(" \n");
+}
+
+/* Problem with FreeBSD 12.0 and strerror(). */
+static void
+pl_freebsd_strerror(void)
+{
+	char * str = strerror(0);
+
+	(void)str; /* UNUSED */
+}
+
 #define MEMLEAKTEST(x) { #x, x }
 static const struct memleaktest {
 	const char * const name;
 	void (* const volatile func)(void);
 } tests[] = {
-	MEMLEAKTEST(pl_freebsd_fgets)
+	MEMLEAKTEST(pl_freebsd_fgets),
+	MEMLEAKTEST(pl_freebsd_printf_space),
+	MEMLEAKTEST(pl_freebsd_printf_space_newline),
+	MEMLEAKTEST(pl_freebsd_strerror)
 };
 static const int num_tests = sizeof(tests) / sizeof(tests[0]);
 
