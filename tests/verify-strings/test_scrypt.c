@@ -11,11 +11,12 @@ static struct scrypt_test {
 	uint64_t N;
 	uint32_t r;
 	uint32_t p;
+	int largemem;
 } tests[4] = {
-	{ "", "", 16, 1, 1 },
-	{ "password", "NaCl", 1024, 8, 16 },
-	{ "pleaseletmein", "SodiumChloride", 16384, 8, 1 },
-	{ "pleaseletmein", "SodiumChloride", 1048576, 8, 1 }
+	{ "", "", 16, 1, 1, 0 },
+	{ "password", "NaCl", 1024, 8, 16, 0 },
+	{ "pleaseletmein", "SodiumChloride", 16384, 8, 1, 0 },
+	{ "pleaseletmein", "SodiumChloride", 1048576, 8, 1, 1 }
 };
 
 int
@@ -25,15 +26,21 @@ main(int argc, char * argv[])
 	char kbuf[64];
 	size_t i;
 	int failures = 0;
+	int skip_largemem = 0;
 
 	WARNP_INIT;
 
-	(void)argc; /* UNUSED */
-	(void)argv; /* UNUSED */
+	/* Do we want to skip the large-memory test? */
+	if ((argc == 2) && (strcmp(argv[1], "1") == 0))
+		skip_largemem = 1;
 
 	for (test = tests;
 	    test < tests + sizeof(tests) / sizeof(tests[0]);
 	    test++) {
+		/* Skip large memory tests (if desired). */
+		if (skip_largemem && test->largemem)
+			continue;
+
 		if (crypto_scrypt((const uint8_t *)test->passwd,
 		    strlen(test->passwd), (const uint8_t *)test->salt,
 		    strlen(test->salt), test->N, test->r, test->p,

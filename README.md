@@ -146,6 +146,10 @@ A small test suite can be run with:
 
     make test
 
+On platforms with less than 1 GB of RAM, use:
+
+    make test SMALLMEM=1
+
 Memory-testing normal operations with valgrind (takes approximately 4 times as
 long as no valgrind tests) can be enabled with:
 

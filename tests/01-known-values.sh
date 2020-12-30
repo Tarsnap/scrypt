@@ -6,6 +6,7 @@
 c_valgrind_min=2
 test_output="${s_basename}-stdout.txt"
 reference="${scriptdir}/verify-strings/test_scrypt.good"
+reference_small="${scriptdir}/verify-strings/test_scrypt_small.good"
 
 ### Actual command
 scenario_cmd() {
@@ -13,12 +14,16 @@ scenario_cmd() {
 	setup_check_variables "test_scrypt"
 	(
 		${c_valgrind_cmd} ${bindir}/tests/verify-strings/test_scrypt \
-			1> ${test_output}
+			"${SMALLMEM:-0}" 1> ${test_output}
 		echo $? > ${c_exitfile}
 	)
 
 	# The generated values should match the known good values.
 	setup_check_variables "test_scrypt output against reference"
-	cmp -s ${test_output} ${reference}
+	if [ "${SMALLMEM:-0}" -gt "0" ]; then
+		cmp -s ${test_output} ${reference_small}
+	else
+		cmp -s ${test_output} ${reference}
+	fi
 	echo $? > ${c_exitfile}
 }
