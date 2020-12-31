@@ -14,6 +14,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Run autoreconf
+        run: autoreconf -i
+      - name: Configure with the default compiler
+        run: ./configure
       - name: Coverity scan
         env:
           COVERITY_SCAN_PROJECT_NAME: ${{ github.repository }}
