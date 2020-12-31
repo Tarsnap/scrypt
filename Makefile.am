@@ -173,6 +173,7 @@ EXTRA_DIST = \
 	tests/04-force-resources.sh				\
 	tests/05-system-scrypt-encrypt-decrypt.sh		\
 	tests/shared_test_functions.sh				\
+	tests/shared_valgrind_functions.sh			\
 	tests/test_scrypt.sh					\
 	tests/verify-strings/test_scrypt.good			\
 	tests/verify-strings/test_scrypt_good.enc
