@@ -32,6 +32,8 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt_smix.c			\
 			libcperciva/util/warnp.c			\
 			libcperciva/util/warnp.h
 
+# Don't include crypto_aesctr_shared.c in this list, as it should be included
+# directly into other translation unit(s), and not compiled on its own.
 scrypt_SOURCES=		main.c					\
 			$(crypto_scrypt_files)			\
 			lib/scryptenc/scryptenc.c		\
@@ -45,6 +47,7 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aes.h		\
 			libcperciva/crypto/crypto_aes_aesni.h	\
+			libcperciva/crypto/crypto_aes_aesni_m128i.h \
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_aesctr.h	\
 			libcperciva/crypto/crypto_entropy.c	\
@@ -52,6 +55,7 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_entropy_rdrand.h \
 			libcperciva/crypto/crypto_verify_bytes.c \
 			libcperciva/crypto/crypto_verify_bytes.h \
+			libcperciva/util/align_ptr.h		\
 			libcperciva/util/asprintf.c		\
 			libcperciva/util/asprintf.h		\
 			libcperciva/util/entropy.c		\
@@ -144,6 +148,9 @@ tests_libscrypt_kdf_sample_libscrypt_kdf_CPPFLAGS=	\
 	-I$(srcdir)/libscrypt-kdf/
 tests_libscrypt_kdf_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
 
+# crypto_aesctr_shared.c is in this list because it can't be included in the
+# _SOURCES because it should only be included as part of another translation
+# unit.
 EXTRA_DIST = \
 	COPYRIGHT						\
 	FORMAT							\
@@ -167,6 +174,7 @@ EXTRA_DIST = \
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSSE3.c	\
 	libcperciva/cpusupport/Build/cpusupport.sh		\
+	libcperciva/crypto/crypto_aesctr_shared.c		\
 	tests/01-known-values.sh				\
 	tests/02-decrypt-reference-file.sh			\
 	tests/03-encrypt-decrypt-file.sh			\
