@@ -50,6 +50,7 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_aes_aesni_m128i.h \
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_aesctr.h	\
+			libcperciva/crypto/crypto_aesctr_aesni.h \
 			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/crypto/crypto_entropy.h	\
 			libcperciva/crypto/crypto_entropy_rdrand.h \
@@ -100,7 +101,8 @@ CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
 
 # Libraries from libcperciva code.
 noinst_LTLIBRARIES=	libcperciva_aesni.la
-libcperciva_aesni_la_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c
+libcperciva_aesni_la_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c \
+			libcperciva/crypto/crypto_aesctr_aesni.c
 nodist_libcperciva_aesni_la_SOURCES=	cpusupport-config.h
 libcperciva_aesni_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
 
