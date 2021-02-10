@@ -21,6 +21,7 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt_smix.c			\
 			libcperciva/alg/sha256.c			\
 			libcperciva/alg/sha256.h			\
 			libcperciva/alg/sha256_shani.h			\
+			libcperciva/alg/sha256_sse2.h			\
 			libcperciva/cpusupport/cpusupport.h		\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c	\
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c	\
@@ -117,9 +118,9 @@ libcperciva_shani_la_SOURCES=	libcperciva/alg/sha256_shani.c
 nodist_libcperciva_shani_la_SOURCES=	cpusupport-config.h
 libcperciva_shani_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
 
-# Library from scrypt code.
+# Library from libcperciva and scrypt code.
 noinst_LTLIBRARIES+=	libscrypt_sse2.la
-libscrypt_sse2_la_SOURCES=	lib/crypto/crypto_scrypt_smix_sse2.c
+libscrypt_sse2_la_SOURCES=	libcperciva/alg/sha256_sse2.c lib/crypto/crypto_scrypt_smix_sse2.c
 nodist_libscrypt_sse2_la_SOURCES=	cpusupport-config.h
 libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
