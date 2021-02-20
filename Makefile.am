@@ -20,9 +20,11 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt_smix.c			\
 			lib-platform/crypto/crypto_scrypt.h		\
 			libcperciva/alg/sha256.c			\
 			libcperciva/alg/sha256.h			\
+			libcperciva/alg/sha256_arm.h			\
 			libcperciva/alg/sha256_shani.h			\
 			libcperciva/alg/sha256_sse2.h			\
 			libcperciva/cpusupport/cpusupport.h		\
+			libcperciva/cpusupport/cpusupport_arm_sha256.c	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c	\
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c	\
 			libcperciva/cpusupport/cpusupport_x86_shani.c	\
@@ -92,6 +94,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 
 scrypt_LDADD=		libcperciva_aesni.la libcperciva_rdrand.la \
 			libcperciva_shani.la libscrypt_sse2.la	\
+			libcperciva_arm_sha256.la		\
 			${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
 
@@ -118,6 +121,11 @@ libcperciva_shani_la_SOURCES=	libcperciva/alg/sha256_shani.c
 nodist_libcperciva_shani_la_SOURCES=	cpusupport-config.h
 libcperciva_shani_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SHANI} $${CFLAGS_X86_SSSE3}`
 
+noinst_LTLIBRARIES+=	libcperciva_arm_sha256.la
+libcperciva_arm_sha256_la_SOURCES=	libcperciva/alg/sha256_arm.c
+nodist_libcperciva_arm_sha256_la_SOURCES=	cpusupport-config.h
+libcperciva_arm_sha256_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_ARM_SHA256}`
+
 # Library from libcperciva and scrypt code.
 noinst_LTLIBRARIES+=	libscrypt_sse2.la
 libscrypt_sse2_la_SOURCES=	libcperciva/alg/sha256_sse2.c lib/crypto/crypto_scrypt_smix_sse2.c
@@ -140,7 +148,8 @@ endif
 
 # Shared definitions for libscrypt-kdf.
 libscrypt_kdf_la_SOURCES=	$(crypto_scrypt_files)
-libscrypt_kdf_la_LIBADD=	libcperciva_shani.la libscrypt_sse2.la
+libscrypt_kdf_la_LIBADD=	libcperciva_shani.la libscrypt_sse2.la	\
+				libcperciva_arm_sha256.la
 # Workaround for "created with both libtool and without"
 libscrypt_kdf_la_CFLAGS=	$(AM_CFLAGS)
 
@@ -170,6 +179,8 @@ EXTRA_DIST = \
 	libcperciva/POSIX/posix-msg_nosignal.c			\
 	libcperciva/POSIX/posix-restrict.c			\
 	libcperciva/POSIX/posix-stat-st_mtim.c			\
+	libcperciva/cpusupport/Build/cpusupport-ARM-SHA256.c	\
+	libcperciva/cpusupport/Build/cpusupport-HWCAP-GETAUXVAL.c \
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
@@ -196,6 +207,7 @@ tests_verify_strings_test_scrypt_SOURCES =			\
 
 tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.la	\
 	libscrypt_sse2.la					\
+	libcperciva_arm_sha256.la				\
 	${LDADD_POSIX}
 
 # Eliminate false positives while memory-checking for the test framework.
