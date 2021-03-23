@@ -19,13 +19,15 @@ int passphrase_entry_parse(const char *, enum passphrase_entry *,
     const char **);
 
 /**
- * passphrase_entry_readpass(passwd, entry_method, entry_arg, once):
+ * passphrase_entry_readpass(passwd, entry_method, entry_arg, prompt,
+ *     confirmprompt, once):
  * Use ${entry_method} to read a passphrase and return it as a malloced
  * NUL-terminated string via ${passwd}.  If ${entry_method} is
  * PASSPHRASE_TTY_STDIN and ${once} is zero, ask for the passphrase twice;
- * otherwise ask for it once.
+ * otherwise ask for it once.  Use ${prompt} for the first prompt, and
+ * ${confirmprompt} for the second prompt (if applicable).
  */
 int passphrase_entry_readpass(char **, enum passphrase_entry, const char *,
-    int);
+    const char *, const char *, int);
 
 #endif /* !_PASSPHRASE_ENTRY_H_ */
