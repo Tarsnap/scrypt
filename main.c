@@ -250,7 +250,8 @@ main(int argc, char *argv[])
 
 	/* Get the password. */
 	if (passphrase_entry_readpass(&passwd, passphrase_entry,
-	    passphrase_arg, dec)) {
+	    passphrase_arg, "Please enter passphrase",
+	    "Please confirm passphrase", dec)) {
 		warnp("passphrase_entry_readpass");
 		goto err1;
 	}
