@@ -1,31 +1,40 @@
-*.o
-.libs/
-*.lo
-*.la
-.deps/
-.dirstamp
+# Development tools
+/devel-tools/
+# Result of autoreconf -i
+/Makefile.in
 /aclocal.m4
 /config.aux/
-/config.h
 /config.h.in
-/config.log
-/config.status
+/config.h.in~
 /configure
-/libtool
-/cpusupport-config.h
-/scrypt
-/stamp-h1
+# m4/ directory: only keep certain files
 /m4/*
 !/m4/check_libcperciva_posix.m4
 !/m4/check_posix_sh.m4
-/Makefile
-/Makefile.in
-# Test infrastructure
-/tests-output/
-/tests-valgrind/
-/tests/libscrypt-kdf/sample-libscrypt-kdf
-/tests/test_scrypt
-/tests/valgrind/potential-memleaks
-/tests/verify-strings/test_scrypt
+!/m4/check_solaris_c99.m4
 # Standard out-of-tree build directory
 /build/
+# In-tree configure
+.deps/
+/Makefile
+/config.h
+/config.log
+/config.status
+/libtool
+/stamp-h1
+# In-tree build, only top-level
+/cpusupport-config.h
+# In-tree build, all directories
+.dirstamp
+.libs/
+*.la
+*.lo
+*.o
+# In-tree binaries
+/scrypt
+/tests/libscrypt-kdf/sample-libscrypt-kdf
+/tests/valgrind/potential-memleaks
+/tests/verify-strings/test_scrypt
+# In-tree test output
+/tests-output/
+/tests-valgrind/
