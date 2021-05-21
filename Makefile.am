@@ -1,5 +1,5 @@
 bin_PROGRAMS=	scrypt
-noinst_PROGRAMS=	tests/verify-strings/test_scrypt			\
+noinst_PROGRAMS=	tests/verify-strings/test_scrypt		\
 	tests/valgrind/potential-memleaks
 dist_man_MANS=$(scrypt_man_MANS)
 ACLOCAL_AMFLAGS=	-I m4
@@ -128,7 +128,8 @@ libcperciva_arm_sha256_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_ARM_SH
 
 # Library from libcperciva and scrypt code.
 noinst_LTLIBRARIES+=	libscrypt_sse2.la
-libscrypt_sse2_la_SOURCES=	libcperciva/alg/sha256_sse2.c lib/crypto/crypto_scrypt_smix_sse2.c
+libscrypt_sse2_la_SOURCES=	libcperciva/alg/sha256_sse2.c	\
+				lib/crypto/crypto_scrypt_smix_sse2.c
 nodist_libscrypt_sse2_la_SOURCES=	cpusupport-config.h
 libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 
@@ -150,10 +151,10 @@ endif
 libscrypt_kdf_la_SOURCES=	$(crypto_scrypt_files)
 libscrypt_kdf_la_LIBADD=	libcperciva_shani.la libscrypt_sse2.la	\
 				libcperciva_arm_sha256.la
-# Workaround for "created with both libtool and without"
+# Workaround for "created with both libtool and without".
 libscrypt_kdf_la_CFLAGS=	$(AM_CFLAGS)
 
-# Test libscrypt-kdf compile
+# Test libscrypt-kdf compile.
 tests_libscrypt_kdf_sample_libscrypt_kdf_SOURCES=	\
 	tests/libscrypt-kdf/sample-libscrypt-kdf.c
 tests_libscrypt_kdf_sample_libscrypt_kdf_CPPFLAGS=	\
@@ -163,7 +164,7 @@ tests_libscrypt_kdf_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
 # crypto_aesctr_shared.c is in this list because it can't be included in the
 # _SOURCES because it should only be included as part of another translation
 # unit.
-EXTRA_DIST = \
+EXTRA_DIST=							\
 	COPYRIGHT						\
 	FORMAT							\
 	README.md						\
@@ -201,7 +202,7 @@ EXTRA_DIST = \
 	tests/verify-strings/test_scrypt_good.enc
 
 # Binary to test the crypto_scrypt() function.
-tests_verify_strings_test_scrypt_SOURCES =			\
+tests_verify_strings_test_scrypt_SOURCES=			\
 	tests/verify-strings/test_scrypt.c			\
 	$(crypto_scrypt_files)
 
@@ -211,7 +212,7 @@ tests_verify_strings_test_scrypt_LDADD=	libcperciva_shani.la	\
 	${LDADD_POSIX}
 
 # Eliminate false positives while memory-checking for the test framework.
-tests_valgrind_potential_memleaks_SOURCES = tests/valgrind/potential-memleaks.c
+tests_valgrind_potential_memleaks_SOURCES= tests/valgrind/potential-memleaks.c
 
 .PHONY: test
 # we can't only build "scrypt tests/verify-strings/test_scrypt" because that
