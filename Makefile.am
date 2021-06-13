@@ -24,6 +24,7 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt_smix.c			\
 			libcperciva/alg/sha256_shani.h			\
 			libcperciva/alg/sha256_sse2.h			\
 			libcperciva/cpusupport/cpusupport.h		\
+			libcperciva/cpusupport/cpusupport_arm_aes.c	\
 			libcperciva/cpusupport/cpusupport_arm_sha256.c	\
 			libcperciva/cpusupport/cpusupport_x86_aesni.c	\
 			libcperciva/cpusupport/cpusupport_x86_rdrand.c	\
@@ -51,9 +52,12 @@ scrypt_SOURCES=		main.c					\
 			libcperciva/crypto/crypto_aes.h		\
 			libcperciva/crypto/crypto_aes_aesni.h	\
 			libcperciva/crypto/crypto_aes_aesni_m128i.h \
+			libcperciva/crypto/crypto_aes_arm.h	\
+			libcperciva/crypto/crypto_aes_arm_u8.h	\
 			libcperciva/crypto/crypto_aesctr.c	\
 			libcperciva/crypto/crypto_aesctr.h	\
 			libcperciva/crypto/crypto_aesctr_aesni.h \
+			libcperciva/crypto/crypto_aesctr_arm.h	\
 			libcperciva/crypto/crypto_entropy.c	\
 			libcperciva/crypto/crypto_entropy.h	\
 			libcperciva/crypto/crypto_entropy_rdrand.h \
@@ -95,6 +99,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 scrypt_LDADD=		libcperciva_aesni.la libcperciva_rdrand.la \
 			libcperciva_shani.la libscrypt_sse2.la	\
 			libcperciva_arm_sha256.la		\
+			libcperciva_arm_aes.la			\
 			${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
 
@@ -109,6 +114,12 @@ libcperciva_aesni_la_SOURCES=	libcperciva/crypto/crypto_aes_aesni.c \
 			libcperciva/crypto/crypto_aesctr_aesni.c
 nodist_libcperciva_aesni_la_SOURCES=	cpusupport-config.h
 libcperciva_aesni_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_AESNI}`
+
+noinst_LTLIBRARIES+=	libcperciva_arm_aes.la
+libcperciva_arm_aes_la_SOURCES=	libcperciva/crypto/crypto_aes_arm.c \
+			libcperciva/crypto/crypto_aesctr_arm.c
+nodist_libcperciva_arm_aes_la_SOURCES=	cpusupport-config.h
+libcperciva_arm_aes_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_ARM_AES}`
 
 noinst_LTLIBRARIES+=	libcperciva_rdrand.la
 libcperciva_rdrand_la_SOURCES=	libcperciva/crypto/crypto_entropy_rdrand.c
