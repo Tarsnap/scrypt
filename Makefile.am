@@ -192,6 +192,7 @@ EXTRA_DIST=							\
 	libcperciva/POSIX/posix-restrict.c			\
 	libcperciva/POSIX/posix-stat-st_mtim.c			\
 	libcperciva/cpusupport/Build/cpusupport-ARM-SHA256.c	\
+	libcperciva/cpusupport/Build/cpusupport-HWCAP-ELF_AUX_INFO.c \
 	libcperciva/cpusupport/Build/cpusupport-HWCAP-GETAUXVAL.c \
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
