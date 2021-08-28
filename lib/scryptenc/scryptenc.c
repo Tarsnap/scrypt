@@ -73,7 +73,7 @@ display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
 {
 	uint64_t N = (uint64_t)(1) << logN;
 	uint64_t mem_minimum = 128 * r * N;
-	double expected_seconds = opps > 0 ? (double)(4 * N * p) / opps : 0;
+	double expected_seconds = opps > 0 ? (double)(4 * N * r * p) / opps : 0;
 	char * human_memlimit = humansize(memlimit);
 	char * human_mem_minimum = humansize(mem_minimum);
 
@@ -201,6 +201,9 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 			return (rc);
 		opslimit = opps * maxtime;
 
+		if (verbose)
+			display_params(logN, r, p, memlimit, opps, maxtime);
+
 		/* Check limits. */
 		N = (uint64_t)(1) << logN;
 		if ((memlimit / N) / r < 128)
@@ -211,10 +214,10 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 		/* We have no limit. */
 		memlimit = 0;
 		opps = 0;
-	}
 
-	if (verbose)
-		display_params(logN, r, p, memlimit, opps, maxtime);
+		if (verbose)
+			display_params(logN, r, p, memlimit, opps, maxtime);
+	}
 
 	/* Success! */
 	return (SCRYPT_OK);
