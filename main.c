@@ -130,7 +130,7 @@ main(int argc, char *argv[])
 			params.maxmem = (size_t)maxmem64;
 			break;
 		GETOPT_OPTARG("-m"):
-			if (PARSENUM(&params.maxmemfrac, optarg, 0, 1)) {
+			if (PARSENUM(&params.maxmemfrac, optarg, 0, 0.5)) {
 				warnp("Invalid option: -m %s", optarg);
 				exit(1);
 			}
