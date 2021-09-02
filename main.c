@@ -200,6 +200,12 @@ main(int argc, char *argv[])
 		goto err0;
 	}
 
+	/* We can't have a maxmemfrac of 0. */
+	if (params.maxmemfrac == 0.0) {
+		warn0("-m must be greater than 0");
+		goto err0;
+	}
+
 	/* Set the input filename. */
 	if (strcmp(argv[0], "-"))
 		infilename = argv[0];
