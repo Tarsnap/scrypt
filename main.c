@@ -336,6 +336,10 @@ done:
 		case SCRYPT_ETOOSLOW:
 			warn0("Decrypting file would take too much CPU time");
 			break;
+		case SCRYPT_EBIGSLOW:
+			warn0("Decrypting file would require too much memory"
+			    " and CPU time");
+			break;
 		case SCRYPT_EPASS:
 			warn0("Passphrase is incorrect");
 			break;
