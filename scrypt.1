@@ -108,7 +108,10 @@ bytes of RAM to compute the derived encryption key.
 .It Fl m Ar maxmemfrac
 Use at most the fraction
 .Ar maxmemfrac
-of the available RAM to compute the derived encryption key.
+of the available RAM to compute the derived encryption key.  The maximum
+possible value for
+.Ar maxmemfrac
+is 0.5.
 .It Fl P
 Always read passphrase from stdin, and do so only once even
 when encrypting.
