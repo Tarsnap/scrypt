@@ -83,8 +83,9 @@ does not print any prompts, and reads a passphrase from stdin.
 .Sh OPTIONS
 .Bl -tag -width "-m maxmemfrac"
 .It Fl f
-Force the decryption to proceed even if it is anticipated to
-require an excessive amount of memory or CPU time.
+Force the operation to proceed even if it is anticipated to
+require an excessive amount of memory or CPU time.  Do not print
+any warnings about exceeding any memory or CPU time limits.
 .It Fl -logN Ar value
 Set the work parameter N to
 .Pf 2^ Ar value .
