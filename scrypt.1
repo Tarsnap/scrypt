@@ -67,9 +67,8 @@ encryption time to generate the derived encryption key.
 provides information about the encryption parameters used for
 .Ar infile .
 .Pp
-If
-.Fl P
-is not given,
+Unless otherwise specified via
+.Fl -passphrase ,
 .Nm
 reads passphrases from its controlling terminal, or failing that, from stdin.
 Prompts are only printed when
@@ -109,11 +108,8 @@ possible value for
 .Ar maxmemfrac
 is 0.5.
 .It Fl P
-Always read passphrase from stdin, and do so only once even
-when encrypting.
-This cannot be used if
-.Ar infile
-is also stdin (aka '-').
+Deprecated synonym for
+.Fl -passphrase Ar dev:stdin-once .
 .It Fl p Ar value
 Set the work parameter p to
 .Ar value .
