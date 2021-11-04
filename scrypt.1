@@ -67,24 +67,19 @@ encryption time to generate the derived encryption key.
 provides information about the encryption parameters used for
 .Ar infile .
 .Pp
-If
-.Fl P
-is not given,
+Unless otherwise specified via
+.Fl -passphrase ,
 .Nm
 reads passphrases from its controlling terminal, or failing that, from stdin.
 Prompts are only printed when
 .Nm
 is reading passphrases from some terminal.
-If
-.Fl P
-is given, then
-.Nm
-does not print any prompts, and reads a passphrase from stdin.
 .Sh OPTIONS
 .Bl -tag -width "-m maxmemfrac"
 .It Fl f
-Force the decryption to proceed even if it is anticipated to
-require an excessive amount of memory or CPU time.
+Force the operation to proceed even if it is anticipated to
+require an excessive amount of memory or CPU time.  Do not print
+any warnings about exceeding any memory or CPU time limits.
 .It Fl -logN Ar value
 Set the work parameter N to
 .Pf 2^ Ar value .
@@ -113,11 +108,8 @@ possible value for
 .Ar maxmemfrac
 is 0.5.
 .It Fl P
-Always read passphrase from stdin, and do so only once even
-when encrypting.
-This cannot be used if
-.Ar infile
-is also stdin (aka '-').
+Deprecated synonym for
+.Fl -passphrase Ar dev:stdin-once .
 .It Fl p Ar value
 Set the work parameter p to
 .Ar value .
