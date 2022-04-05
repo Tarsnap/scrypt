@@ -116,7 +116,8 @@ blockmix_salsa8(const uint32_t * Bin, uint32_t * Bout, uint32_t * X, size_t r)
 	/* 2: for i = 0 to 2r - 1 do */
 	for (i = 0; i < 2 * r; i += 2) {
 		/* 3: X <-- H(X \xor B_i) */
-		blkxor(X, &Bin[i * 16], 64);
+		blkxor((unsigned char *)X,
+		    (const unsigned char *)&Bin[i * 16], 64);
 		salsa20_8(X);
 
 		/* 4: Y_i <-- X */
@@ -124,7 +125,8 @@ blockmix_salsa8(const uint32_t * Bin, uint32_t * Bout, uint32_t * X, size_t r)
 		blkcpy(&Bout[i * 8], X, 64);
 
 		/* 3: X <-- H(X \xor B_i) */
-		blkxor(X, &Bin[i * 16 + 16], 64);
+		blkxor((unsigned char *)X,
+		    (const unsigned char *)&Bin[i * 16 + 16], 64);
 		salsa20_8(X);
 
 		/* 4: Y_i <-- X */
@@ -189,14 +191,16 @@ crypto_scrypt_smix(uint8_t * B, size_t r, uint64_t N, void * _V, void * XY)
 		j = integerify(X, r) & (N - 1);
 
 		/* 8: X <-- H(X \xor V_j) */
-		blkxor(X, &V[j * (32 * r)], 128 * r);
+		blkxor((unsigned char *)X,
+		    (const unsigned char *)&V[j * (32 * r)], 128 * r);
 		blockmix_salsa8(X, Y, Z, r);
 
 		/* 7: j <-- Integerify(X) mod N */
 		j = integerify(Y, r) & (N - 1);
 
 		/* 8: X <-- H(X \xor V_j) */
-		blkxor(Y, &V[j * (32 * r)], 128 * r);
+		blkxor((unsigned char *)Y,
+		    (const unsigned char *)&V[j * (32 * r)], 128 * r);
 		blockmix_salsa8(Y, X, Z, r);
 	}
 
