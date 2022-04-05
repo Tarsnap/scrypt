@@ -33,14 +33,14 @@
 
 #include "crypto_scrypt_smix.h"
 
-static void blkcpy(uint32_t *, const uint32_t *, size_t);
+static void blkcpy(unsigned char *, const unsigned char *, size_t);
 static void blkxor(unsigned char *, const unsigned char *, size_t);
 static void salsa20_8(uint32_t[16]);
 static void blockmix_salsa8(const uint32_t *, uint32_t *, uint32_t *, size_t);
 static uint64_t integerify(const uint32_t *, size_t);
 
 static void
-blkcpy(uint32_t * dest, const uint32_t * src, size_t len)
+blkcpy(unsigned char * dest, const unsigned char * src, size_t len)
 {
 
 	memcpy(dest, src, len);
