@@ -64,7 +64,7 @@ usage(void)
 			warnp("Invalid option: %s %s", ch, optarg);	\
 		exit(1);						\
 	}								\
-} while(0)
+} while (0)
 
 int
 main(int argc, char *argv[])
