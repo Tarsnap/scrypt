@@ -13,7 +13,7 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
 
 # Checks for programs.
-AC_PROG_CC_C99
+m4_version_prereq([2.70], [AC_PROG_CC], [AC_PROG_CC_C99])
 AM_PROG_AR
 LT_INIT
 
