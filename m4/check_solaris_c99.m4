@@ -1,5 +1,5 @@
 # CHECK_SOLARIS_C99
-# ----------------
+# -----------------
 # On Solaris, the default standard library is c89-compatible.  Some linkers
 # require -std=c99 to link to the c99-compatible library.
 AC_DEFUN([CHECK_SOLARIS_C99],

@@ -10,7 +10,7 @@ AC_CONFIG_AUX_DIR([config.aux])
 AC_CONFIG_MACRO_DIR([m4])
 # Compute $target_os and related variables.
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([foreign subdir-objects -Wall])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 # Checks for programs.
 m4_version_prereq([2.70], [AC_PROG_CC], [AC_PROG_CC_C99])
