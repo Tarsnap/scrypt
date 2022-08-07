@@ -1,5 +1,5 @@
-# CHECK_LIBCPERCIVA_POSIX
-# -----------------------
+# CHECK_LIBCPERCIVA_POSIX([LIBCPERCIVA_DIR])
+# ------------------------------------------
 AC_DEFUN([CHECK_LIBCPERCIVA_POSIX], [
 	AC_REQUIRE([CHECK_POSIX_SH])
 	AC_MSG_NOTICE([checking POSIX compatibility...])

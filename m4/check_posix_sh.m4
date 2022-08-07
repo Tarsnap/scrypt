@@ -1,5 +1,5 @@
 # CHECK_POSIX_SH
-# -------------
+# --------------
 AC_DEFUN([CHECK_POSIX_SH], [
 	# Allow users to manually specify the path to a POSIX shell.
 	AC_ARG_VAR([POSIX_SH], [path of a POSIX shell])
