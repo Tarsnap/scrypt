@@ -10,6 +10,7 @@
 # m4/ directory: only keep certain files
 /m4/*
 !/m4/check_libcperciva_posix.m4
+!/m4/check_memlimit_support.m4
 !/m4/check_posix_sh.m4
 !/m4/check_solaris_c99.m4
 # Standard out-of-tree build directory
