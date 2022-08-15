@@ -46,15 +46,7 @@ AC_CHECK_FUNCS_ONCE([mmap])
 AC_SYS_LARGEFILE
 
 # Check whether the user has requested to disable compiler warnings.
-AC_MSG_CHECKING([compiler_warnings])
-AC_ARG_ENABLE(compiler_warnings,
-   AS_HELP_STRING([--disable-compiler-warnings],
-       [Do not request compiler warnings. @<:@default=enabled@:>@]),
-   [ac_compiler_warnings=$enableval],
-   [ac_compiler_warnings=yes])
-AC_MSG_RESULT([${ac_compiler_warnings}])
-AS_IF([test x${ac_compiler_warnings} = xyes],
-   [AX_CFLAGS_WARN_ALL])
+CHECK_DISABLE_COMPILER_WARNINGS
 
 # Check libcperciva POSIX compatibility.
 CHECK_LIBCPERCIVA_POSIX([${srcdir}/libcperciva])
