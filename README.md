@@ -36,7 +36,6 @@ Some additional articles may be of interest:
 * Filippo Valsorda presented a very well-written explanation about how
   [the scrypt parameters](https://blog.filippo.io/the-scrypt-parameters/)
   impact the memory usage and CPU time of the algorithm.
-
 * J. Alwen, B. Chen, K. Pietrzak, L. Reyzin, S. Tessaro,
   [Scrypt is Maximally Memory-Hard](https://eprint.iacr.org/2016/989),
   Cryptology ePrint Archive: Report 2016/989.
