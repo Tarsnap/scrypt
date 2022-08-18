@@ -33,22 +33,8 @@ AC_SEARCH_LIBS([AES_encrypt], [crypto],,
 AC_CHECK_HEADERS([openssl/aes.h],,
   [AC_MSG_ERROR([Unable to find the openssl/aes.h header])])
 
-# Check for a linuxy sysinfo syscall; and while we're doing that, check if
-# struct sysinfo is the old version (total RAM == totalmem) or the new
-# version (total RAM == totalmem * mem_unit).
-AC_CHECK_HEADERS_ONCE([sys/sysinfo.h])
-AC_CHECK_FUNCS_ONCE([sysinfo])
-AC_CHECK_TYPES([struct sysinfo], [], [], [[#include <sys/sysinfo.h>]])
-AC_CHECK_MEMBERS([struct sysinfo.totalram, struct sysinfo.mem_unit], [], [],
-    [[#include <sys/sysinfo.h>]])
-
-# Check if we have <sys/param.h>, since some systems require it for sysctl
-# to work.
-AC_CHECK_HEADERS_ONCE([sys/param.h])
-
-# Check for <sys/sysctl.h>.  If it exists and it defines HW_USERMEM
-# and/or HW_MEMSIZE, we'll try using those as memory limits.
-AC_CHECK_HEADERS_ONCE([sys/sysctl.h])
+# Check how we can find out the available memory.
+CHECK_MEMLIMIT_SUPPORT
 
 # Check for posix_memalign.
 AC_CHECK_FUNCS_ONCE([posix_memalign])
@@ -60,15 +46,7 @@ AC_CHECK_FUNCS_ONCE([mmap])
 AC_SYS_LARGEFILE
 
 # Check whether the user has requested to disable compiler warnings.
-AC_MSG_CHECKING([compiler_warnings])
-AC_ARG_ENABLE(compiler_warnings,
-   AS_HELP_STRING([--disable-compiler-warnings],
-       [Do not request compiler warnings. @<:@default=enabled@:>@]),
-   [ac_compiler_warnings=$enableval],
-   [ac_compiler_warnings=yes])
-AC_MSG_RESULT([${ac_compiler_warnings}])
-AS_IF([test x${ac_compiler_warnings} = xyes],
-   [AX_CFLAGS_WARN_ALL])
+CHECK_DISABLE_COMPILER_WARNINGS
 
 # Check libcperciva POSIX compatibility.
 CHECK_LIBCPERCIVA_POSIX([${srcdir}/libcperciva])
