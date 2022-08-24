@@ -186,11 +186,11 @@ EXTRA_DIST=							\
 	libcperciva/POSIX/posix-cflags.sh			\
 	libcperciva/POSIX/posix-clock_gettime.c			\
 	libcperciva/POSIX/posix-clock_realtime.c		\
-	libcperciva/POSIX/posix-l.c				\
 	libcperciva/POSIX/posix-l.sh				\
 	libcperciva/POSIX/posix-msg_nosignal.c			\
 	libcperciva/POSIX/posix-restrict.c			\
 	libcperciva/POSIX/posix-stat-st_mtim.c			\
+	libcperciva/POSIX/posix-trivial.c			\
 	libcperciva/cpusupport/Build/cpusupport-ARM-SHA256.c	\
 	libcperciva/cpusupport/Build/cpusupport-HWCAP-ELF_AUX_INFO.c \
 	libcperciva/cpusupport/Build/cpusupport-HWCAP-GETAUXVAL.c \
