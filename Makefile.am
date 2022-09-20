@@ -46,7 +46,6 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc_cpuperf.h	\
 			lib/util/passphrase_entry.c		\
 			lib/util/passphrase_entry.h		\
-			lib-platform/util/memlimit.c		\
 			lib-platform/util/memlimit.h		\
 			libcperciva/crypto/crypto_aes.c		\
 			libcperciva/crypto/crypto_aes.h		\
@@ -98,6 +97,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 
 scrypt_LDADD=		libcperciva_aesni.la libcperciva_rdrand.la \
 			libcperciva_shani.la libscrypt_sse2.la	\
+			libscrypt_memlimit.la			\
 			libcperciva_arm_sha256.la		\
 			libcperciva_arm_aes.la			\
 			${LDADD_POSIX}
@@ -143,6 +143,13 @@ libscrypt_sse2_la_SOURCES=	libcperciva/alg/sha256_sse2.c	\
 				lib/crypto/crypto_scrypt_smix_sse2.c
 nodist_libscrypt_sse2_la_SOURCES=	cpusupport-config.h
 libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
+
+# This library uses non-POSIX functionality, so we need to cancel the
+# _POSIX_C_SOURCE and _XOPEN_SOURCE defined in AM_CPPFLAGS.
+noinst_LTLIBRARIES+=	libscrypt_memlimit.la
+libscrypt_memlimit_la_SOURCES=	lib-platform/util/memlimit.c	\
+				lib-platform/util/memlimit.h
+libscrypt_memlimit_la_CFLAGS=-U_POSIX_C_SOURCE -U_XOPEN_SOURCE
 
 # Install libscrypt-kdf?
 if LIBSCRYPT_KDF
