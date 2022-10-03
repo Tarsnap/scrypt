@@ -183,26 +183,34 @@ tests_libscrypt_kdf_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
 # _SOURCES because it should only be included as part of another translation
 # unit.
 EXTRA_DIST=							\
+	.autom4te.cfg						\
+	BUILDING						\
 	COPYRIGHT						\
 	FORMAT							\
 	README.md						\
 	STYLE							\
+	get-version.sh						\
 	lib/README						\
 	lib/crypto/crypto_scrypt-ref.c				\
 	libcperciva/POSIX/README				\
+	libcperciva/POSIX/posix-abstract-declarator.c		\
 	libcperciva/POSIX/posix-cflags.sh			\
 	libcperciva/POSIX/posix-clock_gettime.c			\
 	libcperciva/POSIX/posix-clock_realtime.c		\
+	libcperciva/POSIX/posix-inet-addrstrlen.c		\
+	libcperciva/POSIX/posix-inet6-addrstrlen.c		\
 	libcperciva/POSIX/posix-l.sh				\
 	libcperciva/POSIX/posix-msg_nosignal.c			\
 	libcperciva/POSIX/posix-restrict.c			\
 	libcperciva/POSIX/posix-stat-st_mtim.c			\
 	libcperciva/POSIX/posix-trivial.c			\
+	libcperciva/cpusupport/Build/cpusupport-ARM-AES.c	\
 	libcperciva/cpusupport/Build/cpusupport-ARM-SHA256.c	\
 	libcperciva/cpusupport/Build/cpusupport-HWCAP-ELF_AUX_INFO.c \
 	libcperciva/cpusupport/Build/cpusupport-HWCAP-GETAUXVAL.c \
 	libcperciva/cpusupport/Build/cpusupport-X86-AESNI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-CPUID.c	\
+	libcperciva/cpusupport/Build/cpusupport-X86-CPUID_COUNT.c \
 	libcperciva/cpusupport/Build/cpusupport-X86-RDRAND.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SHANI.c	\
 	libcperciva/cpusupport/Build/cpusupport-X86-SSE2.c	\
@@ -214,11 +222,16 @@ EXTRA_DIST=							\
 	tests/03-encrypt-decrypt-file.sh			\
 	tests/04-force-resources.sh				\
 	tests/05-system-scrypt-encrypt-decrypt.sh		\
+	tests/06-decrypt-fail.sh				\
+	tests/07-passphrase-env.sh				\
+	tests/08-passphrase-file.sh				\
+	tests/09-explicit-params.sh				\
 	tests/shared_test_functions.sh				\
 	tests/shared_valgrind_functions.sh			\
 	tests/test_scrypt.sh					\
 	tests/verify-strings/test_scrypt.good			\
-	tests/verify-strings/test_scrypt_good.enc
+	tests/verify-strings/test_scrypt_good.enc		\
+	tests/verify-strings/test_scrypt_small.good
 
 # Binary to test the crypto_scrypt() function.
 tests_verify_strings_test_scrypt_SOURCES=			\
