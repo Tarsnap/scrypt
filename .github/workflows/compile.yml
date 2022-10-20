@@ -17,25 +17,26 @@ env:
                             -Wno-missing-noreturn -Wno-reserved-id-macro
                             -Wno-unused-macros
                             -Wno-documentation-unknown-command
+                            -Wno-implicit-fallthrough
   CFLAGS_GCC_LIBCPERCIVA: -Wall -Wextra -Werror -Wpedantic
                           -pedantic-errors -Wno-clobbered
   # Variables for specific projects / platforms / compilers.
   CFLAGS_CLANG_PROJECT:
-  CFLAGS_GCC_PROJECT:
-  CFLAGS_OSX: -Wno-poison-system-directories -I/usr/local/opt/openssl@1.1/include
+  CFLAGS_GCC_PROJECT: -Wno-cpp
+  CFLAGS_OSX: -Wno-poison-system-directories
+              -I/usr/local/opt/openssl@1.1/include
   LDFLAGS_OSX: -L/usr/local/opt/openssl@1.1/lib
 
 jobs:
   Ubuntu:
     name: Ubuntu
-    # Ubuntu 16.04 comes with valgrind-3.11, which can't handle RDRAND
-    # instructions.  We need at least Ubuntu 18.04, which has valgrind-3.13.
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - name: Update apt-get
       run: sudo apt-get update
     - name: Install software
-      run: sudo apt-get install --no-install-recommends valgrind
+      run: sudo apt-get install --no-install-recommends
+           valgrind autoconf-archive
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Run autoreconf
@@ -43,12 +44,12 @@ jobs:
         autoreconf -i
     - name: Configure with clang
       env:
-        CC: clang-9
+        CC: clang-10
         CFLAGS: ${{ env.CFLAGS_ALL }}
       run: ./configure
     - name: Compile with clang
       env:
-        CC: clang-9
+        CC: clang-10
         CFLAGS: ${{ env.CFLAGS_ALL }}
                 ${{ env.CFLAGS_CLANG_LIBCPERCIVA }}
                 ${{ env.CFLAGS_CLANG_PROJECT }}
