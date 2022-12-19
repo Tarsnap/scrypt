@@ -27,6 +27,9 @@ To install the development library, run:
 Platform-specific notes
 -----------------------
 
+- when cross-compiling, runtime POSIX compatibility checks are disabled.
+  For more information, see libcperciva/POSIX/README.
+
 - On OS X, the version of OpenSSL included with the operating
   system is outdated (0.9.8) and deprecated, and it is recommended
   that scrypt be built with an updated version of OpenSSL.  On OS X
