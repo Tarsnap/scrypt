@@ -247,8 +247,8 @@ main(int argc, char *argv[])
 		rc = scryptdec_file_printparams(infile);
 
 		/* Clean up. */
-		if (infile != stdin)
-			fclose(infile);
+		if ((infile != stdin) && fclose(infile))
+			warnp("fclose");
 
 		/* Finished! */
 		goto done;
@@ -303,10 +303,10 @@ cleanup:
 	free(passwd);
 
 	/* Close any files we opened. */
-	if (infile != stdin)
-		fclose(infile);
-	if (outfile != stdout)
-		fclose(outfile);
+	if ((outfile != stdout) && fclose(outfile))
+		warnp("fclose");
+	if ((infile != stdin) && fclose(infile))
+		warnp("fclose");
 
 done:
 	/* If we failed, print the right error message and exit. */
@@ -374,8 +374,8 @@ err2:
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 err1:
-	if (infile != stdin)
-		fclose(infile);
+	if ((infile != stdin) && fclose(infile))
+		warnp("fclose");
 err0:
 	/* Failure! */
 	exit(1);
