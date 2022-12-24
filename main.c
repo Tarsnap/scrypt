@@ -224,6 +224,14 @@ main(int argc, char *argv[])
 		passphrase_arg = "";
 	}
 
+	/* Sanity check passphrase entry method and input filename. */
+	if ((passphrase_entry == PASSPHRASE_STDIN_ONCE) &&
+	    (infilename == NULL)) {
+		warn0("Cannot read both passphrase and input file"
+		    " from standard input");
+		goto err0;
+	}
+
 	/* If the input isn't stdin, open the file. */
 	if (infilename != NULL) {
 		if ((infile = fopen(infilename, "rb")) == NULL) {
@@ -232,13 +240,6 @@ main(int argc, char *argv[])
 		}
 	} else {
 		infile = stdin;
-
-		/* Error if given incompatible options. */
-		if (passphrase_entry == PASSPHRASE_STDIN_ONCE) {
-			warn0("Cannot read both passphrase and input file"
-			    " from standard input");
-			goto err0;
-		}
 	}
 
 	/* User selected 'info' mode. */
@@ -367,7 +368,7 @@ done:
 	}
 
 	/* Success! */
-	return (0);
+	exit(0);
 
 err2:
 	scryptdec_file_cookie_free(C);
