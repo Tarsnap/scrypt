@@ -313,58 +313,7 @@ cleanup:
 done:
 	/* If we failed, print the right error message and exit. */
 	if (rc != SCRYPT_OK) {
-		switch (rc) {
-		case SCRYPT_ELIMIT:
-			warnp("Error determining amount of available memory");
-			break;
-		case SCRYPT_ECLOCK:
-			warnp("Error reading clocks");
-			break;
-		case SCRYPT_EKEY:
-			warnp("Error computing derived key");
-			break;
-		case SCRYPT_ESALT:
-			warnp("Error reading salt");
-			break;
-		case SCRYPT_EOPENSSL:
-			warnp("OpenSSL error");
-			break;
-		case SCRYPT_ENOMEM:
-			warnp("Error allocating memory");
-			break;
-		case SCRYPT_EINVAL:
-			warn0("Input is not valid scrypt-encrypted block");
-			break;
-		case SCRYPT_EVERSION:
-			warn0("Unrecognized scrypt format version");
-			break;
-		case SCRYPT_ETOOBIG:
-			warn0("Decrypting file would require too much memory");
-			break;
-		case SCRYPT_ETOOSLOW:
-			warn0("Decrypting file would take too much CPU time");
-			break;
-		case SCRYPT_EBIGSLOW:
-			warn0("Decrypting file would require too much memory"
-			    " and CPU time");
-			break;
-		case SCRYPT_EPASS:
-			warn0("Passphrase is incorrect");
-			break;
-		case SCRYPT_EWRFILE:
-			warnp("Error writing file: %s",
-			    (outfilename != NULL) ? outfilename
-			    : "standard output");
-			break;
-		case SCRYPT_ERDFILE:
-			warnp("Error reading file: %s",
-			    (infilename != NULL) ? infilename
-			    : "standard input");
-			break;
-		case SCRYPT_EPARAM:
-			warn0("Error in explicit parameters");
-			break;
-		}
+		scryptenc_errno_print(rc, infilename, outfilename);
 		goto err0;
 	}
 
