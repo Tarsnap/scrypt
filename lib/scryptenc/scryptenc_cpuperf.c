@@ -36,6 +36,7 @@
 
 #include "scryptenc.h"
 #include "scryptenc_cpuperf.h"
+#include "scryptenc_errno.h"
 
 static int
 getclockdiff(struct timeval * st, double * diffd)

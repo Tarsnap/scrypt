@@ -38,6 +38,7 @@
 #include "parsenum.h"
 #include "passphrase_entry.h"
 #include "scryptenc.h"
+#include "scryptenc_errno.h"
 #include "warnp.h"
 
 static void

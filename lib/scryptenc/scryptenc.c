@@ -46,6 +46,7 @@
 #include "crypto_scrypt.h"
 #include "memlimit.h"
 #include "scryptenc_cpuperf.h"
+#include "scryptenc_errno.h"
 
 #include "scryptenc.h"
 
