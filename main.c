@@ -246,7 +246,10 @@ main(int argc, char *argv[])
 	/* User selected 'info' mode. */
 	if (info) {
 		/* Print the encryption parameters used for the file. */
-		rc = scryptdec_file_printparams(infile);
+		if ((rc = scryptdec_file_printparams(infile)) != SCRYPT_OK) {
+			scryptenc_print_error(rc, infilename, NULL);
+			goto err0;
+		}
 
 		/* Clean up. */
 		if ((infile != stdin) && fclose(infile))
@@ -310,13 +313,13 @@ cleanup:
 	if ((infile != stdin) && fclose(infile))
 		warnp("fclose");
 
-done:
 	/* If we failed, print the right error message and exit. */
 	if (rc != SCRYPT_OK) {
 		scryptenc_print_error(rc, infilename, outfilename);
 		goto err0;
 	}
 
+done:
 	/* Success! */
 	exit(0);
 
