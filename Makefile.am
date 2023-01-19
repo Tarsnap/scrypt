@@ -44,6 +44,8 @@ scrypt_SOURCES=		main.c					\
 			lib/scryptenc/scryptenc.h		\
 			lib/scryptenc/scryptenc_cpuperf.c	\
 			lib/scryptenc/scryptenc_cpuperf.h	\
+			lib/scryptenc/scryptenc_print_error.c	\
+			lib/scryptenc/scryptenc_print_error.h	\
 			lib/util/passphrase_entry.c		\
 			lib/util/passphrase_entry.h		\
 			lib-platform/util/memlimit.h		\
