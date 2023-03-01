@@ -39,6 +39,8 @@ crypto_scrypt_files=	lib/crypto/crypto_scrypt_smix.c			\
 # Don't include crypto_aesctr_shared.c in this list, as it should be included
 # directly into other translation unit(s), and not compiled on its own.
 scrypt_SOURCES=		main.c					\
+			scrypt_mode.h				\
+			scrypt_mode.c				\
 			$(crypto_scrypt_files)			\
 			lib/scryptenc/scryptenc.c		\
 			lib/scryptenc/scryptenc.h		\

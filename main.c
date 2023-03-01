@@ -37,6 +37,7 @@
 #include "insecure_memzero.h"
 #include "parsenum.h"
 #include "passphrase_entry.h"
+#include "scrypt_mode.h"
 #include "scryptenc.h"
 #include "scryptenc_print_error.h"
 #include "warnp.h"
@@ -233,6 +234,15 @@ main(int argc, char *argv[])
 		goto err0;
 	}
 
+	/* What type of operation are we doing? */
+	if (info) {
+		/* User selected 'info' mode. */
+		if (scrypt_mode_info(infilename))
+			goto err0;
+		rc = SCRYPT_OK;
+		goto done;
+	}
+
 	/* If the input isn't stdin, open the file. */
 	if (infilename != NULL) {
 		if ((infile = fopen(infilename, "rb")) == NULL) {
@@ -241,22 +251,6 @@ main(int argc, char *argv[])
 		}
 	} else {
 		infile = stdin;
-	}
-
-	/* User selected 'info' mode. */
-	if (info) {
-		/* Print the encryption parameters used for the file. */
-		if ((rc = scryptdec_file_printparams(infile)) != SCRYPT_OK) {
-			scryptenc_print_error(rc, infilename, NULL);
-			goto err0;
-		}
-
-		/* Clean up. */
-		if ((infile != stdin) && fclose(infile))
-			warnp("fclose");
-
-		/* Finished! */
-		goto done;
 	}
 
 	/* Get the password. */
