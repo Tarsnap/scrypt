@@ -32,6 +32,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/* Compatiblity for C++. */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Internal name of function. */
 #define scrypt_kdf crypto_scrypt
 
@@ -46,5 +51,10 @@
  */
 int scrypt_kdf(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
     uint32_t, uint32_t, uint8_t *, size_t);
+
+/* End compatiblity for C++. */
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !SCRYPT_KDF_H */
