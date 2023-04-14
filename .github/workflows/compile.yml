@@ -38,7 +38,7 @@ jobs:
       run: sudo apt-get install --no-install-recommends
            valgrind autoconf-archive
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Run autoreconf
       run:
         autoreconf -i
@@ -87,7 +87,7 @@ jobs:
     runs-on: macOS-11
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install software
       run: brew install automake
     - name: Run autoreconf

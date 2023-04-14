@@ -10,10 +10,10 @@ on:
 # requires us to fake a TRAVIS_BRANCH environment variable.
 jobs:
   coverity-scan:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run autoreconf
         run: autoreconf -i
       - name: Configure with the default compiler
