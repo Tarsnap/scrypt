@@ -54,6 +54,48 @@ usage(void)
 	exit(1);
 }
 
+/**
+ * scrypt_mode_info(infilename):
+ * Print scrypt parameters used for the specified ${infilename}, or read from
+ * stdin if that argument is NULL.
+ */
+static int
+scrypt_mode_info(const char * infilename)
+{
+	FILE * infile;
+	int rc;
+
+	/* If the input isn't stdin, open the file. */
+	if (infilename != NULL) {
+		if ((infile = fopen(infilename, "rb")) == NULL) {
+			warnp("Cannot open input file: %s", infilename);
+			goto err0;
+		}
+	} else {
+		infile = stdin;
+	}
+
+	/* Print the encryption parameters used for the file. */
+	if ((rc = scryptdec_file_printparams(infile)) != SCRYPT_OK) {
+		scryptenc_print_error(rc, infilename, NULL);
+		goto err1;
+	}
+
+	/* Clean up. */
+	if ((infile != stdin) && fclose(infile))
+		warnp("fclose");
+
+	/* Success! */
+	return (0);
+
+err1:
+	if ((infile != stdin) && fclose(infile))
+		warnp("fclose");
+err0:
+	/* Failure! */
+	return (-1);
+}
+
 /* Parse a numeric optarg within a GETOPT context.  (Requires ch and optarg.) */
 #define GETOPT_PARSENUM_WITHIN_UNSIGNED(var, min, max) do {		\
 	if (PARSENUM((var), optarg, (min), (max))) {			\
@@ -233,6 +275,15 @@ main(int argc, char *argv[])
 		goto err0;
 	}
 
+	/* What type of operation are we doing? */
+	if (info) {
+		/* User selected 'info' mode. */
+		if (scrypt_mode_info(infilename))
+			goto err0;
+		rc = SCRYPT_OK;
+		goto done;
+	}
+
 	/* If the input isn't stdin, open the file. */
 	if (infilename != NULL) {
 		if ((infile = fopen(infilename, "rb")) == NULL) {
@@ -241,22 +292,6 @@ main(int argc, char *argv[])
 		}
 	} else {
 		infile = stdin;
-	}
-
-	/* User selected 'info' mode. */
-	if (info) {
-		/* Print the encryption parameters used for the file. */
-		if ((rc = scryptdec_file_printparams(infile)) != SCRYPT_OK) {
-			scryptenc_print_error(rc, infilename, NULL);
-			goto err0;
-		}
-
-		/* Clean up. */
-		if ((infile != stdin) && fclose(infile))
-			warnp("fclose");
-
-		/* Finished! */
-		goto done;
 	}
 
 	/* Get the password. */
