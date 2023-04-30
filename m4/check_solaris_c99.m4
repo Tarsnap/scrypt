@@ -26,6 +26,11 @@ case $target_os in
 			[AC_MSG_RESULT([yes, if linked with -std=c99])],
 			[AC_MSG_RESULT([no])
 			 AC_MSG_ERROR([c99 required])],
+			# This should never arise, because the outer _ifelse
+			# would jump to the action-if-cross-compiling rather
+			# than executing its action-if-false.  However, adding
+			# this explicitly makes autoconf happier.
+			[AC_MSG_RESULT([skipping due to cross-compiling])]
 			)],
 		[AC_MSG_RESULT([skipping due to cross-compiling])])
 	;;
