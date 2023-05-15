@@ -45,11 +45,15 @@ The scrypt encryption utility
 -----------------------------
 
 A simple password-based encryption utility is available as a demonstration of
-the `scrypt` key derivation function.  It can be invoked as `scrypt enc infile
-[outfile]` to encrypt data (if `outfile` is not specified, the encrypted data
-is written to the standard output), or as `scrypt dec infile [outfile]` to
-decrypt data (if outfile is not specified, the decrypted data is written to the
-standard output). `scrypt` also supports three command-line options:
+the `scrypt` key derivation function.  It can be invoked as:
+
+* `scrypt enc [options] infile [outfile]` to encrypt data,
+* `scrypt dec [options] infile [outfile]` to decrypt data, or
+* `scrypt info infile` to see the encryption parameters used, and the memory
+  required to decrypt the encrypted file.
+
+If `[outfile]` is not specified, the output is written to standard output.
+`scrypt` also supports a number of command-line `[options]`:
 
 * `-t maxtime` will instruct `scrypt` to spend at most maxtime seconds
   computing the derived encryption key from the password; for encryption, this
