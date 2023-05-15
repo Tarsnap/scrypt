@@ -67,6 +67,10 @@ If `[outfile]` is not specified, the output is written to standard output.
   upper limit and may `cause` scrypt to exit with an error.
 * `-M maxmem` instructs `scrypt` to use at most the specified number of bytes
   of RAM when computing the derived encryption key.
+* `--logN value1`, `-r value2`, `-p value3` will set the encryption parameters
+  explicitly.
+* `--passphrase method:arg` allows the user to specify whether to read the
+  passphrase from stdin, /dev/tty, an environment variable, or a file.
 
 If the encrypted data is corrupt, `scrypt dec` will exit with a non-zero
 status.  However, **`scrypt dec` may produce output before it determines that
