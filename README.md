@@ -70,26 +70,6 @@ the encrypted data was corrupt**, so for applications which require data to be
 authenticated, you must store the output of `scrypt dec` in a temporary
 location and check `scrypt`'s exit code before using the decrypted data.
 
-The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
-(Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd.
-
-* [scrypt version 1.3.1 source tarball](
-  https://www.tarsnap.com/scrypt/scrypt-1.3.1.tgz)
-* [GPG-signed SHA256 for scrypt version 1.3.1](
-  https://www.tarsnap.com/scrypt/scrypt-sigs-1.3.1.asc) (signature
-  generated using Tarsnap [code signing key](
-  https://www.tarsnap.com/tarsnap-signing-key.asc))
-
-  This cleartext signature of the SHA256 output can be verified with:
-
-      gpg --decrypt scrypt-sigs-1.3.1.asc
-
-  You may then compare the displayed hash to the SHA256 hash of
-  `scrypt-1.3.1.gz`.
-
-In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
-in NetBSD pkgsrc as `security/scrypt`.
-
 
 Using scrypt as a KDF
 ---------------------
@@ -126,6 +106,30 @@ crypto_scrypt(): success
 If you would rather copy our source files directly into your
 project, then take a look at the `lib/crypto/crypto_scrypt.h`
 header, which provides `crypto_scrypt()`.
+
+
+Official releases
+-----------------
+
+The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
+(Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd.
+
+* [scrypt version 1.3.1 source tarball](
+  https://www.tarsnap.com/scrypt/scrypt-1.3.1.tgz)
+* [GPG-signed SHA256 for scrypt version 1.3.1](
+  https://www.tarsnap.com/scrypt/scrypt-sigs-1.3.1.asc) (signature
+  generated using Tarsnap [code signing key](
+  https://www.tarsnap.com/tarsnap-signing-key.asc))
+
+  This cleartext signature of the SHA256 output can be verified with:
+
+      gpg --decrypt scrypt-sigs-1.3.1.asc
+
+  You may then compare the displayed hash to the SHA256 hash of
+  `scrypt-1.3.1.gz`.
+
+In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
+in NetBSD pkgsrc as `security/scrypt`.
 
 
 Building
