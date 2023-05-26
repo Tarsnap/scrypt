@@ -35,4 +35,4 @@ if git rev-parse 2>/dev/null; then
 fi
 
 # Output the version to stdout.  Do not use \n; that confuses autoconf.
-printf ${version}
+printf "${version}"

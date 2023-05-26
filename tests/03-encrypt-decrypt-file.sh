@@ -10,10 +10,10 @@ scenario_cmd() {
 	# Encrypt a file.  Use --passphrase dev:stdin-once instead of -P.
 	setup_check_variables "scrypt enc"
 	(
-		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
+		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
 		    enc --passphrase dev:stdin-once -t 1		\
-		    ${reference_file} ${encrypted_file}
-		echo $? > ${c_exitfile}
+		    "${reference_file}" "${encrypted_file}"
+		echo $? > "${c_exitfile}"
 	)
 
 	# The encrypted file should be different from the original file.
@@ -21,19 +21,19 @@ scenario_cmd() {
 	# encrypted files include random salt.  If successful, don't delete
 	# ${encrypted_file} yet; we need it for the next test.
 	setup_check_variables "scrypt enc random salt"
-	cmp -s ${encrypted_file} ${reference_file}
-	expected_exitcode 1 $? > ${c_exitfile}
+	cmp -s "${encrypted_file}" "${reference_file}"
+	expected_exitcode 1 $? > "${c_exitfile}"
 
 	# Decrypt the file we just encrypted.
 	setup_check_variables "scrypt enc decrypt"
 	(
-		echo ${password} | ${c_valgrind_cmd} ${bindir}/scrypt	\
-		    dec -P ${encrypted_file} ${decrypted_file}
-		echo $? > ${c_exitfile}
+		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
+		    dec -P "${encrypted_file}" "${decrypted_file}"
+		echo $? > "${c_exitfile}"
 	)
 
 	# The decrypted file should match the reference.
 	setup_check_variables "scrypt enc decrypt output against reference"
-	cmp -s ${decrypted_file} ${reference_file}
-	echo $? > ${c_exitfile}
+	cmp -s "${decrypted_file}" "${reference_file}"
+	echo $? > "${c_exitfile}"
 }

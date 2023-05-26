@@ -11,24 +11,24 @@ scenario_cmd() {
 	# We want this command to fail with 1.
 	setup_check_variables "scrypt dec non-scrypt"
 	(
-		echo "" | ${c_valgrind_cmd} ${bindir}/scrypt		\
-		    dec -P ${non_encoded_file}				\
-		    ${non_encoded_file_output}				\
-			2>> ${non_encoded_file_stderr}
-		expected_exitcode 1 $? > ${c_exitfile}
+		echo "" | ${c_valgrind_cmd} "${bindir}/scrypt"		\
+		    dec -P "${non_encoded_file}"			\
+		    "${non_encoded_file_output}"			\
+			2>> "${non_encoded_file_stderr}"
+		expected_exitcode 1 $? > "${c_exitfile}"
 	)
 
 	# We should have received an error message.
 	setup_check_variables "scrypt dec non-scrypt error"
 	grep -q "scrypt: Input is not valid scrypt-encrypted block" \
-	    ${non_encoded_file_stderr}
-	echo "$?" > ${c_exitfile}
+	    "${non_encoded_file_stderr}"
+	echo "$?" > "${c_exitfile}"
 
 	# We should not have created a file.
 	setup_check_variables "scrypt dec non-scrypt no file"
-	if [ -e ${non_encoded_file_output} ]; then
+	if [ -e "${non_encoded_file_output}" ]; then
 		echo "1"
 	else
 		echo "0"
-	fi > ${c_exitfile}
+	fi > "${c_exitfile}"
 }
