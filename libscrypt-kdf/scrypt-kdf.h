@@ -32,7 +32,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-/* Compatiblity for C++. */
+/* Compatibility for C++. */
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,7 +52,7 @@ extern "C" {
 int scrypt_kdf(const uint8_t *, size_t, const uint8_t *, size_t, uint64_t,
     uint32_t, uint32_t, uint8_t *, size_t);
 
-/* End compatiblity for C++. */
+/* End compatibility for C++. */
 #ifdef __cplusplus
 }
 #endif

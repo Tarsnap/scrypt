@@ -14,14 +14,14 @@ env:
                             -Wno-#warnings -Wno-pedantic -Wno-padded
                             -Wno-format-nonliteral
                             -Wno-disabled-macro-expansion
-                            -Wno-missing-noreturn -Wno-reserved-id-macro
+                            -Wno-missing-noreturn
                             -Wno-unused-macros
                             -Wno-documentation-unknown-command
                             -Wno-implicit-fallthrough
   CFLAGS_GCC_LIBCPERCIVA: -Wall -Wextra -Werror -Wpedantic
                           -pedantic-errors -Wno-clobbered
   # Variables for specific projects / platforms / compilers.
-  CFLAGS_CLANG_PROJECT:
+  CFLAGS_CLANG_PROJECT: -Wno-reserved-id-macro
   CFLAGS_GCC_PROJECT: -Wno-cpp
   CFLAGS_OSX: -Wno-poison-system-directories
               -I/usr/local/opt/openssl@1.1/include

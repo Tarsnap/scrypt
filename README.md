@@ -45,11 +45,15 @@ The scrypt encryption utility
 -----------------------------
 
 A simple password-based encryption utility is available as a demonstration of
-the `scrypt` key derivation function.  It can be invoked as `scrypt enc infile
-[outfile]` to encrypt data (if `outfile` is not specified, the encrypted data
-is written to the standard output), or as `scrypt dec infile [outfile]` to
-decrypt data (if outfile is not specified, the decrypted data is written to the
-standard output). `scrypt` also supports three command-line options:
+the `scrypt` key derivation function.  It can be invoked as:
+
+* `scrypt enc [options] infile [outfile]` to encrypt data,
+* `scrypt dec [options] infile [outfile]` to decrypt data, or
+* `scrypt info infile` to see the encryption parameters used, and the memory
+  required to decrypt the encrypted file.
+
+If `[outfile]` is not specified, the output is written to standard output.
+`scrypt` also supports a number of command-line `[options]`:
 
 * `-t maxtime` will instruct `scrypt` to spend at most maxtime seconds
   computing the derived encryption key from the password; for encryption, this
@@ -63,32 +67,16 @@ standard output). `scrypt` also supports three command-line options:
   upper limit and may `cause` scrypt to exit with an error.
 * `-M maxmem` instructs `scrypt` to use at most the specified number of bytes
   of RAM when computing the derived encryption key.
+* `--logN value1`, `-r value2`, `-p value3` will set the encryption parameters
+  explicitly.
+* `--passphrase method:arg` allows the user to specify whether to read the
+  passphrase from stdin, /dev/tty, an environment variable, or a file.
 
 If the encrypted data is corrupt, `scrypt dec` will exit with a non-zero
 status.  However, **`scrypt dec` may produce output before it determines that
 the encrypted data was corrupt**, so for applications which require data to be
 authenticated, you must store the output of `scrypt dec` in a temporary
 location and check `scrypt`'s exit code before using the decrypted data.
-
-The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
-(Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd.
-
-* [scrypt version 1.3.1 source tarball](
-  https://www.tarsnap.com/scrypt/scrypt-1.3.1.tgz)
-* [GPG-signed SHA256 for scrypt version 1.3.1](
-  https://www.tarsnap.com/scrypt/scrypt-sigs-1.3.1.asc) (signature
-  generated using Tarsnap [code signing key](
-  https://www.tarsnap.com/tarsnap-signing-key.asc))
-
-  This cleartext signature of the SHA256 output can be verified with:
-
-      gpg --decrypt scrypt-sigs-1.3.1.asc
-
-  You may then compare the displayed hash to the SHA256 hash of
-  `scrypt-1.3.1.gz`.
-
-In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
-in NetBSD pkgsrc as `security/scrypt`.
 
 
 Using scrypt as a KDF
@@ -126,6 +114,30 @@ crypto_scrypt(): success
 If you would rather copy our source files directly into your
 project, then take a look at the `lib/crypto/crypto_scrypt.h`
 header, which provides `crypto_scrypt()`.
+
+
+Official releases
+-----------------
+
+The `scrypt` utility has been tested on FreeBSD, NetBSD, OpenBSD, Linux
+(Slackware, CentOS, Gentoo, Ubuntu), Solaris, OS X, Cygwin, and GNU Hurd.
+
+* [scrypt version 1.3.1 source tarball](
+  https://www.tarsnap.com/scrypt/scrypt-1.3.1.tgz)
+* [GPG-signed SHA256 for scrypt version 1.3.1](
+  https://www.tarsnap.com/scrypt/scrypt-sigs-1.3.1.asc) (signature
+  generated using Tarsnap [code signing key](
+  https://www.tarsnap.com/tarsnap-signing-key.asc))
+
+  This cleartext signature of the SHA256 output can be verified with:
+
+      gpg --decrypt scrypt-sigs-1.3.1.asc
+
+  You may then compare the displayed hash to the SHA256 hash of
+  `scrypt-1.3.1.gz`.
+
+In addition, `scrypt` is available in the OpenBSD and FreeBSD ports trees and
+in NetBSD pkgsrc as `security/scrypt`.
 
 
 Building

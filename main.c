@@ -218,7 +218,7 @@ err0:
 } while (0)
 
 int
-main(int argc, char *argv[])
+main(int argc, char * argv[])
 {
 	int dec = 0;
 	int info = 0;
