@@ -26,9 +26,9 @@ PKGSIGS=scrypt-sigs-${SCRYPTVERSION}
 dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 
 # Create tarball
-sh ${dir}/mktarball.sh $SCRYPTVERSION
+sh "${dir}/mktarball.sh" "$SCRYPTVERSION"
 
 # Sign tarball
-sha256 ${PKGNAME}.tgz |			\
+sha256 "${PKGNAME}.tgz" |			\
     GNUPGHOME=${GNUPG_SIGNING_HOME} gpg --clearsign \
-    > ${PKGSIGS}.asc
+    > "${PKGSIGS}.asc"

@@ -13,54 +13,54 @@ scenario_cmd() {
 	# Decrypt a reference file using --passphrase env:VAR.
 	setup_check_variables "scrypt dec env"
 	PASSPHRASE="${password}"					\
-	${c_valgrind_cmd} ${bindir}/scrypt				\
+	${c_valgrind_cmd} "${bindir}/scrypt"				\
 	    dec --passphrase env:PASSPHRASE				\
-	    ${encrypted_reference_file} ${decrypted_reference_file}
-	echo $? > ${c_exitfile}
+	    "${encrypted_reference_file}" "${decrypted_reference_file}"
+	echo $? > "${c_exitfile}"
 
 	# The decrypted reference file should match the reference.
 	setup_check_variables "scrypt dec env output against reference"
-	cmp -s ${decrypted_reference_file} ${reference_file}
-	echo $? > ${c_exitfile}
+	cmp -s "${decrypted_reference_file}" "${reference_file}"
+	echo $? > "${c_exitfile}"
 
 	# Attempt to decrypt the reference file with a non-existent envvar.
 	# We want this command to fail with 1.
 	setup_check_variables "scrypt dec env none"
-	${c_valgrind_cmd} ${bindir}/scrypt				\
+	${c_valgrind_cmd} "${bindir}/scrypt"				\
 	    dec --passphrase env:THIS_ENVVAR_DOES_NOT_EXIST		\
-	    ${encrypted_reference_file} ${decrypted_reference_file}	\
-	    2> ${decrypted_no_envvar_log}
-	expected_exitcode 1 $? > ${c_exitfile}
+	    "${encrypted_reference_file}" "${decrypted_reference_file}"	\
+	    2> "${decrypted_no_envvar_log}"
+	expected_exitcode 1 $? > "${c_exitfile}"
 
 	# We should have received an error message.
 	setup_check_variables "scrypt dec env none error"
 	grep -q								\
 	    "scrypt: Failed to read from \${THIS_ENVVAR_DOES_NOT_EXIST}" \
-	    ${decrypted_no_envvar_log}
-	echo "$?" > ${c_exitfile}
+	    "${decrypted_no_envvar_log}"
+	echo "$?" > "${c_exitfile}"
 
 	# We should not have created a file.
 	setup_check_variables "scrypt dec env no file"
-	test -e ${decrypted_badpass_file}
-	expected_exitcode 1 $? > ${c_exitfile}
+	test -e "${decrypted_badpass_file}"
+	expected_exitcode 1 $? > "${c_exitfile}"
 
 	# Attempt to decrypt the reference file with an incorrect passphrase.
 	# We want this command to fail with 1.
 	setup_check_variables "scrypt dec env bad"
 	PASSPHRASE="bad-pass"						\
-	${c_valgrind_cmd} ${bindir}/scrypt				\
+	${c_valgrind_cmd} "${bindir}/scrypt"				\
 	    dec --passphrase env:PASSPHRASE				\
-	    ${encrypted_reference_file} ${decrypted_reference_file}	\
-	    2> ${decrypted_badpass_log}
-	expected_exitcode 1 $? > ${c_exitfile}
+	    "${encrypted_reference_file}" "${decrypted_reference_file}"	\
+	    2> "${decrypted_badpass_log}"
+	expected_exitcode 1 $? > "${c_exitfile}"
 
 	# We should have received an error message.
 	setup_check_variables "scrypt dec env bad error"
-	grep -q "scrypt: Passphrase is incorrect" ${decrypted_badpass_log}
-	echo "$?" > ${c_exitfile}
+	grep -q "scrypt: Passphrase is incorrect" "${decrypted_badpass_log}"
+	echo "$?" > "${c_exitfile}"
 
 	setup_check_variables "scrypt dec env bad no file"
 	# We should not have created a file.
-	test -e ${decrypted_badpass_file}
-	expected_exitcode 1 $? > ${c_exitfile}
+	test -e "${decrypted_badpass_file}"
+	expected_exitcode 1 $? > "${c_exitfile}"
 }
