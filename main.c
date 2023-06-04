@@ -197,8 +197,8 @@ err2:
 	insecure_memzero(passwd, strlen(passwd));
 	free(passwd);
 err1:
-	if (infile != stdin)
-		fclose(infile);
+	if ((infile != stdin) && fclose(infile))
+		warnp("fclose");
 err0:
 	/* Failure! */
 	return (-1);
