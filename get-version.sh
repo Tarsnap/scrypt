@@ -12,7 +12,7 @@ version=1.3.1-head
 # Use $SCRYPT_VERSION if it exists.
 if [ -n "${SCRYPT_VERSION}" ]; then
 	# Do not use \n; that confuses autoconf.
-	printf "${SCRYPT_VERSION}"
+	printf "%s" "${SCRYPT_VERSION}"
 	exit 0
 fi
 
@@ -35,4 +35,4 @@ if git rev-parse 2>/dev/null; then
 fi
 
 # Output the version to stdout.  Do not use \n; that confuses autoconf.
-printf "${version}"
+printf "%s" "${version}"
