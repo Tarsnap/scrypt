@@ -17,6 +17,8 @@ set -o noclobber -o nounset
 #   Check for any memory leaks recorded in valgrind logfiles associated with a
 #   test exitfile.  Return the filename if there's a leak; otherwise return an
 #   empty string.
+# - valgrind_incomplete():
+#   Check if any valgrind log files are incomplete.
 
 # A non-zero value unlikely to be used as an exit code by the programs being
 # tested.
@@ -228,7 +230,7 @@ valgrind_setup_cmd() {
 		return
 	fi
 
-	val_logfilename="${s_val_basename}-${count_str}-%p.log"
+	val_logfilename="${s_val_basename}-${s_count_str}-%p.log"
 	c_valgrind_cmd="valgrind \
 		--log-file=${val_logfilename} \
 		--track-fds=yes \
@@ -236,6 +238,18 @@ valgrind_setup_cmd() {
 		--errors-for-leak-kinds=all \
 		--suppressions=${valgrind_suppressions}"
 	echo "${c_valgrind_cmd}"
+}
+
+## valgrind_incomplete:
+# Return 0 if at least one valgrind log file is not complete.
+valgrind_incomplete() {
+	# The exit code of `grep -L` is undesirable: if at least one file
+	# contains the pattern, it returns 0.  To detect if at least one file
+	# does *not* contain the pattern, we need to check grep's output,
+	# rather than the exit code.
+	_valgrind_incomplete_logfiles=$(grep -L "ERROR SUMMARY"		\
+	    "${out_valgrind}"/*.log)
+	test -n "${_valgrind_incomplete_logfiles}"
 }
 
 ## valgrind_get_basename (exitfile):
