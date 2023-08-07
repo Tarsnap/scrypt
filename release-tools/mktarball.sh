@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION=$1
-if [ -z "$VERSION" ]; then
+if [ -z "${VERSION}" ]; then
 	echo "Please specify the version number"
 	exit 1
 fi
@@ -15,7 +15,7 @@ cp Makefile.am .autom4te.cfg "${DESTDIR}"
 cp Makefile.am "${DESTDIR}/autotools"
 cp -R lib lib-platform libcperciva libscrypt-kdf m4 tests "${DESTDIR}"
 # Copy with substitution
-sed -e "s/@DATE@/$RELEASEDATE/" < scrypt.1 > "${DESTDIR}/scrypt.1"
+sed -e "s/@DATE@/${RELEASEDATE}/" < scrypt.1 > "${DESTDIR}/scrypt.1"
 sed -e "s/\[m4_esyscmd(\[sh get-version\.sh\])]/${VERSION}/" \
 	< configure.ac > "${DESTDIR}/configure.ac"
 cp "${DESTDIR}/configure.ac" "${DESTDIR}/autotools"
