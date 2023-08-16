@@ -21,7 +21,7 @@ if git rev-parse 2>/dev/null; then
 	# Get a version string from the latest git tag.
 	if version_git=$( git describe --tags --match '[[:digit:]].*' ) \
 	    2>/dev/null ; then
-		version_decapitated=$( echo ${version} | sed "s/-head//" )
+		version_decapitated=$( echo "${version}" | sed "s/-head//" )
 		# Check that the beginning of this tag matches the version.
 		case ${version_git} in
 		"${version_decapitated}"*)
