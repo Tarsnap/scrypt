@@ -46,6 +46,7 @@ getclockdiff(struct timeval * st, double * diffd)
 		return (1);
 	*diffd = timeval_diff((*st), en);
 
+	/* Success! */
 	return (0);
 }
 
