@@ -12,13 +12,13 @@ scenario_cmd() {
 	if [ -z "${system_scrypt}" ]; then
 		printf "no suitable system scrypt: " 1>&2
 		# Inform test suite that we are skipping.
-		setup_check_variables "system scrypt skip"
+		setup_check "system scrypt skip"
 		echo "-1" > "${c_exitfile}"
 		return
 	fi
 
 	# Encrypt a file with our scrypt.
-	setup_check_variables "scrypt enc for system"
+	setup_check "scrypt enc for system"
 	(
 		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
 		    enc -P -t 1 "${reference_file}" "${encrypted_file_1}"
@@ -27,7 +27,7 @@ scenario_cmd() {
 
 	# Use the system scrypt to decrypt the file we just
 	# encrypted. Don't use valgrind for this.
-	setup_check_variables "system scrypt dec"
+	setup_check "system scrypt dec"
 	(
 		echo "${password}" | ${system_scrypt}			\
 		    dec -P "${encrypted_file_1}" "${decrypted_file_1}"
@@ -35,13 +35,13 @@ scenario_cmd() {
 	)
 
 	# The decrypted file should match the reference.
-	setup_check_variables "system scrypt dec output against reference"
+	setup_check "system scrypt dec output against reference"
 	cmp -s "${decrypted_file_1}" "${reference_file}"
 	echo $? > "${c_exitfile}"
 
 	# Encrypt a file with the system scrypt.  Don't use
 	# valgrind for this.
-	setup_check_variables "system scrypt enc"
+	setup_check "system scrypt enc"
 	(
 		echo "${password}" | ${system_scrypt}			\
 		    enc -P -t 1 "${reference_file}" "${encrypted_file_2}"
@@ -49,7 +49,7 @@ scenario_cmd() {
 	)
 
 	# Use our scrypt to decrypt the file we just encrypted.
-	setup_check_variables "scrypt dec for system"
+	setup_check "scrypt dec for system"
 	(
 		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
 		    dec -P "${encrypted_file_2}" "${decrypted_file_2}"
@@ -57,7 +57,7 @@ scenario_cmd() {
 	)
 
 	# The decrypted file should match the reference.
-	setup_check_variables "scrypt dec for system output against reference"
+	setup_check "scrypt dec for system output against reference"
 	cmp -s "${decrypted_file_2}" "${reference_file}"
 	echo $? > "${c_exitfile}"
 }

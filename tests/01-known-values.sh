@@ -11,7 +11,7 @@ reference_small="${scriptdir}/verify-strings/test_scrypt_small.good"
 ### Actual command
 scenario_cmd() {
 	# Run the binary which tests known input/output strings.
-	setup_check_variables "test_scrypt"
+	setup_check "test_scrypt"
 	(
 		${c_valgrind_cmd} "${bindir}/tests/verify-strings/test_scrypt" \
 			"${SMALLMEM:-0}" 1> "${test_output}"
@@ -19,7 +19,7 @@ scenario_cmd() {
 	)
 
 	# The generated values should match the known good values.
-	setup_check_variables "test_scrypt output against reference"
+	setup_check "test_scrypt output against reference"
 	if [ "${SMALLMEM:-0}" -gt "0" ]; then
 		cmp -s "${test_output}" "${reference_small}"
 	else

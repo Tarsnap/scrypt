@@ -9,7 +9,7 @@ longwait_failed_log="${s_basename}-failed.log"
 
 scenario_cmd() {
 	# Encrypt file which should take a long time to decrypt.
-	setup_check_variables "scrypt enc 10 seconds"
+	setup_check "scrypt enc 10 seconds"
 	(
 		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
 			enc -P -t 10 "${reference_file}"		\
@@ -19,7 +19,7 @@ scenario_cmd() {
 
 	# Attempt to decrypt it with limited time.  We want this
 	# command to fail, so we negate the normal return code.
-	setup_check_variables "scrypt dec 1 second"
+	setup_check "scrypt dec 1 second"
 	(
 		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
 			dec -P -t 1 "${longwait_encrypted_file}"	\
@@ -29,13 +29,13 @@ scenario_cmd() {
 	)
 
 	# We should have received an error message.
-	setup_check_variables "scrypt dec 1 second error"
+	setup_check "scrypt dec 1 second error"
 	grep -q "scrypt: Decrypting file would take too much CPU time" \
 	    "${longwait_failed_log}"
 	echo "$?" > "${c_exitfile}"
 
 	# Attempt to decrypt it with limited time, but force success.
-	setup_check_variables "scrypt dec force"
+	setup_check "scrypt dec force"
 	(
 		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
 			dec -P -t 1 -f "${longwait_encrypted_file}"	\
@@ -44,7 +44,7 @@ scenario_cmd() {
 	)
 
 	# The decrypted reference file should match the reference.
-	setup_check_variables "scrypt dec force output against reference"
+	setup_check "scrypt dec force output against reference"
 	cmp -s "${longwait_decrypted_file}" "${reference_file}"
 	echo $? > "${c_exitfile}"
 }
