@@ -24,8 +24,8 @@ env:
   CFLAGS_CLANG_PROJECT: -Wno-reserved-id-macro
   CFLAGS_GCC_PROJECT: -Wno-cpp
   CFLAGS_OSX: -Wno-poison-system-directories
-              -I/usr/local/opt/openssl@1.1/include
-  LDFLAGS_OSX: -L/usr/local/opt/openssl@1.1/lib
+              -Wno-deprecated-declarations
+  LDFLAGS_OSX:
 
 jobs:
   Ubuntu:
