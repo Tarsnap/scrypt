@@ -27,6 +27,9 @@ CHECK_POSIX_SH
 # Check if we need -std=c99 in LDFLAGS (for gcc on Solaris).
 CHECK_SOLARIS_C99
 
+# Check if we need to add extra paths to CPPFLAGS and LDFLAGS for macOS.
+CHECK_DARWIN_PATHS
+
 # Checks for AES support in OpenSSL.
 AC_SEARCH_LIBS([AES_encrypt], [crypto],,
     AC_MSG_ERROR([function AES_ENCRYPT not found]))
