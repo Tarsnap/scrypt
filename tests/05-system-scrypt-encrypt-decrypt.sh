@@ -26,7 +26,7 @@ scenario_cmd() {
 	)
 
 	# Use the system scrypt to decrypt the file we just
-	# encrypted. Don't use valgrind for this.
+	# encrypted.  Don't use valgrind for this.
 	setup_check "system scrypt dec"
 	(
 		echo "${password}" | ${system_scrypt}			\
