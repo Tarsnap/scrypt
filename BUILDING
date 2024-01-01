@@ -43,7 +43,7 @@ Platform-specific notes
   pass the relevant directories directly to ./configure:
       ./configure CPPFLAGS="-I/usr/local/opt/openssl/include" LDFLAGS="-L/usr/local/opt/openssl/lib"
 
-  Alternatively, you may with to add these lines to your $HOME/.profile file:
+  Alternatively, you may wish to add these lines to your $HOME/.profile file:
       export CPPFLAGS="-I/usr/local/opt/openssl/include $CPPFLAGS"
       export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
   and then close & re-open your terminal window.

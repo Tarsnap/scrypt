@@ -61,7 +61,7 @@ If `[outfile]` is not specified, the output is written to standard output.
   this value is used as an upper limit (if `scrypt` detects that it would take
   too long to decrypt the data, it will exit with an error message).
 * `-m maxmemfrac` instructs `scrypt` to use at most the specified fraction of
-  the available RAM for computing the derived encryption key. For encryption,
+  the available RAM for computing the derived encryption key.  For encryption,
   increasing this value might increase the security of the encrypted data,
   depending on the `maxtime` value; for decryption, this value is used as an
   upper limit and may `cause` scrypt to exit with an error.
