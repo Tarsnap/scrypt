@@ -29,7 +29,7 @@ main(void)
 	if (exitcode == 0)
 		printf("scrypt(): success\n");
 	else
-		printf("scrypt(): failure %i\n", exitcode);
+		printf("scrypt(): failure %d\n", exitcode);
 
 	return (exitcode);
 }
