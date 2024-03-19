@@ -282,7 +282,7 @@ main(int argc, char * argv[])
 			}
 			break;
 		GETOPT_OPTARG("-p"):
-			GETOPT_PARSENUM_WITHIN_UNSIGNED(&params.p, 1, 32);
+			GETOPT_PARSENUM_WITHIN_UNSIGNED(&params.p, 1, 2048);
 			break;
 		GETOPT_OPTARG("--passphrase"):
 			if (passphrase_entry != PASSPHRASE_UNSET) {
