@@ -27,6 +27,7 @@
 /libtool
 /stamp-h1
 # In-tree build, only top-level
+/apisupport-config.h
 /cpusupport-config.h
 # In-tree build, all directories
 .dirstamp
