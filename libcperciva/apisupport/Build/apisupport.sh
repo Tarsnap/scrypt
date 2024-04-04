@@ -74,6 +74,9 @@ fi
 feature NONPOSIX SETGROUPS "" ""			\
 	"-U_POSIX_C_SOURCE -U_XOPEN_SOURCE"		\
 	"-U_POSIX_C_SOURCE -U_XOPEN_SOURCE -Wno-reserved-id-macro"
+feature NONPOSIX MEMLIMIT "" ""				\
+	"-U_POSIX_C_SOURCE -U_XOPEN_SOURCE"		\
+	"-U_POSIX_C_SOURCE -U_XOPEN_SOURCE -Wno-reserved-id-macro"
 
 # Detect how to compile libssl and libcrypto code.
 feature LIBSSL HOST_NAME "-lssl" ""			\

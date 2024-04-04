@@ -157,7 +157,7 @@ libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 noinst_LTLIBRARIES+=	libscrypt_memlimit.la
 libscrypt_memlimit_la_SOURCES=	lib-platform/util/memlimit.c	\
 				lib-platform/util/memlimit.h
-libscrypt_memlimit_la_CFLAGS=-U_POSIX_C_SOURCE -U_XOPEN_SOURCE
+libscrypt_memlimit_la_CFLAGS=`. ./apisupport-config.h; echo $${CFLAGS_NONPOSIX_MEMLIMIT}`
 
 # Install libscrypt-kdf?
 if LIBSCRYPT_KDF
