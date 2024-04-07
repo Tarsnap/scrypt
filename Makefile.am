@@ -93,6 +93,7 @@ AM_CPPFLAGS=		-I$(srcdir)/lib				\
 			-I$(srcdir)/libcperciva/crypto		\
 			-I$(srcdir)/libcperciva/util		\
 			-DCPUSUPPORT_CONFIG_FILE=\"cpusupport-config.h\" \
+			-DAPISUPPORT_CONFIG_FILE=\"apisupport-config.h\" \
 			-D_POSIX_C_SOURCE=200809L		\
 			-D_XOPEN_SOURCE=700			\
 			${CFLAGS_POSIX}
@@ -105,10 +106,15 @@ scrypt_LDADD=		libcperciva_aesni.la libcperciva_rdrand.la \
 			${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
 
+# apisupport needs to access post-configure info: lib-platform/platform.h,
+# config.h, and -DHAVE_CONFIG_H.
+apisupport-config.h:
+	( export CC="${CC}"; export CFLAGS="-I${top_srcdir}/lib-platform -I${builddir} ${DEFS} ${CFLAGS}"; command -p sh $(srcdir)/libcperciva/apisupport/Build/apisupport.sh "$$PATH") > apisupport-config.h.tmp && command -p mv apisupport-config.h.tmp apisupport-config.h
 cpusupport-config.h:
 	( export CC="${CC}"; export CFLAGS="${CFLAGS}"; command -p sh $(srcdir)/libcperciva/cpusupport/Build/cpusupport.sh "$$PATH") > cpusupport-config.h.tmp && command -p mv cpusupport-config.h.tmp cpusupport-config.h
-BUILT_SOURCES=	cpusupport-config.h
-CLEANFILES=	cpusupport-config.h cpusupport-config.h.tmp
+BUILT_SOURCES=	apisupport-config.h cpusupport-config.h
+CLEANFILES=	apisupport-config.h apisupport-config.h.tmp	\
+		cpusupport-config.h cpusupport-config.h.tmp
 
 # Libraries from libcperciva code.
 noinst_LTLIBRARIES=	libcperciva_aesni.la
@@ -151,7 +157,7 @@ libscrypt_sse2_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_X86_SSE2}`
 noinst_LTLIBRARIES+=	libscrypt_memlimit.la
 libscrypt_memlimit_la_SOURCES=	lib-platform/util/memlimit.c	\
 				lib-platform/util/memlimit.h
-libscrypt_memlimit_la_CFLAGS=-U_POSIX_C_SOURCE -U_XOPEN_SOURCE
+libscrypt_memlimit_la_CFLAGS=`. ./apisupport-config.h; echo $${CFLAGS_NONPOSIX_MEMLIMIT}`
 
 # Install libscrypt-kdf?
 if LIBSCRYPT_KDF
