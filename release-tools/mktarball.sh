@@ -10,7 +10,7 @@ RELEASEDATE=$(date "+%B %d, %Y")
 
 # Copy bits in
 mkdir "${DESTDIR}" "${DESTDIR}/autotools"
-cp main.c FORMAT COPYRIGHT BUILDING README.md STYLE "${DESTDIR}"
+cp main.c FORMAT.md COPYRIGHT BUILDING README.md STYLE "${DESTDIR}"
 cp Makefile.am .autom4te.cfg "${DESTDIR}"
 cp Makefile.am "${DESTDIR}/autotools"
 cp -R lib lib-platform libcperciva libscrypt-kdf m4 tests "${DESTDIR}"

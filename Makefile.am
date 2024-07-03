@@ -199,7 +199,7 @@ EXTRA_DIST=							\
 	.autom4te.cfg						\
 	BUILDING						\
 	COPYRIGHT						\
-	FORMAT							\
+	FORMAT.md						\
 	README.md						\
 	STYLE							\
 	get-version.sh						\
