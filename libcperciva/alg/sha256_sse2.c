@@ -21,7 +21,7 @@ mm_bswap_epi32(__m128i a)
 {
 
 	/* Swap bytes in each 16-bit word. */
-        a = _mm_or_si128(_mm_slli_epi16(a, 8), _mm_srli_epi16(a, 8));
+	a = _mm_or_si128(_mm_slli_epi16(a, 8), _mm_srli_epi16(a, 8));
 
 	/* Swap all 16-bit words. */
 	a = _mm_shufflelo_epi16(a, _MM_SHUFFLE(2, 3, 0, 1));
@@ -167,7 +167,7 @@ MSG4(__m128i X0, __m128i X1, __m128i X2, __m128i X3)
 }
 
 /**
- * SHA256_Transform_sse2(state, block):
+ * SHA256_Transform_sse2(state, block, W, S):
  * Compute the SHA256 block compression function, transforming ${state} using
  * the data in ${block}.  This implementation uses x86 SSE2 instructions, and
  * should only be used if _SSE2 is defined and cpusupport_x86_sse2() returns
