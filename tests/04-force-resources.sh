@@ -19,10 +19,10 @@ scenario_cmd() {
 
 	# Attempt to decrypt it with limited time.  We want this
 	# command to fail, so we negate the normal return code.
-	setup_check "scrypt dec 1 second"
+	setup_check "scrypt dec 0.1 seconds"
 	(
 		echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt" \
-			dec -P -t 1 "${longwait_encrypted_file}"	\
+			dec -P -t 0.1 "${longwait_encrypted_file}"	\
 			"${longwait_decrypted_file}"			\
 			2> "${longwait_failed_log}"
 		expected_exitcode 1 $? > "${c_exitfile}"
