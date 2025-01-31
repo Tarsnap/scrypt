@@ -107,7 +107,7 @@ scrypt_LDADD=								\
 	libcperciva_shani.la						\
 	libscrypt_sse2.la						\
 	libscrypt_memlimit.la						\
-	libscrypt_crypto_aes.la						\
+	libcperciva_crypto_aes.la					\
 	libcperciva_arm_sha256.la					\
 	libcperciva_arm_aes.la						\
 	${LDADD_POSIX}
@@ -159,6 +159,11 @@ libcperciva_arm_sha256_la_SOURCES=	libcperciva/alg/sha256_arm.c
 nodist_libcperciva_arm_sha256_la_SOURCES=	cpusupport-config.h
 libcperciva_arm_sha256_la_CFLAGS=`. ./cpusupport-config.h; echo $${CFLAGS_ARM_SHA256}`
 
+noinst_LTLIBRARIES+=	libcperciva_crypto_aes.la
+libcperciva_crypto_aes_la_SOURCES=	libcperciva/crypto/crypto_aes.c
+nodist_libcperciva_crypto_aes_la_SOURCES=	cpusupport-config.h
+libcperciva_crypto_aes_la_CFLAGS=`. ./apisupport-config.h; echo $${CFLAGS_LIBCRYPTO_LOW_LEVEL_AES}`
+
 # Library from libcperciva and scrypt code.
 noinst_LTLIBRARIES+=	libscrypt_sse2.la
 libscrypt_sse2_la_SOURCES=						\
@@ -174,12 +179,6 @@ libscrypt_memlimit_la_SOURCES=						\
 	lib-platform/util/memlimit.c					\
 	lib-platform/util/memlimit.h
 libscrypt_memlimit_la_CFLAGS=`. ./apisupport-config.h; echo $${CFLAGS_NONPOSIX_MEMLIMIT}`
-
-noinst_LTLIBRARIES+=	libscrypt_crypto_aes.la
-libscrypt_crypto_aes_la_SOURCES=					\
-	libcperciva/crypto/crypto_aes.c					\
-	libcperciva/crypto/crypto_aes.h
-libscrypt_crypto_aes_la_CFLAGS=`. ./apisupport-config.h; echo $${CFLAGS_LIBCRYPTO_LOW_LEVEL_AES}`
 
 # Install libscrypt-kdf?
 if LIBSCRYPT_KDF
