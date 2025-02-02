@@ -10,9 +10,6 @@ ACLOCAL_AMFLAGS=	-I m4
 #     lib/crypto/crypto_scrypt_smix_sse2.c
 # which require special compiler flags and are thus compiled as separate
 # libraries.  See test_scrypt for an example.
-#
-# crypto_scrypt() does not require aesni or rdrand, but we need to include
-# the relevant cpusupport_x86 files so that cpusupport can link to them.
 crypto_scrypt_files=							\
 	lib/crypto/crypto_scrypt_smix.c					\
 	lib/crypto/crypto_scrypt_smix.h					\
@@ -26,13 +23,6 @@ crypto_scrypt_files=							\
 	libcperciva/alg/sha256_shani.h					\
 	libcperciva/alg/sha256_sse2.h					\
 	libcperciva/cpusupport/cpusupport.h				\
-	libcperciva/cpusupport/cpusupport_arm_aes.c			\
-	libcperciva/cpusupport/cpusupport_arm_sha256.c			\
-	libcperciva/cpusupport/cpusupport_x86_aesni.c			\
-	libcperciva/cpusupport/cpusupport_x86_rdrand.c			\
-	libcperciva/cpusupport/cpusupport_x86_shani.c			\
-	libcperciva/cpusupport/cpusupport_x86_sse2.c			\
-	libcperciva/cpusupport/cpusupport_x86_ssse3.c			\
 	libcperciva/util/insecure_memzero.c				\
 	libcperciva/util/insecure_memzero.h				\
 	libcperciva/util/warnp.c					\
@@ -101,15 +91,20 @@ AM_CPPFLAGS=								\
 	-D_XOPEN_SOURCE=700						\
 	${CFLAGS_POSIX}
 
+# Each "paragraph" denotes a rank of dependencies.  Libraries without
+# dependencies go in the bottom paragraph; a library which depends on one of
+# those goes in the preceeding paragraph; and so on.
 scrypt_LDADD=								\
+	libcperciva_crypto_aes.la					\
+									\
 	libcperciva_aesni.la						\
 	libcperciva_rdrand.la						\
 	libcperciva_shani.la						\
 	libscrypt_sse2.la						\
 	libscrypt_memlimit.la						\
-	libcperciva_crypto_aes.la					\
 	libcperciva_arm_sha256.la					\
 	libcperciva_arm_aes.la						\
+	libcperciva_cpusupport_detect.la				\
 	${LDADD_POSIX}
 scrypt_man_MANS=	scrypt.1
 
@@ -164,6 +159,18 @@ libcperciva_crypto_aes_la_SOURCES=	libcperciva/crypto/crypto_aes.c
 nodist_libcperciva_crypto_aes_la_SOURCES=	cpusupport-config.h
 libcperciva_crypto_aes_la_CFLAGS=`. ./apisupport-config.h; echo $${CFLAGS_LIBCRYPTO_LOW_LEVEL_AES}`
 
+noinst_LTLIBRARIES+=	libcperciva_cpusupport_detect.la
+libcperciva_cpusupport_detect_la_SOURCES=				\
+	libcperciva/cpusupport/cpusupport_arm_aes.c			\
+	libcperciva/cpusupport/cpusupport_arm_sha256.c			\
+	libcperciva/cpusupport/cpusupport_x86_aesni.c			\
+	libcperciva/cpusupport/cpusupport_x86_rdrand.c			\
+	libcperciva/cpusupport/cpusupport_x86_shani.c			\
+	libcperciva/cpusupport/cpusupport_x86_sse2.c			\
+	libcperciva/cpusupport/cpusupport_x86_ssse3.c
+nodist_libcperciva_cpusupport_detect_la_SOURCES=	cpusupport-config.h
+
+
 # Library from libcperciva and scrypt code.
 noinst_LTLIBRARIES+=	libscrypt_sse2.la
 libscrypt_sse2_la_SOURCES=						\
@@ -198,6 +205,7 @@ endif
 # Shared definitions for libscrypt-kdf.
 libscrypt_kdf_la_SOURCES=	$(crypto_scrypt_files)
 libscrypt_kdf_la_LIBADD=						\
+	libcperciva_cpusupport_detect.la				\
 	libcperciva_shani.la						\
 	libscrypt_sse2.la						\
 	libcperciva_arm_sha256.la
@@ -277,6 +285,7 @@ tests_verify_strings_test_scrypt_LDADD=					\
 	libcperciva_shani.la						\
 	libscrypt_sse2.la						\
 	libcperciva_arm_sha256.la					\
+	libcperciva_cpusupport_detect.la				\
 	${LDADD_POSIX}
 
 # Eliminate false positives while memory-checking for the test framework.
