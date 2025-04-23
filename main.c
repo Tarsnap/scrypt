@@ -249,7 +249,7 @@ main(int argc, char * argv[])
 		fprintf(stdout, "scrypt %s\n", PACKAGE_VERSION);
 		exit(0);
 	} else {
-		warn0("First argument must be 'enc', 'dec', or 'info'.");
+		warn0("First argument must be 'enc', 'dec', or 'info'");
 		usage();
 	}
 	argc--;
@@ -266,11 +266,11 @@ main(int argc, char * argv[])
 			break;
 		GETOPT_OPTARG("-M"):
 			if (humansize_parse(optarg, &maxmem64)) {
-				warn0("Could not parse the parameter to -M.");
+				warn0("Could not parse the parameter to -M");
 				exit(1);
 			}
 			if (maxmem64 > SIZE_MAX) {
-				warn0("The parameter to -M is too large.");
+				warn0("The parameter to -M is too large");
 				exit(1);
 			}
 			params.maxmem = (size_t)maxmem64;
