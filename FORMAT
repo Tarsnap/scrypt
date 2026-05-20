@@ -5,8 +5,8 @@ offset	length
 0	6	"scrypt"
 6	1	scrypt data file version number (== 0)
 7	1	log2(N) (must be between 1 and 63 inclusive)
-8	4	r (big-endian integer; must satisfy r * p < 2^30)
-12	4	p (big-endian integer; must satisfy r * p < 2^30)
+8	4	r (big-endian integer; must satisfy 0 < r * p < 2^30)
+12	4	p (big-endian integer; must satisfy 0 < r * p < 2^30)
 16	32	salt
 48	16	first 16 bytes of SHA256(bytes 0 .. 47)
 64	32	HMAC-SHA256(bytes 0 .. 63)
