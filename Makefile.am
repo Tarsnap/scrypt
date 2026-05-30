@@ -1,5 +1,6 @@
 bin_PROGRAMS=	scrypt
 noinst_PROGRAMS=							\
+	tests/invalid-params/test_scrypt_ref_params			\
 	tests/valgrind/potential-memleaks				\
 	tests/verify-strings/test_scrypt
 dist_man_MANS=$(scrypt_man_MANS)
@@ -287,6 +288,24 @@ tests_verify_strings_test_scrypt_LDADD=					\
 	libscrypt_sse2.la						\
 	${LDADD_POSIX}
 
+# Binary to test parameter validation in the reference crypto_scrypt().
+tests_invalid_params_test_scrypt_ref_params_SOURCES=			\
+	tests/invalid-params/test_scrypt_ref_params.c			\
+	lib/crypto/crypto_scrypt-ref.c					\
+	libcperciva/alg/sha256.c					\
+	libcperciva/alg/sha256.h					\
+	libcperciva/util/insecure_memzero.c				\
+	libcperciva/util/insecure_memzero.h				\
+	libcperciva/util/warnp.c					\
+	libcperciva/util/warnp.h
+
+tests_invalid_params_test_scrypt_ref_params_LDADD=			\
+	libcperciva_arm_sha256.la					\
+	libcperciva_cpusupport_detect.la				\
+	libcperciva_shani.la						\
+	libscrypt_sse2.la						\
+	${LDADD_POSIX}
+
 # Eliminate false positives while memory-checking for the test framework.
 tests_valgrind_potential_memleaks_SOURCES= tests/valgrind/potential-memleaks.c
 
@@ -294,4 +313,5 @@ tests_valgrind_potential_memleaks_SOURCES= tests/valgrind/potential-memleaks.c
 # we can't only build "scrypt tests/verify-strings/test_scrypt" because that
 # won't build the BUILT_SOURCES.
 test: all
+	$(top_builddir)/tests/invalid-params/test_scrypt_ref_params
 	$(top_srcdir)/tests/test_scrypt.sh .
