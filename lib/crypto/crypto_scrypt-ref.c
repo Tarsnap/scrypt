@@ -165,7 +165,8 @@ integerify(uint8_t * B, size_t r)
  * smix(B, r, N, V, XY):
  * Compute B = SMix_r(B, N).  The input B must be 128r bytes in length; the
  * temporary storage V must be 128rN bytes in length; the temporary storage
- * XY must be 256r bytes in length.  The value N must be a power of 2.
+ * XY must be 256r bytes in length.  The value N must be a power of 2 greater
+ * than 1.
  */
 static void
 smix(uint8_t * B, size_t r, uint64_t N, uint8_t * V, uint8_t * XY)
@@ -206,7 +207,7 @@ smix(uint8_t * B, size_t r, uint64_t N, uint8_t * V, uint8_t * XY)
  * Compute scrypt(passwd[0 .. passwdlen - 1], salt[0 .. saltlen - 1], N, r,
  * p, buflen) and write the result into buf.  The parameters r, p, and buflen
  * must satisfy r * p < 2^30 and buflen <= (2^32 - 1) * 32.  The parameter N
- * must be a power of 2.
+ * must be a power of 2 greater than 1.
  *
  * Return 0 on success; or -1 on error.
  */
@@ -232,7 +233,7 @@ crypto_scrypt(const uint8_t * passwd, size_t passwdlen,
 		errno = EFBIG;
 		goto err0;
 	}
-	if (((N & (N - 1)) != 0) || (N == 0)) {
+	if (((N & (N - 1)) != 0) || (N < 2)) {
 		errno = EINVAL;
 		goto err0;
 	}
