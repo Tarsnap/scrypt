@@ -81,11 +81,13 @@ display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
 	fprintf(stderr, "Parameters used: N = %" PRIu64 "; r = %" PRIu32
 	    "; p = %" PRIu32 ";\n", N, r, p);
 
-	/* Memory */
+	/* Memory - guard against humansize() returning NULL on ENOMEM */
 	fprintf(stderr, "    Decrypting this file requires at least"
-	    " %s of memory", human_mem_minimum);
+	    " %s of memory",
+	    human_mem_minimum ? human_mem_minimum : "(unknown)");
 	if (memlimit > 0)
-		fprintf(stderr, " (%s available)", human_memlimit);
+		fprintf(stderr, " (%s available)",
+		    human_memlimit ? human_memlimit : "(unknown)");
 
 	/* CPU time */
 	if (opps > 0)
