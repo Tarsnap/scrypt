@@ -539,16 +539,17 @@ scryptdec_buf(const uint8_t * inbuf, size_t inbuflen, uint8_t * outbuf,
 	crypto_aesctr_stream(AES, &inbuf[96], outbuf, inbuflen - 128);
 	crypto_aesctr_free(AES);
 	crypto_aes_key_free(key_enc_exp);
-	*outlen = inbuflen - 128;
 
-	/* Verify signature. */
+	/* Verify signature before setting *outlen (encrypt-then-MAC). */
 	HMAC_SHA256_Init(&hctx, key_hmac, 32);
 	HMAC_SHA256_Update(&hctx, inbuf, inbuflen - 32);
 	HMAC_SHA256_Final(hbuf, &hctx);
 	if (crypto_verify_bytes(hbuf, &inbuf[inbuflen - 32], 32)) {
-		rc = SCRYPT_EINVAL;
-		goto err1;
+		insecure_memzero(dk, 64);
+		return (SCRYPT_EINVAL);
 	}
+
+	*outlen = inbuflen - 128;
 
 	/* Zero sensitive data. */
 	insecure_memzero(dk, 64);
