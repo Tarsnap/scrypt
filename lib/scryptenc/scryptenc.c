@@ -67,7 +67,7 @@ struct scryptdec_file_cookie {
 	uint8_t	dk[64];
 };
 
-static void
+static int
 display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
     double opps, double maxtime)
 {
@@ -76,6 +76,13 @@ display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
 	double expected_seconds = opps > 0 ? (double)(4 * N * r * p) / opps : 0;
 	char * human_memlimit = humansize(memlimit);
 	char * human_mem_minimum = humansize(mem_minimum);
+	int rc;
+
+	/* Check humansize() allocation. */
+	if ((human_memlimit == NULL) || (human_mem_minimum == NULL)) {
+		rc = SCRYPT_ENOMEM;
+		goto err1;
+	}
 
 	/* Parameters */
 	fprintf(stderr, "Parameters used: N = %" PRIu64 "; r = %" PRIu32
@@ -96,6 +103,16 @@ display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
 	/* Clean up */
 	free(human_memlimit);
 	free(human_mem_minimum);
+
+	/* Success! */
+	return (SCRYPT_OK);
+
+err1:
+	free(human_memlimit);
+	free(human_mem_minimum);
+
+	/* Failure! */
+	return (rc);
 }
 
 static int
@@ -165,8 +182,10 @@ pickparams(size_t maxmem, double maxmemfrac, double maxtime,
 		*p = (uint32_t)(maxrp) / *r;
 	}
 
-	if (verbose)
-		display_params(*logN, *r, *p, memlimit, opps, maxtime);
+	if (verbose &&
+	    (rc = display_params(*logN, *r, *p, memlimit, opps, maxtime)
+	    != SCRYPT_OK))
+		return (rc);
 
 	/* Success! */
 	return (SCRYPT_OK);
@@ -201,8 +220,10 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 			return (rc);
 		opslimit = opps * maxtime;
 
-		if (verbose)
-			display_params(logN, r, p, memlimit, opps, maxtime);
+		if (verbose &&
+		    (rc = display_params(logN, r, p, memlimit, opps, maxtime)
+		    != SCRYPT_OK))
+			return (rc);
 
 		/* Check limits. */
 		N = (uint64_t)(1) << logN;
@@ -218,8 +239,10 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 		memlimit = 0;
 		opps = 0;
 
-		if (verbose)
-			display_params(logN, r, p, memlimit, opps, maxtime);
+		if (verbose &&
+		    (rc = display_params(logN, r, p, memlimit, opps, maxtime)
+		    != SCRYPT_OK))
+			return (rc);
 	}
 
 	/* Success! */
@@ -335,7 +358,8 @@ scryptdec_file_printparams(FILE * infile)
 	p = be32dec(&header[12]);
 
 	/* Print parameters. */
-	display_params(logN, r, p, 0, 0, 0);
+	if ((rc = display_params(logN, r, p, 0, 0, 0)) != SCRYPT_OK)
+		goto err0;
 
 	/* Success! */
 	return (SCRYPT_OK);
