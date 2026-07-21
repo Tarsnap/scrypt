@@ -183,7 +183,7 @@ pickparams(size_t maxmem, double maxmemfrac, double maxtime,
 	}
 
 	if (verbose &&
-	    (rc = display_params(*logN, *r, *p, memlimit, opps, maxtime)
+	    ((rc = display_params(*logN, *r, *p, memlimit, opps, maxtime))
 	    != SCRYPT_OK))
 		return (rc);
 
@@ -221,7 +221,7 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 		opslimit = opps * maxtime;
 
 		if (verbose &&
-		    (rc = display_params(logN, r, p, memlimit, opps, maxtime)
+		    ((rc = display_params(logN, r, p, memlimit, opps, maxtime))
 		    != SCRYPT_OK))
 			return (rc);
 
@@ -240,7 +240,7 @@ checkparams(size_t maxmem, double maxmemfrac, double maxtime,
 		opps = 0;
 
 		if (verbose &&
-		    (rc = display_params(logN, r, p, memlimit, opps, maxtime)
+		    ((rc = display_params(logN, r, p, memlimit, opps, maxtime))
 		    != SCRYPT_OK))
 			return (rc);
 	}
