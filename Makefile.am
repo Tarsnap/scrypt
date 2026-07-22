@@ -1,5 +1,6 @@
 bin_PROGRAMS=	scrypt
 noinst_PROGRAMS=							\
+	tests/check-params/check-params-normal				\
 	tests/valgrind/potential-memleaks				\
 	tests/verify-strings/test_scrypt
 dist_man_MANS=$(scrypt_man_MANS)
@@ -218,6 +219,17 @@ tests_libscrypt_kdf_sample_libscrypt_kdf_CPPFLAGS=			\
 	-I$(srcdir)/libscrypt-kdf/
 tests_libscrypt_kdf_sample_libscrypt_kdf_LDADD=		libscrypt-kdf.la
 
+# Check scrypt parameter-handling (normal program, including intrinsics).
+tests_check_params_check_params_normal_SOURCES=				\
+	tests/check-params/check-params.c				\
+	$(crypto_scrypt_files)
+tests_check_params_check_params_normal_LDADD=				\
+	libcperciva_arm_sha256.la					\
+	libcperciva_cpusupport_detect.la				\
+	libcperciva_shani.la						\
+	libscrypt_sse2.la						\
+	${LDADD_POSIX}
+
 # crypto_aesctr_shared.c is in this list because it can't be included in the
 # _SOURCES because it should only be included as part of another translation
 # unit.
@@ -268,6 +280,7 @@ EXTRA_DIST=								\
 	tests/07-passphrase-env.sh					\
 	tests/08-passphrase-file.sh					\
 	tests/09-explicit-params.sh					\
+	tests/10-check-params.sh					\
 	tests/shared_test_functions.sh					\
 	tests/shared_valgrind_functions.sh				\
 	tests/test_scrypt.sh						\

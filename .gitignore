@@ -37,6 +37,7 @@
 *.o
 # In-tree binaries
 /scrypt
+/tests/check-params/check-params-normal
 /tests/libscrypt-kdf/sample-libscrypt-kdf
 /tests/valgrind/potential-memleaks
 /tests/verify-strings/test_scrypt
