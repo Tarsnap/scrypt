@@ -35,6 +35,7 @@
 #include "sysendian.h"
 
 #include "crypto_scrypt.h"
+#include "insecure_memzero.h"
 
 static void blkcpy(uint8_t *, uint8_t *, size_t);
 static void blkxor(uint8_t *, uint8_t *, size_t);
@@ -269,6 +270,11 @@ crypto_scrypt(const uint8_t * passwd, size_t passwdlen,
 
 	/* 5: DK <-- PBKDF2(P, B, 1, dkLen) */
 	PBKDF2_SHA256(passwd, passwdlen, B, p * 128 * r, 1, buf, buflen);
+
+	/* Sanitize memory. */
+	insecure_memzero(V, 128 * r * N);
+	insecure_memzero(XY, 256 * r);
+	insecure_memzero(B, 128 * r * p);
 
 	/* Free memory. */
 	free(V);
