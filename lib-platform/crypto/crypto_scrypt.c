@@ -44,6 +44,7 @@
 #include "crypto_scrypt_smix_sse2.h"
 
 #include "crypto_scrypt.h"
+#include "insecure_memzero.h"
 
 static void (* smix_func)(uint8_t *, size_t, uint64_t, void *, void *) = NULL;
 
@@ -142,6 +143,11 @@ crypto_scrypt_internal(const uint8_t * passwd, size_t passwdlen,
 
 	/* 5: DK <-- PBKDF2(P, B, 1, dkLen) */
 	PBKDF2_SHA256(passwd, passwdlen, B, p * 128 * r, 1, buf, buflen);
+
+	/* Sanitize memory. */
+	insecure_memzero(V, (size_t)(128 * r * N));
+	insecure_memzero(XY, 256 * r + 64);
+	insecure_memzero(B, 128 * r * p);
 
 	/* Free memory. */
 #if defined(MAP_ANON) && defined(HAVE_MMAP)
