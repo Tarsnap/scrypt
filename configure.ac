@@ -1,5 +1,8 @@
 AC_PREREQ([2.69])
-AC_INIT([scrypt],[m4_esyscmd([sh get-version.sh])],
+# We need a variable for SCRYPT_VERSION, otherwise AC_INIT will re-run
+# `sh get-version.sh` every time it needs a version string.
+m4_define([SCRYPT_VERSION], [m4_esyscmd([sh get-version.sh])])
+AC_INIT([scrypt], [SCRYPT_VERSION],
   [https://github.com/Tarsnap/scrypt],[scrypt],[http://www.tarsnap.com/scrypt/])
 
 # Safety check: make sure that the srcdir contains this file.
