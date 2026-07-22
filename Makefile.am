@@ -1,6 +1,7 @@
 bin_PROGRAMS=	scrypt
 noinst_PROGRAMS=							\
 	tests/check-params/check-params-normal				\
+	tests/check-params/check-params-reference			\
 	tests/valgrind/potential-memleaks				\
 	tests/verify-strings/test_scrypt
 dist_man_MANS=$(scrypt_man_MANS)
@@ -230,6 +231,34 @@ tests_check_params_check_params_normal_LDADD=				\
 	libscrypt_sse2.la						\
 	${LDADD_POSIX}
 
+# Check scrypt parameter-handling (reference code only, no intrinsics).
+# We need a separate library for this because we need to re-compile these
+# files without -DCPUSUPPORT_CONFIG_FILE.
+noinst_LTLIBRARIES+=	libscrypt-reference.la
+libscrypt_reference_la_SOURCES=						\
+	lib/crypto/crypto_scrypt-ref.c					\
+	libcperciva/alg/sha256.c					\
+	libcperciva/alg/sha256.h					\
+	libcperciva/util/insecure_memzero.c				\
+	libcperciva/util/insecure_memzero.h				\
+	libcperciva/util/sysendian.h					\
+	libcperciva/util/warnp.c					\
+	libcperciva/util/warnp.h
+libscrypt_reference_la_CPPFLAGS=					\
+	-I$(srcdir)/lib-platform/crypto					\
+	-I$(srcdir)/lib/crypto						\
+	-I$(srcdir)/libcperciva/alg					\
+	-I$(srcdir)/libcperciva/cpusupport				\
+	-I$(srcdir)/libcperciva/util					\
+	-D_POSIX_C_SOURCE=200809L					\
+	-D_XOPEN_SOURCE=700						\
+	${CFLAGS_POSIX}
+tests_check_params_check_params_reference_SOURCES=			\
+	tests/check-params/check-params.c
+tests_check_params_check_params_reference_LDADD=			\
+	libscrypt-reference.la						\
+	${LDADD_POSIX}
+
 # crypto_aesctr_shared.c is in this list because it can't be included in the
 # _SOURCES because it should only be included as part of another translation
 # unit.
@@ -242,7 +271,6 @@ EXTRA_DIST=								\
 	STYLE								\
 	get-version.sh							\
 	lib/README							\
-	lib/crypto/crypto_scrypt-ref.c					\
 	libcperciva/POSIX/README					\
 	libcperciva/POSIX/posix-abstract-declarator.c			\
 	libcperciva/POSIX/posix-cflags.sh				\
