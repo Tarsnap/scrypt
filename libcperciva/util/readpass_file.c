@@ -52,8 +52,29 @@ readpass_file(char ** passwd, const char * filename)
 		goto err1;
 	}
 
-	/* Truncate at any newline character. */
-	passbuf[strcspn(passbuf, "\r\n")] = '\0';
+	/*
+	 * Strip a trailing "\n" or a trailing "\r\n" explicitly, then reject the
+	 * file if any "\r" or "\n" remains.  This matches the contract in
+	 * readpass.h: only a single trailing newline ("\n") or CRLF ("\r\n") is
+	 * permitted at the end of the file; any other occurrences of CR or LF are
+	 * an error.
+	 */
+	{
+		size_t len = strlen(passbuf);
+
+		/* Strip trailing '\n', and an optional preceding '\r'. */
+		if (len > 0 && passbuf[len - 1] == '\n') {
+			passbuf[--len] = '\0';
+			if (len > 0 && passbuf[len - 1] == '\r')
+				passbuf[--len] = '\0';
+		}
+
+		/* If any CR or LF remains, the file contains embedded newlines. */
+		if (strchr(passbuf, '\r') != NULL || strchr(passbuf, '\n') != NULL) {
+			warn0("Invalid passphrase file: %s", filename);
+			goto err1;
+		}
+	}
 
 	/* Copy the password out. */
 	if ((*passwd = strdup(passbuf)) == NULL) {
