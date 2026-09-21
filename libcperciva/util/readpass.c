@@ -54,6 +54,56 @@ resetsigs(struct sigaction savedsa[NSIGS])
 	}
 }
 
+/*
+ * Read one password line without silently accepting a truncated prefix.
+ * fgets(3) can fill the buffer before consuming the line terminator; in that
+ * case inspect the next byte and reject any non-terminator suffix.
+ */
+static int
+readpass_readline(char * buf, size_t buflen, FILE * f)
+{
+	size_t len;
+	int ch;
+	int next;
+
+	if (fgets(buf, buflen, f) == NULL) {
+		if (feof(f))
+			warn0("EOF reading password");
+		else
+			warnp("Cannot read password");
+		return (-1);
+	}
+
+	/* A short read, or a line ending already in the buffer, is complete. */
+	len = strcspn(buf, "\r\n");
+	if (len < buflen - 1)
+		return (0);
+
+	/* The buffer is full and contains no line terminator. */
+	if ((ch = fgetc(f)) == EOF) {
+		if (ferror(f)) {
+			warnp("Cannot read password");
+			return (-1);
+		}
+		return (0);
+	}
+	if (ch == '\n')
+		return (0);
+	if (ch == '\r') {
+		do {
+			next = fgetc(f);
+		} while ((next != '\n') && (next != EOF));
+		if ((next == EOF) && ferror(f)) {
+			warnp("Cannot read password");
+			return (-1);
+		}
+		return (0);
+	}
+
+	warn0("Password is too long");
+	return (-1);
+}
+
 /**
  * readpass(passwd, prompt, confirmprompt, devtty):
  * If ${devtty} is 0, read a password from stdin.  If ${devtty} is 1, read a
@@ -136,25 +186,15 @@ retry:
 		fprintf(stderr, "%s: ", prompt);
 
 	/* Read the password. */
-	if (fgets(passbuf, MAXPASSLEN, readfrom) == NULL) {
-		if (feof(readfrom))
-			warn0("EOF reading password");
-		else
-			warnp("Cannot read password");
+	if (readpass_readline(passbuf, MAXPASSLEN, readfrom))
 		goto err3;
-	}
 
 	/* Confirm the password if necessary. */
 	if (confirmprompt != NULL) {
 		if (usingtty)
 			fprintf(stderr, "%s: ", confirmprompt);
-		if (fgets(confpassbuf, MAXPASSLEN, readfrom) == NULL) {
-			if (feof(readfrom))
-				warn0("EOF reading password");
-			else
-				warnp("Cannot read password");
+		if (readpass_readline(confpassbuf, MAXPASSLEN, readfrom))
 			goto err3;
-		}
 		if (strcmp(passbuf, confpassbuf)) {
 			fprintf(stderr,
 			    "Passwords mismatch, please try again\n");
