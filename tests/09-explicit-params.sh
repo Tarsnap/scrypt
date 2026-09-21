@@ -63,4 +63,14 @@ scenario_cmd() {
 	    enc -p 12 "${reference_file}" 2>&1 |			\
 	    grep -q "If -p is set, --logN and -r must also be set"
 	echo $? > "${c_exitfile}"
+
+	# Explicit parameters are encryption-only; "dec" must reject them
+	# instead of reaching the assertion in scryptdec_file_prep.
+	setup_check "scrypt dec Nrp rejected"
+	echo "${password}" | ${c_valgrind_cmd} "${bindir}/scrypt"	\
+	    dec --logN 12 -r 2 -p 3					\
+	    --passphrase dev:stdin-once					\
+	    "${encrypted_file}" 2>&1 |					\
+	    grep -q "\--logN, -r and -p cannot be used when decrypting"
+	echo $? > "${c_exitfile}"
 }

@@ -346,6 +346,17 @@ main(int argc, char * argv[])
 		goto err0;
 	}
 
+	/*
+	 * Explicit parameters only apply to encryption; when decrypting we
+	 * always use the values from the file header.  Reject them here
+	 * rather than violating scryptdec_file_prep's API contract.  The
+	 * all-or-none checks above mean that testing logN is sufficient.
+	 */
+	if (dec && (params.logN != 0)) {
+		warn0("--logN, -r and -p cannot be used when decrypting");
+		goto err0;
+	}
+
 	/* We can't have a maxmemfrac of 0. */
 	if (params.maxmemfrac == 0.0) {
 		warn0("-m must be greater than 0");
