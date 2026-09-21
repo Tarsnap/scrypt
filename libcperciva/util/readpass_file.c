@@ -22,6 +22,7 @@ readpass_file(char ** passwd, const char * filename)
 {
 	FILE * f;
 	char passbuf[MAXPASSLEN];
+	size_t len;
 
 	/* Open the file. */
 	if ((f = fopen(filename, "r")) == NULL) {
@@ -52,8 +53,28 @@ readpass_file(char ** passwd, const char * filename)
 		goto err1;
 	}
 
-	/* Truncate at any newline character. */
-	passbuf[strcspn(passbuf, "\r\n")] = '\0';
+	/*
+	 * Strip a trailing "\n" or "\r\n".  fgets() stops after a "\n", so
+	 * if the file contains one then it is the last character we read.
+	 */
+	len = strlen(passbuf);
+	if ((len > 0) && (passbuf[len - 1] == '\n')) {
+		passbuf[--len] = '\0';
+		if ((len > 0) && (passbuf[len - 1] == '\r'))
+			passbuf[--len] = '\0';
+	}
+
+	/*
+	 * Any "\r" or "\n" left is not a line ending we strip.  We could cut
+	 * the passphrase short there, or keep the character as part of the
+	 * passphrase, but both change the passphrase which an existing file
+	 * yields, and neither is safe to pick silently.  Refuse the file.
+	 */
+	if (strcspn(passbuf, "\r\n") != len) {
+		warn0("passphrase in %s contains a carriage return or newline",
+		    filename);
+		goto err1;
+	}
 
 	/* Copy the password out. */
 	if ((*passwd = strdup(passbuf)) == NULL) {
