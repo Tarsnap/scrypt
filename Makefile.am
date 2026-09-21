@@ -309,6 +309,7 @@ EXTRA_DIST=								\
 	tests/08-passphrase-file.sh					\
 	tests/09-explicit-params.sh					\
 	tests/10-check-params.sh					\
+	tests/13-write-error.sh						\
 	tests/shared_test_functions.sh					\
 	tests/shared_valgrind_functions.sh				\
 	tests/test_scrypt.sh						\
