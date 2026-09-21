@@ -77,6 +77,8 @@ entropy_read_fill(struct entropy_read_cookie * er, uint8_t * buf,
 	/* Read bytes until we have filled the buffer. */
 	while (buflen > 0) {
 		if ((lenread = read(er->fd, buf, buflen)) == -1) {
+			if (errno == EINTR)
+				continue;
 			warnp("read(/dev/urandom)");
 			goto err0;
 		}
