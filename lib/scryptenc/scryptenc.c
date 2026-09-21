@@ -71,12 +71,38 @@ static int
 display_params(int logN, uint32_t r, uint32_t p, size_t memlimit,
     double opps, double maxtime)
 {
-	uint64_t N = (uint64_t)(1) << logN;
-	uint64_t mem_minimum = 128 * r * N;
-	double expected_seconds = opps > 0 ? (double)(4 * N * r * p) / opps : 0;
-	char * human_memlimit = humansize(memlimit);
-	char * human_mem_minimum = humansize(mem_minimum);
+	uint64_t N;
+	uint64_t mem_minimum;
+	double expected_seconds;
+	char * human_memlimit;
+	char * human_mem_minimum;
 	int rc;
+
+	/* Our callers must bound logN before we shift by it. */
+	assert((logN > 0) && (logN < 64));
+
+	N = (uint64_t)(1) << logN;
+
+	/*
+	 * Compute 128 * r * N.  The "128 * r" subexpression has type uint32_t
+	 * and wraps around for r >= 2^25, so this must be computed in 64-bit
+	 * arithmetic; even then the product can exceed UINT64_MAX, so we
+	 * saturate rather than reporting a nonsensically small value.
+	 */
+	if ((uint64_t)(r) > (UINT64_MAX / 128) / N)
+		mem_minimum = UINT64_MAX;
+	else
+		mem_minimum = 128 * (uint64_t)(r) * N;
+
+	/*
+	 * Compute 4 * N * r * p / opps.  We accumulate in floating point
+	 * because 4 * N * r * p can overflow a uint64_t.
+	 */
+	expected_seconds = (opps > 0) ?
+	    4.0 * (double)N * (double)r * (double)p / opps : 0;
+
+	human_memlimit = humansize(memlimit);
+	human_mem_minimum = humansize(mem_minimum);
 
 	/* Check humansize() allocation. */
 	if ((human_memlimit == NULL) || (human_mem_minimum == NULL)) {
@@ -343,6 +369,8 @@ int
 scryptdec_file_printparams(FILE * infile)
 {
 	uint8_t header[96];
+	uint8_t hbuf[32];
+	SHA256_CTX ctx;
 	int logN;
 	uint32_t r;
 	uint32_t p;
@@ -352,10 +380,37 @@ scryptdec_file_printparams(FILE * infile)
 	if ((rc = scryptdec_file_load_header(infile, header)) != 0)
 		goto err0;
 
+	/* Verify header checksum. */
+	SHA256_Init(&ctx);
+	SHA256_Update(&ctx, header, 48);
+	SHA256_Final(hbuf, &ctx);
+	if (crypto_verify_bytes(&header[48], hbuf, 16)) {
+		rc = SCRYPT_EINVAL;
+		goto err0;
+	}
+
 	/* Parse N, r, p. */
 	logN = header[7];
 	r = be32dec(&header[8]);
 	p = be32dec(&header[12]);
+
+	/*
+	 * Sanity-check the parameters using the same rules as checkparams();
+	 * in particular, display_params() computes N = 2^logN, so a logN of
+	 * 64 or greater would be an out-of-range shift.
+	 */
+	if ((logN < 1) || (logN > 63)) {
+		rc = SCRYPT_EINVAL;
+		goto err0;
+	}
+	if ((r == 0) || (p == 0)) {
+		rc = SCRYPT_EINVAL;
+		goto err0;
+	}
+	if ((uint64_t)(r) * (uint64_t)(p) >= 0x40000000) {
+		rc = SCRYPT_EINVAL;
+		goto err0;
+	}
 
 	/* Print parameters. */
 	if ((rc = display_params(logN, r, p, 0, 0, 0)) != SCRYPT_OK)
