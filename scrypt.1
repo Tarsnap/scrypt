@@ -72,6 +72,11 @@ truncates
 before it reads
 .Ar infile ,
 so it exits with an error instead of destroying the input.
+The same restriction applies when standard output refers to the input file.
+This check cannot restore an input which the shell has already truncated
+before
+.Nm
+starts.
 .Pp
 .Nm Cm info
 provides information about the encryption parameters used for

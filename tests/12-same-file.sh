@@ -120,6 +120,47 @@ scenario_cmd() {
 	done
 
 
+	# stdout is already open: append redirection must not bypass the guard.
+	for stdout_mode in enc dec; do
+		stdout_params=""
+		stdout_reference="${encrypted_reference_file}"
+		if [ "${stdout_mode}" = enc ]; then
+			stdout_params="--logN 10 -r 1 -p 1"
+			stdout_reference="${reference_file}"
+		fi
+		for stdout_source in file stdin; do
+			stdout_target="${s_basename}-${stdout_mode}-${stdout_source}"
+			stdout_stderr="${stdout_target}.stderr"
+			cp "${stdout_reference}" "${stdout_target}"
+			stdout_input="${stdout_target}"
+			if [ "${stdout_source}" = stdin ]; then
+				stdout_input="-"
+			fi
+
+			setup_check "scrypt ${stdout_mode} ${stdout_source} stdout alias"
+			(
+				# Bound any accidental writes if this guard regresses.
+				ulimit -f 128 || exit 1
+				${c_valgrind_cmd} "${bindir}/scrypt" "${stdout_mode}" \
+				    ${stdout_params} \
+				    --passphrase file:"${alias_password}" \
+				    "${stdout_input}" < "${stdout_target}" \
+				    >> "${stdout_target}" 2> "${stdout_stderr}"
+				expected_exitcode 1 $? > "${c_exitfile}"
+			)
+
+			setup_check "scrypt ${stdout_mode} stdout alias error"
+			grep -q "scrypt: Input and output files are the same" \
+			    "${stdout_stderr}"
+			echo $? > "${c_exitfile}"
+
+			setup_check "scrypt ${stdout_mode} stdout preserves input"
+			cmp -s "${stdout_target}" "${stdout_reference}"
+			echo $? > "${c_exitfile}"
+		done
+	done
+
+
 	# Exercise the race between the early path check and the destructive
 	# output open.  A FIFO passphrase source gives us a deterministic gate:
 	# once the writer has opened the FIFO, scrypt has already completed the

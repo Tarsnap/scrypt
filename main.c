@@ -125,7 +125,8 @@ same_destructive_object(const struct stat * sb_in, const struct stat * sb_out)
 /**
  * same_file(infile, outfilename):
  * Return non-zero if the already-open ${infile} and the path ${outfilename}
- * identify the same destructive storage object.  If we cannot tell -- most
+ * identify the same destructive storage object.  If ${outfilename} is NULL,
+ * compare against standard output instead.  If we cannot tell -- most
  * importantly if ${outfilename} does not exist yet -- return zero.
  */
 static int
@@ -137,8 +138,12 @@ same_file(FILE * infile, const char * outfilename)
 	/* If we can't stat either file, assume that they're different. */
 	if (fstat(fileno(infile), &sb_in))
 		return (0);
-	if (stat(outfilename, &sb_out))
+	if (outfilename != NULL) {
+		if (stat(outfilename, &sb_out))
+			return (0);
+	} else if (fstat(fileno(stdout), &sb_out)) {
 		return (0);
+	}
 
 	return (same_destructive_object(&sb_in, &sb_out));
 }
@@ -230,8 +235,9 @@ scrypt_mode_enc_dec(struct scryptenc_params params,
 	 * repeats this check on the descriptor it actually opens, closing the
 	 * path race before any regular output file is truncated.
 	 */
-	if ((outfilename != NULL) && same_file(infile, outfilename)) {
-		warn0("Input and output files are the same: %s", outfilename);
+	if (same_file(infile, outfilename)) {
+		warn0("Input and output files are the same: %s",
+		    outfilename != NULL ? outfilename : "standard output");
 		goto err1;
 	}
 
