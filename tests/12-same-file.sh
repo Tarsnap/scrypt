@@ -129,7 +129,7 @@ scenario_cmd() {
 			stdout_reference="${reference_file}"
 		fi
 		for stdout_source in file stdin; do
-			stdout_target="${s_basename}-${stdout_mode}-${stdout_source}"
+			stdout_target="${s_basename}-stdout-${stdout_mode}-${stdout_source}"
 			stdout_stderr="${stdout_target}.stderr"
 			cp "${stdout_reference}" "${stdout_target}"
 			stdout_input="${stdout_target}"
